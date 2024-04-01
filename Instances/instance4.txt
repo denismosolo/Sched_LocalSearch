@@ -1,0 +1,66 @@
+$orario
+Days 6
+HoursXDay 5
+SubjectMaxHoursXDay 2
+ProfMaxWeeklyHours 18
+
+$materie
+scienze 3
+matematica 4
+italiano 7
+latino 3
+filosofia 3
+storia 2
+inglese 3
+storia_arte 2
+educazione_fisica 2
+religione 1
+
+$professori
+Mario_Rossi scienze lun
+Quintino_Pagnotto matematica mar
+Paolo_Garzanti scienze ven
+Bianca_Marino italiano gio
+Cecilia_Bellucci latino mar
+Aida_DeRose filosofia mer
+Costanzo_Pugliesi storia gio
+Nadia_Mazzanti inglese gio
+Berardo_Calabrese storia_arte ven
+Azelio_Pinto educazione_fisica sab
+Tiziano_Giordano religione lun
+Rosa_Giuliani italiano sab
+A_Mario_Rossi scienze lun
+A_Quintino_Pagnotto matematica mar
+A_Paolo_Garzanti scienze ven
+A_Bianca_Marino italiano gio
+A_Cecilia_Bellucci latino mar
+A_Aida_DeRose filosofia mer
+A_Costanzo_Pugliesi storia gio
+A_Nadia_Mazzanti inglese gio
+A_Berardo_Calabrese storia_arte ven
+A_Azelio_Pinto educazione_fisica sab
+A_Tiziano_Giordano religione lun
+A_Rosa_Giuliani italiano sab
+
+$classi
+1A
+2A
+3A
+4A
+5A
+1B
+2B
+3B
+4B
+5B
+1C
+2C
+3C
+4C
+
+
+$costi
+UnavailabilityViolation 10
+MaxSubjectHoursXDayViolation 5
+MaxProfWeeklyHoursViolation 15
+ScheduleContiguityViolation 5

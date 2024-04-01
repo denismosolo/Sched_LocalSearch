@@ -1,0 +1,102 @@
+$orario
+Days 6
+HoursXDay 5
+SubjectMaxHoursXDay 2
+ProfMaxWeeklyHours 18
+
+$materie
+scienze 3
+matematica 4
+italiano 7
+latino 3
+filosofia 3
+storia 2
+inglese 3
+storia_arte 2
+educazione_fisica 2
+religione 1
+
+$professori
+Ludovica_Moretti scienze mar
+Vittoria_Ricci scienze gio
+Lorenzo_Mancini scienze lun
+Riccardo_Romano scienze ven
+Alice_Martinelli matematica gio
+Gabriele_Romano matematica ven
+Riccardo_Colombo matematica mer
+Mattia_Greco matematica lun
+Ginevra_Mancini matematica mer
+Alice_Fontana matematica mer
+Sofia_Romano italiano lun
+Aurora_Ferrari italiano sab
+Riccardo_Longo italiano lun
+Giulia_Bruno italiano sab
+Beatrice_Colombo italiano lun
+Matilde_Rossi italiano mer
+Ginevra_Conti italiano gio
+Alessandro_Conti italiano mer
+Edoardo_Costa latino sab
+Emma_Conti latino mar
+Aurora_Marino latino gio
+Ginevra_Giordano latino ven
+Mattia_Romano filosofia mer
+Emma_Moretti filosofia mar
+Matilde_Martinelli filosofia mer
+Mattia_Marino filosofia mer
+Edoardo_Ricci storia ven
+Riccardo_Gallo storia lun
+Lorenzo_Moretti storia lun
+Andrea_Bruno inglese ven
+Vittoria_Gallo inglese mar
+Andrea_Giordano inglese ven
+Ludovica_Colombo inglese mar
+Alice_Conti storia_arte mer
+Ginevra_Longo storia_arte gio
+Francesco_Giordano storia_arte mer
+Gabriele_Moretti storia_arte lun
+Matilde_Marino educazione_fisica mer
+Emma_Lombardi educazione_fisica mar
+Lorenzo_Fontana educazione_fisica mar
+Edoardo_Lombardi educazione_fisica mer
+Alice_Longo religione sab
+Emma_Bianchi religione sab
+Andrea_Marino religione sab
+Gabriele_Martinelli religione lun
+
+$classi
+1A
+2A
+3A
+4A
+5A
+1B
+2B
+3B
+4B
+5B
+1C
+2C
+3C
+4C
+5C
+1D
+2D
+3D
+4D
+5D
+1E
+2E
+3E
+4E
+5E
+1F
+2F
+3F
+4F
+5F
+
+$costi
+UnavailabilityViolation 10
+MaxSubjectHoursXDayViolation 5
+MaxProfWeeklyHoursViolation 15
+ScheduleContiguityViolation 5
