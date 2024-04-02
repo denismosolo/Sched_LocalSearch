@@ -130,19 +130,19 @@ public:
 
   // Profs selectors
   int Prof_Schedule(unsigned p, unsigned d, unsigned h) const { return schedule_prof[p][d][h]; }  // Get the prof's schedule
-  unsigned ProfWeeklyAssignedHours(unsigned p) { return prof_weekly_hours[p]; }
+  unsigned ProfWeeklyAssignedHours(unsigned p) const { return prof_weekly_hours[p]; }
   int ProfAssignedDayOff(unsigned p) const { return prof_day_off[p]; } // Get prof day off
 
   // Costs and violations computing methods
-  unsigned ProfUnavailabilityViolations() const;
-  unsigned MaxSubjectHoursXDayViolations() const;
-  unsigned ProfMaxWeeklyHoursViolations() const;
-  unsigned ScheduleContiguityViolations() const;
+  [[deprecated("moved to relative cost component class")]] unsigned ProfUnavailabilityViolations() const;
+  [[deprecated("moved to relative cost component class")]] unsigned MaxSubjectHoursXDayViolations() const;
+  [[deprecated("moved to relative cost component class")]] unsigned ProfMaxWeeklyHoursViolations() const;
+  [[deprecated("moved to relative cost component class")]] unsigned ScheduleContiguityViolations() const;
 
-  unsigned ProfUnavailabilityViolationsCost() const { return ProfUnavailabilityViolations() * in.UnavailabilityViolationCost(); }
-  unsigned MaxSubjectHoursXDayViolationsCost() const { return MaxSubjectHoursXDayViolations() * in.MaxSubjectHoursXDayViolationCost(); }
-  unsigned ProfMaxWeeklyHoursViolationsCost() const { return ProfMaxWeeklyHoursViolations() * in.MaxProfWeeklyHoursViolationCost(); }
-  unsigned ScheduleContiguityViolationsCost() const { return ScheduleContiguityViolations() * in.ScheduleContiguityViolationCost(); }
+  [[deprecated("moved to relative cost component class")]] unsigned ProfUnavailabilityViolationsCost() const { return ProfUnavailabilityViolations() * in.UnavailabilityViolationCost(); }
+  [[deprecated("moved to relative cost component class")]] unsigned MaxSubjectHoursXDayViolationsCost() const { return MaxSubjectHoursXDayViolations() * in.MaxSubjectHoursXDayViolationCost(); }
+  [[deprecated("moved to relative cost component class")]] unsigned ProfMaxWeeklyHoursViolationsCost() const { return ProfMaxWeeklyHoursViolations() * in.MaxProfWeeklyHoursViolationCost(); }
+  [[deprecated("moved to relative cost component class")]] unsigned ScheduleContiguityViolationsCost() const { return ScheduleContiguityViolations() * in.ScheduleContiguityViolationCost(); }
 
   unsigned SolutionTotalCost() const { return ProfUnavailabilityViolationsCost() + MaxSubjectHoursXDayViolationsCost() + ProfMaxWeeklyHoursViolationsCost() + ScheduleContiguityViolationsCost(); }
 
