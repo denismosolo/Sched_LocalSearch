@@ -265,6 +265,34 @@ void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& out, ostream&
       }
 }
 
+int Sched_CompleteSolution::ComputeCost(const Sched_Output& out) const
+{
+  unsigned c, d, h;
+  unsigned violations = 0;
+
+  for (c = 0; c < in.N_Classes(); c++)
+    for (d = 0; d < in.N_Days(); d++)
+      for (h = 0; h < in.N_HoursXDay(); h++)
+        if(out.IsClassHourFree(c, d, h))
+          violations++;
+
+  return violations;
+}
+
+void Sched_CompleteSolution::PrintViolations(const Sched_Output& out, ostream& os) const
+{
+  unsigned c, d, h;
+
+  for (c = 0; c < in.N_Classes(); c++)
+    for (d = 0; d < in.N_Days(); d++)
+      for (h = 0; h < in.N_HoursXDay(); h++)
+        if(out.IsClassHourFree(c, d, h))
+          os << "Free hour for class " << in.Class_Name(c)
+            << " on " << in.Day_Name(days(d))
+            << " at hour " << h+1
+            << endl;
+}
+
 
 /***************************************************************************
  * Sched_Change Neighborhood Explorer:
@@ -375,6 +403,13 @@ int Sched_ChangeDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& ou
 }
 
 int Sched_ChangeDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
+{
+// to be implemented
+// sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
+  return 0;
+}
+
+int Sched_ChangeDeltaCompleteSolution::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova

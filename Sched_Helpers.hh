@@ -70,6 +70,16 @@ public:
   void PrintViolations(const Sched_Output& out, ostream& os = cout) const override;
 };
 
+class Sched_CompleteSolution: public CostComponent<Sched_Input,Sched_Output>
+{
+public:
+  Sched_CompleteSolution(const Sched_Input & in, int w, bool hard = true) : CostComponent<Sched_Input,Sched_Output>(in,w,hard,"Sched_CompleteSolution")
+  {}
+  int ComputeCost(const Sched_Output& out) const override;
+  void PrintViolations(const Sched_Output& out, ostream& os = cout) const override;
+};
+
+
 /***************************************************************************
  * Sched_Change Neighborhood Explorer:
  ***************************************************************************/
@@ -110,6 +120,16 @@ class Sched_ChangeDeltaScheduleContiguity
 public:
   Sched_ChangeDeltaScheduleContiguity(const Sched_Input & in, Sched_ScheduleContiguity& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaScheduleContiguity") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
+};
+
+class Sched_ChangeDeltaCompleteSolution
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>
+{
+public:
+  Sched_ChangeDeltaCompleteSolution(const Sched_Input & in, Sched_CompleteSolution& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaCompleteSolution") 
   {}
   int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
 };
