@@ -581,7 +581,7 @@ void Sched_Output::Print(ostream& os) const
   }
 
   // Print violations and costs
-  os << "======================" << endl;
+  /*os << "======================" << endl;
   os << "Violations and costs" << endl;
   os << "======================" << endl;
   os << "Unavailability violations: " << ProfUnavailabilityViolations() << endl;
@@ -595,7 +595,7 @@ void Sched_Output::Print(ostream& os) const
   os << "Schedule contiguity violations cost: " << ScheduleContiguityViolationsCost() << endl;
   os << "----------------------" << endl;
   os << "Total cost: " << SolutionTotalCost() << endl;
-  os << "----------------------" << endl;
+  os << "----------------------" << endl;*/
 }
 
 
@@ -720,7 +720,7 @@ void Sched_Output::PrintTAB(string output_filename) const
   }
 
   // Print violations and costs
-  os << "======================" << endl;
+  /*os << "======================" << endl;
   os << "Violations and costs" << endl;
   os << "======================" << endl;
   os << "Unavailability violations: " << ProfUnavailabilityViolations() << endl;
@@ -734,7 +734,7 @@ void Sched_Output::PrintTAB(string output_filename) const
   os << "Schedule contiguity violations cost: " << ScheduleContiguityViolationsCost() << endl;
   os << "----------------------" << endl;
   os << "Total cost: " << SolutionTotalCost() << endl;
-  os << "----------------------" << endl;
+  os << "----------------------" << endl;*/
 
 }
 

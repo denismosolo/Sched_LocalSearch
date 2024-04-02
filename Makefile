@@ -1,5 +1,5 @@
 EASYLOCAL = ./easylocal-3
-FLAGS = -std=c++20 -Wall -Wfatal-errors -Wno-sign-compare -O3 -g
+FLAGS = -std=c++20 -Wall -Wfatal-errors -Wno-sign-compare -O3 -g -Wno-deprecated-declarations
 COMPOPTS = -I$(EASYLOCAL)/include $(FLAGS)
 LINKOPTS = -lboost_program_options -pthread
 

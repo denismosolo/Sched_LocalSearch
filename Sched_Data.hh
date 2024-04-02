@@ -144,7 +144,7 @@ public:
   [[deprecated("moved to relative cost component class")]] unsigned ProfMaxWeeklyHoursViolationsCost() const { return ProfMaxWeeklyHoursViolations() * in.MaxProfWeeklyHoursViolationCost(); }
   [[deprecated("moved to relative cost component class")]] unsigned ScheduleContiguityViolationsCost() const { return ScheduleContiguityViolations() * in.ScheduleContiguityViolationCost(); }
 
-  unsigned SolutionTotalCost() const { return ProfUnavailabilityViolationsCost() + MaxSubjectHoursXDayViolationsCost() + ProfMaxWeeklyHoursViolationsCost() + ScheduleContiguityViolationsCost(); }
+  //unsigned SolutionTotalCost() const { return ProfUnavailabilityViolationsCost() + MaxSubjectHoursXDayViolationsCost() + ProfMaxWeeklyHoursViolationsCost() + ScheduleContiguityViolationsCost(); }
 
   // Print methods
   void Print(ostream& os) const;  // Print output class in a user-readable manner
