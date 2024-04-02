@@ -120,7 +120,7 @@ void Sched_SolutionManager::GreedyState(Sched_Output& out)
     }
 }
 
-bool Sched_SolutionManager::CheckConsistency(const Sched_Output& st) const
+bool Sched_SolutionManager::CheckConsistency(const Sched_Output& out) const
 {
   return true; //TBC if necessary or already handled by AssignHour method
 }
@@ -129,32 +129,36 @@ bool Sched_SolutionManager::CheckConsistency(const Sched_Output& st) const
  * State Manager 
  ***************************************************************************/
 
-int Sched_ProfUnavailability::ComputeCost(const Sched_Output& st) const
+int Sched_ProfUnavailability::ComputeCost(const Sched_Output& out) const
 {
   unsigned p;
   unsigned violations = 0;
   
   for (p = 0; p < in.N_Profs(); p++)
-    if (st.ProfAssignedDayOff(p) == -1 || (unsigned)st.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
+    if (out.ProfAssignedDayOff(p) == -1 || (unsigned)out.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
       violations++;
 
   return violations * in.UnavailabilityViolationCost();
 }
 
-void Sched_ProfUnavailability::PrintViolations(const Sched_Output& st, ostream& os) const
+void Sched_ProfUnavailability::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned p;
   
   for (p = 0; p < in.N_Profs(); p++)
-    if (st.ProfAssignedDayOff(p) == -1)
+  {
+    if (out.ProfAssignedDayOff(p) == -1)
       os << "Prof " << in.Prof_Name(p) << " has no day off" << endl;
-    else if ((unsigned)st.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
-      os << "To prof " << in.Prof_Name(p) << " assigned day off on " << in.Day_Name((days)st.ProfAssignedDayOff(p))
-        << " instead of " << in.Day_Name((days)st.ProfAssignedDayOff(p))
+    else if ((unsigned)out.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
+    {
+      os << "To prof " << in.Prof_Name(p) << " assigned day off on " << in.Day_Name((days)out.ProfAssignedDayOff(p))
+        << " instead of " << in.Day_Name((days)in.ProfUnavailability(p))
         << endl;
+    }
+  }
 }
 
-int Sched_MaxSubjectHoursXDay::ComputeCost(const Sched_Output& st) const
+int Sched_MaxSubjectHoursXDay::ComputeCost(const Sched_Output& out) const
 {
   unsigned c, s, d;
   unsigned violations = 0;
@@ -162,50 +166,50 @@ int Sched_MaxSubjectHoursXDay::ComputeCost(const Sched_Output& st) const
   for (c = 0; c < in.N_Classes(); c++)
     for (d = 0; d < in.N_Days(); d++)
       for (s = 0; s < in.N_Subjects(); s++)
-        if (st.DailySubjectAssignedHours(c, d, s) > in.SubjectMaxHoursXDay())
-          violations += st.DailySubjectAssignedHours(c, d, s) - in.SubjectMaxHoursXDay();
+        if (out.DailySubjectAssignedHours(c, d, s) > in.SubjectMaxHoursXDay())
+          violations += out.DailySubjectAssignedHours(c, d, s) - in.SubjectMaxHoursXDay();
 
   return violations * in.MaxSubjectHoursXDayViolationCost();
 }
 
-void Sched_MaxSubjectHoursXDay::PrintViolations(const Sched_Output& st, ostream& os) const
+void Sched_MaxSubjectHoursXDay::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned c, s, d;
 
   for (c = 0; c < in.N_Classes(); c++)
     for (d = 0; d < in.N_Days(); d++)
       for (s = 0; s < in.N_Subjects(); s++)
-        if (st.DailySubjectAssignedHours(c, d, s) > in.SubjectMaxHoursXDay())
+        if (out.DailySubjectAssignedHours(c, d, s) > in.SubjectMaxHoursXDay())
           os << "To subject " << in.Subject_Name(s) << " in class " << in.Class_Name(c)
-            << " assigned " << st.DailySubjectAssignedHours(c, d, s) << " instead of " << in.SubjectMaxHoursXDay()
+            << " assigned " << out.DailySubjectAssignedHours(c, d, s) << " hours instead of " << in.SubjectMaxHoursXDay()
             << " on " << in.Day_Name((days)d)
             << endl;
 }
 
-int Sched_ProfMaxWeeklyHours::ComputeCost(const Sched_Output& st) const
+int Sched_ProfMaxWeeklyHours::ComputeCost(const Sched_Output& out) const
 {
   unsigned p;
   unsigned violations = 0;
 
   for (p = 0; p < in.N_Profs(); p++)
-    if (st.ProfWeeklyAssignedHours(p) > in.ProfMaxWeeklyHours())
-      violations += st.ProfWeeklyAssignedHours(p) - in.ProfMaxWeeklyHours();
+    if (out.ProfWeeklyAssignedHours(p) > in.ProfMaxWeeklyHours())
+      violations += out.ProfWeeklyAssignedHours(p) - in.ProfMaxWeeklyHours();
 
   return violations * in.MaxProfWeeklyHoursViolationCost();
 }
 
-void Sched_ProfMaxWeeklyHours::PrintViolations(const Sched_Output& st, ostream& os) const
+void Sched_ProfMaxWeeklyHours::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned p;
 
   for (p = 0; p < in.N_Profs(); p++)
-    if (st.ProfWeeklyAssignedHours(p) > in.ProfMaxWeeklyHours())
+    if (out.ProfWeeklyAssignedHours(p) > in.ProfMaxWeeklyHours())
       os << "To prof " << in.Prof_Name(p) << " assigned "
-        << st.ProfWeeklyAssignedHours(p) - in.ProfMaxWeeklyHours() << " extra hours"
+        << out.ProfWeeklyAssignedHours(p) - in.ProfMaxWeeklyHours() << " extra hours"
         << endl;
 }
 
-int Sched_ScheduleContiguity::ComputeCost(const Sched_Output& st) const
+int Sched_ScheduleContiguity::ComputeCost(const Sched_Output& out) const
 {
   unsigned c, s, d, h;
   int subject_last_position;
@@ -221,7 +225,7 @@ int Sched_ScheduleContiguity::ComputeCost(const Sched_Output& st) const
         subject_last_position = -1;
 
         for (h = 0; h < in.N_HoursXDay(); h++)
-          if (st.Class_Schedule(c, d, h) != -1 && (unsigned)st.Class_Schedule(c, d, h) == s)
+          if (out.Class_Schedule(c, d, h) != -1 && (unsigned)out.Class_Schedule(c, d, h) == s)
           {
             if (subject_last_position != -1 && h - subject_last_position > 1)
               violations++;
@@ -233,7 +237,7 @@ int Sched_ScheduleContiguity::ComputeCost(const Sched_Output& st) const
   return violations * in.ScheduleContiguityViolationCost();
 }
 
-void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& st, ostream& os) const
+void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned c, s, d, h;
   int subject_last_position;
@@ -248,7 +252,7 @@ void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& st, ostream& 
         subject_last_position = -1;
 
         for (h = 0; h < in.N_HoursXDay(); h++)
-          if (st.Class_Schedule(c, d, h) != -1 && (unsigned)st.Class_Schedule(c, d, h) == s)
+          if (out.Class_Schedule(c, d, h) != -1 && (unsigned)out.Class_Schedule(c, d, h) == s)
           {
             if (subject_last_position != -1 && h - subject_last_position > 1)
               os << "Contiguity violation in class " << in.Class_Name(c)
@@ -309,68 +313,68 @@ ostream& operator<<(ostream& os, const Sched_Change& mv)
   return os;
 }
 
-void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& st, Sched_Change& mv) const
+void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_Change& mv) const
 {
 // to be implemented
 } 
 
-bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& st, const Sched_Change& mv) const
+bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_Change& mv) const
 {
   // to be implemented
   return true;
 } 
 
-void Sched_ChangeNeighborhoodExplorer::MakeMove(Sched_Output& st, const Sched_Change& mv) const
+void Sched_ChangeNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_Change& mv) const
 {
 // to be implemented
 }  
 
-void Sched_ChangeNeighborhoodExplorer::FirstMove(const Sched_Output& st, Sched_Change& mv) const
+void Sched_ChangeNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_Change& mv) const
 {
 // to be implemented
 }
 
-bool Sched_ChangeNeighborhoodExplorer::NextMove(const Sched_Output& st, Sched_Change& mv) const
+bool Sched_ChangeNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_Change& mv) const
 {
   // to be implemented
   do
   {
-    if (!AnyNextMove(st,mv))
+    if (!AnyNextMove(out,mv))
       return false;
   }  
-  while (!FeasibleMove(st,mv));
+  while (!FeasibleMove(out,mv));
   
   return true;
 }
 
-bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& st, Sched_Change& mv) const
+bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_Change& mv) const
 {
 // to be implemented
   return true;
 }
 
-int Sched_ChangeDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& st, const Sched_Change& mv) const
+int Sched_ChangeDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& st, const Sched_Change& mv) const
+int Sched_ChangeDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& st, const Sched_Change& mv) const
+int Sched_ChangeDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& st, const Sched_Change& mv) const
+int Sched_ChangeDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
