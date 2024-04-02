@@ -46,7 +46,46 @@ Sched_SolutionManager::Sched_SolutionManager(const Sched_Input & pin)
 
 void Sched_SolutionManager::RandomState(Sched_Output& out) 
 {
-  // to be implemented
+  // to be implemented -- deve instrinsecamente rispettare il vincolo del singolo prof per materia
+  unsigned c, s, p, d, h, i;
+  vector<pair<unsigned, unsigned>> all_d_h_permutations;
+  vector<unsigned> subjects(in.N_Subjects());
+
+  iota(subjects.begin(), subjects.end(), 0);
+
+  //load all day-hour permutations
+  for (d = 0; d < in.N_Days(); d++)
+    for (h = 0; h < in.N_HoursXDay(); h++)
+      all_d_h_permutations.push_back(make_pair(d,h));
+
+  for (c = 0; c < in.N_Classes(); c++)
+  {
+    // mescolo vettore materie
+    shuffle(subjects.begin(), subjects.end(), Random::GetGenerator());
+
+    for (s = 0; s < in.N_Subjects(); s++)
+    {
+      //mescolo il vettore delle coppie giorno-ora
+      shuffle(all_d_h_permutations.begin(), all_d_h_permutations.end(), Random::GetGenerator());
+
+      //seleziono a caso un prof della materia che non sia già pieno
+      do
+      {
+        p = in.SubjectProf(s, Random::Uniform<unsigned>(0, in.N_ProfsXSubject(s)-1));
+      } while (out.ProfWeeklyAssignedHours(p) >= (in.N_Days()*in.N_HoursXDay()));
+
+      i = 0;
+
+      for (h = 0; h < in.N_HoursXSubject(s); h++)
+      {
+        while (i < all_d_h_permutations.size() || out.AssignHour(c, all_d_h_permutations[i].first, all_d_h_permutations[i].second, p))
+          i++;
+        
+        if (i == all_d_h_permutations.size())
+          break;  // ho scorso tutte le coppie non ci sono altre possibilità di assegnare altre ore di quel prof alla classe
+      }
+    }  
+  }
 }
 
 void Sched_SolutionManager::GreedyState(Sched_Output& out) 
