@@ -28,8 +28,8 @@ int main(int argc, const char* argv[])
   // cost components: second parameter is the cost, third is the type (true -> hard, false -> soft)
   Sched_ProfUnavailability cc1(in, 1, false);
   Sched_MaxSubjectHoursXDay cc2(in, 1, false);
-  Sched_ProfMaxWeeklyHours cc3(in, 1, true);
-  Sched_ScheduleContiguity cc4(in, 1, true);
+  Sched_ProfMaxWeeklyHours cc3(in, 1, false);
+  Sched_ScheduleContiguity cc4(in, 1, false);
  
   Sched_ChangeDeltaProfUnavailability dcc1(in, cc1);
   Sched_ChangeDeltaMaxSubjectHoursXDay dcc2(in, cc2);

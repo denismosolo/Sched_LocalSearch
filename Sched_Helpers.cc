@@ -146,8 +146,10 @@ void Sched_ProfUnavailability::PrintViolations(const Sched_Output& st, ostream& 
   unsigned p;
   
   for (p = 0; p < in.N_Profs(); p++)
-    if (st.ProfAssignedDayOff(p) == -1 || (unsigned)st.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
-      os << "To prof " << in.Prof_Name(p) << " assigned day off on " << st.ProfAssignedDayOff(p)
+    if (st.ProfAssignedDayOff(p) == -1)
+      os << "Prof " << in.Prof_Name(p) << " has no day off" << endl;
+    else if ((unsigned)st.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
+      os << "To prof " << in.Prof_Name(p) << " assigned day off on " << days(st.ProfAssignedDayOff(p))
         << " instead of " << in.ProfUnavailability(p) 
         << endl;
 }
