@@ -149,8 +149,8 @@ void Sched_ProfUnavailability::PrintViolations(const Sched_Output& st, ostream& 
     if (st.ProfAssignedDayOff(p) == -1)
       os << "Prof " << in.Prof_Name(p) << " has no day off" << endl;
     else if ((unsigned)st.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
-      os << "To prof " << in.Prof_Name(p) << " assigned day off on " << days(st.ProfAssignedDayOff(p))
-        << " instead of " << in.ProfUnavailability(p) 
+      os << "To prof " << in.Prof_Name(p) << " assigned day off on " << in.Day_Name((days)st.ProfAssignedDayOff(p))
+        << " instead of " << in.Day_Name((days)st.ProfAssignedDayOff(p))
         << endl;
 }
 
@@ -178,7 +178,7 @@ void Sched_MaxSubjectHoursXDay::PrintViolations(const Sched_Output& st, ostream&
         if (st.DailySubjectAssignedHours(c, d, s) > in.SubjectMaxHoursXDay())
           os << "To subject " << in.Subject_Name(s) << " in class " << in.Class_Name(c)
             << " assigned " << st.DailySubjectAssignedHours(c, d, s) << " instead of " << in.SubjectMaxHoursXDay()
-            << " on " << days(d)
+            << " on " << in.Day_Name((days)d)
             << endl;
 }
 
@@ -252,7 +252,7 @@ void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& st, ostream& 
           {
             if (subject_last_position != -1 && h - subject_last_position > 1)
               os << "Contiguity violation in class " << in.Class_Name(c)
-                << " for subject " << in.Subject_Name(s) << " on " << days(d)
+                << " for subject " << in.Subject_Name(s) << " on " << in.Day_Name((days)d)
                 << " between hours " << h+1 << " - " << subject_last_position+1
                 << endl;
 

@@ -34,6 +34,7 @@ public:
   // Schedule data selectors
   unsigned N_Days() const { return n_days; }
   unsigned N_HoursXDay() const { return n_hours_x_day; }
+  string Day_Name(days d) const;
 
   // Professors' data selectors
   unsigned N_Profs() const { return n_profs; }

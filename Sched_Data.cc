@@ -249,6 +249,36 @@ ostream& operator<<(ostream& os, const Sched_Input& in)
   return os;
 }
 
+string Sched_Input::Day_Name(days d) const
+{
+  switch(d)
+  {
+    case lun:
+      return "lun";
+
+    case mar:
+      return "mar";
+
+    case mer:
+      return "mer";
+
+    case gio:
+      return "gio";
+
+    case ven:
+      return "ven";
+
+    case sab:
+      return "sab";
+
+    case dom:
+      return "dom";
+    
+    default:
+      return "Invalid day";
+  }
+}
+
 void Sched_Input::Print(ostream& os) const
 {
   unsigned s;
