@@ -74,15 +74,15 @@ void Sched_SolutionManager::RandomState(Sched_Output& out)
         p = in.SubjectProf(s, Random::Uniform<unsigned>(0, in.N_ProfsXSubject(s)-1));
       } while (out.ProfWeeklyAssignedHours(p) >= (in.N_Days()*in.N_HoursXDay()));
 
-      i = 0;
+      h = 0;
 
-      for (h = 0; h < in.N_HoursXSubject(s); h++)
+      for (i = 0; i < all_d_h_permutations.size(); i++)
       {
-        while (i < all_d_h_permutations.size() || out.AssignHour(c, all_d_h_permutations[i].first, all_d_h_permutations[i].second, p))
-          i++;
+        if (out.AssignHour(c, all_d_h_permutations[i].first, all_d_h_permutations[i].second, p))
+          h++;
         
-        if (i == all_d_h_permutations.size())
-          break;  // ho scorso tutte le coppie non ci sono altre possibilità di assegnare altre ore di quel prof alla classe
+        if (h == in.N_HoursXSubject(s))
+          break;  // ho assegnato tutte le ore
       }
     }  
   }
