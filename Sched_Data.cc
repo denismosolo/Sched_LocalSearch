@@ -773,9 +773,7 @@ bool Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
 {
   // If the hour isn't already free in class or prof schedule, return false
   if (Class_Schedule(c, d, h) != -1 || Prof_Schedule(p, d, h) != -1)
-  {
     return false;
-  }
   
   // Assign hour to class and prof schedule
   schedule_class[c][d][h] = p;
@@ -784,9 +782,7 @@ bool Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
   // If there weren't hours of a specific subject assigned yet
   // the class "gains" a prof
   if (weekly_subject_assigned_hours[c][in.ProfSubject(p)] == 0)
-  {
     class_profs[c][in.ProfSubject(p)] = p;
-  }
 
   // Update Daily and weekly assigned hours
   weekly_subject_assigned_hours[c][in.ProfSubject(p)]++;
@@ -807,9 +803,7 @@ bool Sched_Output::FreeHour(unsigned c, unsigned d, unsigned h)
 
   // If the hour is already free return false
   if (Class_Schedule(c, d, h) == -1)
-  {
     return false;
-  }
 
   p = (unsigned)Class_Schedule(c, d, h);
 
@@ -842,9 +836,8 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
 
   // If the hours are both free or assigned to the same professor, return false
   if (Class_Schedule(c1, d1, h1) == Class_Schedule(c2, d2, h2))
-  {
     return false;
-  }
+  
   else if (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) != -1)
   {
     cerr << "Check" << endl;
@@ -864,10 +857,8 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
       ComputeProfDayOff(p2);
     }
     else
-    {
       // Is this case possible ?
       return false;
-    }
   }
   else // Case (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) == -1)
        //   or (Class_Schedule(c1, d1, h1) == -1 && Class_Schedule(c2, d2, h2) != -1)
@@ -889,9 +880,7 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
       ComputeProfDayOff(p1);
     }
     else
-    {
       return false;
-    }
   }
 
   return true;

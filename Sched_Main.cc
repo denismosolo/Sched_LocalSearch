@@ -30,13 +30,13 @@ int main(int argc, const char* argv[])
   Sched_MaxSubjectHoursXDay cc2(in, 1, false);
   Sched_ProfMaxWeeklyHours cc3(in, 1, false);
   Sched_ScheduleContiguity cc4(in, 1, false);
-  Sched_CompleteSolution cc5(in, 1);
+  Sched_CompleteSolution cc5(in, 1); // Hard constrain, set as default at definition
  
-  Sched_ChangeDeltaProfUnavailability dcc1(in, cc1);
-  Sched_ChangeDeltaMaxSubjectHoursXDay dcc2(in, cc2);
-  Sched_ChangeDeltaProfMaxWeeklyHours dcc3(in, cc3);
-  Sched_ChangeDeltaScheduleContiguity dcc4(in, cc4);
-  Sched_ChangeDeltaCompleteSolution dcc5(in, cc5);
+  //Sched_ChangeDeltaProfUnavailability dcc1(in, cc1);
+  //Sched_ChangeDeltaMaxSubjectHoursXDay dcc2(in, cc2);
+  //Sched_ChangeDeltaProfMaxWeeklyHours dcc3(in, cc3);
+  //Sched_ChangeDeltaScheduleContiguity dcc4(in, cc4);
+  //Sched_ChangeDeltaCompleteSolution dcc5(in, cc5);
 
   // helpers
   Sched_SolutionManager Sched_sm(in);
@@ -50,11 +50,18 @@ int main(int argc, const char* argv[])
   Sched_sm.AddCostComponent(cc5);
   
   // All delta cost components must be added to the neighborhood explorer
-  Sched_nhe.AddDeltaCostComponent(dcc1);
-  Sched_nhe.AddDeltaCostComponent(dcc2);
-  Sched_nhe.AddDeltaCostComponent(dcc3);
-  Sched_nhe.AddDeltaCostComponent(dcc4);
-  Sched_nhe.AddDeltaCostComponent(dcc5);
+  //Sched_nhe.AddDeltaCostComponent(dcc1);
+  //Sched_nhe.AddDeltaCostComponent(dcc2);
+  //Sched_nhe.AddDeltaCostComponent(dcc3);
+  //Sched_nhe.AddDeltaCostComponent(dcc4);
+  //Sched_nhe.AddDeltaCostComponent(dcc5);
+
+  // Add all cost component to neighborhood explorer - slower than with delta costs
+  Sched_nhe.AddCostComponent(cc1);
+  Sched_nhe.AddCostComponent(cc2);
+  Sched_nhe.AddCostComponent(cc3);
+  Sched_nhe.AddCostComponent(cc4);
+  Sched_nhe.AddCostComponent(cc5);
   
   // runners
   HillClimbing<Sched_Input, Sched_Output, Sched_Change> Sched_hc(in, Sched_sm, Sched_nhe, "HC");

@@ -15,7 +15,15 @@ class Sched_Change
   friend ostream& operator<<(ostream& os, const Sched_Change& c);
   friend istream& operator>>(istream& is, Sched_Change& c);
  public:
-  int store, old_w, new_w;    //che variabili devo mettere qua? vecchia ora, nuova ora e professore? e se cambio professore?
+  //int store, old_w, new_w;    //che variabili devo mettere qua? vecchia ora, nuova ora e professore? e se cambio professore?
+  int _class;
+  int new_day;
+  int new_hour;
+  int old_prof;
+  int old_day;
+  int old_hour;
+  int new_prof;
+
   Sched_Change();
 };
 
