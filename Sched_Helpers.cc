@@ -469,7 +469,18 @@ bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sche
         mv.old_hour = 0;
 
         if (mv.old_day == in.N_Days() - 1) // Il confronto con l'ultimo giorno l'ho già eseguito
-          return false;
+        {
+          mv._class++;
+          mv.old_day = 0;
+          mv.old_hour = 0;
+          mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+          mv.new_day = 1;
+          mv.new_hour = 1;
+          mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
+
+          if (mv._class == in.N_Classes())
+            return false;
+        };
       }
       // se arrivo qui ho sicuro cambiato old quindi devo ricalcolarmi il professore
       mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);

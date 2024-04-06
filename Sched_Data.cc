@@ -840,7 +840,6 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
   
   else if (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) != -1)
   {
-    cerr << "Check" << endl;
     p1 = Class_Schedule(c1, d1, h1);
     p2 = Class_Schedule(c2, d2, h2);
 
@@ -852,9 +851,6 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
 
       AssignHour(c1, d1, h1, p2);
       AssignHour(c2, d2, h2, p1);
-
-      ComputeProfDayOff(p1);
-      ComputeProfDayOff(p2);
     }
     else
       // Is this case possible ?
