@@ -19,10 +19,13 @@ class Sched_Change
   int _class;
   int new_day;
   int new_hour;
-  int old_prof;
+  int new_prof;
+  bool new_free;
   int old_day;
   int old_hour;
-  int new_prof;
+  int old_prof;
+  bool old_free;
+  int count;
 
   Sched_Change();
 };

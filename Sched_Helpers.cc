@@ -39,6 +39,18 @@ namespace {
     }
     return compatible_hours;
   }
+
+  // RandomMove and AnyNextMovehelp function
+  vector<unsigned> GetAvailableProfs(const Sched_Input& in, const Sched_Output& out, const int c)
+  {
+    unsigned s;
+    vector<unsigned> available_profs;
+    
+    for (s = 0; s < in.N_Subjects(); s++)
+      if (out.WeeklySubjectResidualHours(c, s) != 0)
+        available_profs.push_back(out.Subject_Prof(c, s));
+    return available_profs;
+  }
 }
 
 Sched_SolutionManager::Sched_SolutionManager(const Sched_Input & pin) 
@@ -343,9 +355,12 @@ Sched_Change::Sched_Change()
   new_day = -1;
   new_hour = -1;
   new_prof = -1;
+  new_free = false;
   old_day = -1;
   old_hour = -1;
   old_prof = -1;
+  old_free = false;
+  count = -1;
 }
 
 bool operator==(const Sched_Change& mv1, const Sched_Change& mv2)
@@ -387,16 +402,28 @@ ostream& operator<<(ostream& os, const Sched_Change& mv)
 
 void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_Change& mv) const
 {
+  vector<unsigned> available_profs;
+
   mv._class = Random::Uniform<int>(0, in.N_Classes()-1);
+
+  // Get all profs of the class with not all hours already assigned
+  available_profs = GetAvailableProfs(in, out, mv._class);
 
   do
   {
     mv.old_day = Random::Uniform<int>(0, in.N_Days()-1);
     mv.old_hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
-    mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+    if (out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour)) // è un'ora buca
+      mv.old_prof = Random::Uniform<int>(0, available_profs.size()-1);
+    else
+      mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+
     mv.new_day = Random::Uniform<int>(0, in.N_Days()-1);
     mv.new_hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
-    mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
+    if (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour))
+      mv.new_prof = Random::Uniform<int>(0, available_profs.size()-1);
+    else
+      mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
   } while (!FeasibleMove(out, mv));
   
 } 
@@ -405,11 +432,6 @@ bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, con
 {
   // If there is only one class the move is always feasible
   if (in.N_Classes() == 1)
-    return mv.old_day != mv.new_day || mv.old_hour != mv.new_hour;
-
-  // If one of the two hours of the class is already free
-  // Every entry of Class_Schedule contains the professor so if the prof is "-1" than the hour is free for the class
-  if (mv.old_prof == -1 || mv.new_prof == -1)
     return mv.old_day != mv.new_day || mv.old_hour != mv.new_hour;
 
   // If at least one of the profs has their "new" hour already assigned
@@ -422,17 +444,38 @@ bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, con
 void Sched_ChangeNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_Change& mv) const
 {
   out.SwapHours(mv._class, mv.old_day, mv.old_hour, mv._class, mv.new_day, mv.new_hour); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
+  cerr << mv << endl;
 }  
 
 void Sched_ChangeNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_Change& mv) const
 {
+  vector<unsigned> available_profs;
+
   mv._class = 0;
+
+  available_profs = GetAvailableProfs(in, out, mv._class);
+
   mv.old_day = 0;
   mv.old_hour = 0;
-  mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+  if (out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour))
+  {
+    mv.old_free = true;
+    mv.old_prof = available_profs[0];
+    mv.count++;
+  }
+  else
+    mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+
   mv.new_day = 1;
   mv.new_hour = 1;
-  mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
+  if (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour))
+  {
+    mv.new_free = true;
+    mv.new_prof = available_profs[0];
+    mv.count++;
+  }
+  else
+    mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
 }
 
 bool Sched_ChangeNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_Change& mv) const
@@ -449,45 +492,86 @@ bool Sched_ChangeNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_C
 
 bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_Change& mv) const
 {
-  // aumento la nuova ora di 1
-  mv.new_hour++;
-  
-  if (mv.new_hour == in.N_HoursXDay())
+  vector<unsigned> available_profs;
+
+  available_profs = GetAvailableProfs(in, out, mv._class);
+
+  if ((mv.new_free ^ mv.old_free) && mv.count < available_profs.size())  // NOTE: ^ is XOR in C++
   {
-    mv.new_day++;
-    mv.new_hour = 0;
-
-    if (mv.new_day == in.N_Days())
+    if (mv.count == available_profs.size() - 1)
     {
-      mv.old_hour++;
-      mv.new_day = 0;
-      mv.new_hour = mv.old_hour + 1; // Il confronto con le ore precedenti l'ho già eseguito
-
-      if (mv.old_hour == in.N_HoursXDay() - 1) // Il confronto con l'ultima ora l'ho già eseguito
-      {
-        mv.old_day++;
-        mv.old_hour = 0;
-
-        if (mv.old_day == in.N_Days() - 1) // Il confronto con l'ultimo giorno l'ho già eseguito
-        {
-          mv._class++;
-          mv.old_day = 0;
-          mv.old_hour = 0;
-          mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
-          mv.new_day = 1;
-          mv.new_hour = 1;
-          mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
-
-          if (mv._class == in.N_Classes())
-            return false;
-        };
-      }
-      // se arrivo qui ho sicuro cambiato old quindi devo ricalcolarmi il professore
-      mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+      mv.count++;
+      if (mv.new_free)
+        mv.new_prof = -1;
+      else
+        mv.old_prof = -1;
     }
+    else if (mv.new_free)
+      mv.new_prof = available_profs[++mv.count];
+    else
+      mv.old_prof = available_profs[++mv.count];
   }
+  else
+  {
+    // aumento la nuova ora di 1
+    mv.new_hour++;
 
-  mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
+    mv.count = -1;
+    mv.new_free = false;
+    mv.old_free = false;
+    
+    if (mv.new_hour == in.N_HoursXDay())
+    {
+      mv.new_day++;
+      mv.new_hour = 0;
+
+      if (mv.new_day == in.N_Days())
+      {
+        mv.old_hour++;
+        mv.new_day = mv.old_day;
+        mv.new_hour = mv.old_hour + 1; // Il confronto con le ore precedenti l'ho già eseguito
+
+        if (mv.old_hour == in.N_HoursXDay() - 1) // Il confronto con l'ultima ora l'ho già eseguito
+        {
+          mv.old_day++;
+          mv.old_hour = 0;
+          mv.new_day = mv.old_day;
+          mv.new_hour = 1;
+
+          if (mv.old_day == in.N_Days() - 1) // Il confronto con l'ultimo giorno l'ho già eseguito
+          {
+            mv._class++;
+            mv.old_day = 0;
+            mv.old_hour = 0;
+            mv.new_day = 0;
+            mv.new_hour = 1;
+
+            if (mv._class == in.N_Classes())
+              return false;
+
+            available_profs = GetAvailableProfs(in, out, mv._class);
+          };
+        }
+        // se arrivo qui ho sicuro cambiato old quindi devo ricalcolarmi il professore
+        if (out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour))
+        {
+          mv.count++;
+          mv.old_prof = available_profs[mv.count];
+          mv.old_free = true;
+        }
+        else
+          mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
+      }
+    }
+    if (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour))
+    {
+      mv.count++;
+      mv.new_prof = available_profs[mv.count];
+      mv.new_free = true;
+    }
+    else
+      mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
+  }
 
   return true;
 }
