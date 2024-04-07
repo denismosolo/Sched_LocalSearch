@@ -43,12 +43,18 @@ namespace {
   // RandomMove and AnyNextMovehelp function
   vector<unsigned> GetAvailableProfs(const Sched_Input& in, const Sched_Output& out, const int c)
   {
-    unsigned s;
+    unsigned s, p;
     vector<unsigned> available_profs;
     
     for (s = 0; s < in.N_Subjects(); s++)
+    {
       if (out.WeeklySubjectResidualHours(c, s) != 0)
         available_profs.push_back(out.Subject_Prof(c, s));
+      
+      if (out.WeeklySubjectAssignedHours(c, s) == 0)
+          for (p = 0; p < in.N_ProfsXSubject(s); p++)
+            available_profs.push_back(in.SubjectProf(s, p));
+    }
     return available_profs;
   }
 }

@@ -40,7 +40,7 @@ public:
   Sched_SolutionManager(const Sched_Input &);
   void RandomState(Sched_Output& out) override;   
   void GreedyState(Sched_Output& out) override;   
-  void DumpState(const Sched_Output& out, ostream& os) const override { out.Print(cout); } //dove viene usata?
+  void DumpState(const Sched_Output& out, ostream& os) const override { out.Print(cout); }
   void PrettyPrintOutput(const Sched_Output& out, string filename) const { out.PrintTAB(filename); }
   bool CheckConsistency(const Sched_Output& out) const override;
 }; 
