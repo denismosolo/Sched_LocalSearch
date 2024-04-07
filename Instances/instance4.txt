@@ -53,11 +53,6 @@ $classi
 3B
 4B
 5B
-1C
-2C
-3C
-4C
-
 
 $costi
 UnavailabilityViolation 10

@@ -430,21 +430,26 @@ void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched
 
 bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_Change& mv) const
 {
-  // If there is only one class the move is always feasible
-  if (in.N_Classes() == 1)
-    return mv.old_day != mv.new_day || mv.old_hour != mv.new_hour;
-
-  // If at least one of the profs has their "new" hour already assigned
-  if (out.IsProfHourFree(mv.old_prof, mv.new_day, mv.new_hour) || out.IsProfHourFree(mv.new_prof, mv.old_day, mv.old_hour))
+  // If the prof is the same (either the case that both are -1)
+  if (mv.old_prof == mv.new_prof)
     return false;
   else
-    return mv.old_day != mv.new_day || mv.old_hour != mv.new_hour;
+  {
+    // If there is only one class the move is always feasible
+    if (in.N_Classes() == 1)
+      return mv.old_day != mv.new_day || mv.old_hour != mv.new_hour;
+
+    // If at least one of the profs has their "new" hour already assigned
+    if ((mv.old_prof != -1 && !out.IsProfHourFree(mv.old_prof, mv.new_day, mv.new_hour)) || (mv.new_prof != -1 && !out.IsProfHourFree(mv.new_prof, mv.old_day, mv.old_hour)))
+      return false;
+    else
+      return mv.old_day != mv.new_day || mv.old_hour != mv.new_hour;
+  }
 } 
 
 void Sched_ChangeNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_Change& mv) const
 {
   out.SwapHours(mv._class, mv.old_day, mv.old_hour, mv._class, mv.new_day, mv.new_hour); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
-  cerr << mv << endl;
 }  
 
 void Sched_ChangeNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_Change& mv) const
@@ -496,7 +501,7 @@ bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sche
 
   available_profs = GetAvailableProfs(in, out, mv._class);
 
-  if ((mv.new_free ^ mv.old_free) && mv.count < available_profs.size())  // NOTE: ^ is XOR in C++
+  if ((mv.new_free ^ mv.old_free) && mv.count < available_profs.size() && (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour) ^ out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour)))  // NOTE: ^ is XOR in C++
   {
     if (mv.count == available_profs.size() - 1)
     {
@@ -549,6 +554,7 @@ bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sche
             if (mv._class == in.N_Classes())
               return false;
 
+            available_profs.clear();
             available_profs = GetAvailableProfs(in, out, mv._class);
           };
         }
