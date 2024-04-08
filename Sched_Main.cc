@@ -16,21 +16,22 @@ int main(int argc, const char* argv[])
   CommandLineParameters::Parse(argc, argv, false, true);  
 
   if (!instance.IsSet())
-    {
-      cout << "Error: --main::instance filename option must always be set" << endl;
-      return 1;
-    }
+  {
+    cout << "Error: --main::instance filename option must always be set" << endl;
+    return 1;
+  }
+
   Sched_Input in(instance);
 
   if (seed.IsSet())
     Random::SetSeed(seed);
   
   // cost components: second parameter is the cost, third is the type (true -> hard, false -> soft)
-  Sched_ProfUnavailability cc1(in, 1, false);
-  Sched_MaxSubjectHoursXDay cc2(in, 1, false);
-  Sched_ProfMaxWeeklyHours cc3(in, 1, false);
-  Sched_ScheduleContiguity cc4(in, 1, false);
-  Sched_CompleteSolution cc5(in, 1); // Hard constrain, set as default at definition
+  Sched_ProfUnavailability_CC cc1(in, 1, false);
+  Sched_MaxSubjectHoursXDay_CC cc2(in, 1, false);
+  Sched_ProfMaxWeeklyHours_CC cc3(in, 1, false);
+  Sched_ScheduleContiguity_CC cc4(in, 1, false);
+  Sched_SolutionComplete_CC cc5(in, 1); // Hard constrain, set as default at definition
  
   //Sched_ChangeDeltaProfUnavailability dcc1(in, cc1);
   //Sched_ChangeDeltaMaxSubjectHoursXDay dcc2(in, cc2);
@@ -77,48 +78,50 @@ int main(int argc, const char* argv[])
     return 1;
 
   if (!method.IsSet())
-    { // if no search method is set -> enter the tester
-      if (init_state.IsSet())
-	    tester.RunMainMenu(init_state);
-      else
-	    tester.RunMainMenu();
-    }
+  { // if no search method is set -> enter the tester
+    if (init_state.IsSet())
+    tester.RunMainMenu(init_state);
+    else
+    tester.RunMainMenu();
+  }
   else
+  {
+    if (method == "SA")
     {
-      if (method == "SA")
-        {
-          Sched_solver.SetRunner(Sched_sa);
-        }
-      else if (method == "HC")
-        {
-          Sched_solver.SetRunner(Sched_hc);
-        }
-      else if (method == "SD")
-        {
-          Sched_solver.SetRunner(Sched_sd);
-        }
-	  else
-	  {
-		  cerr << "Unknown method " << static_cast<string>(method) << endl;
-		  exit(1);
-	  }
-      SolverResult<Sched_Input, Sched_Output> result = Sched_solver.Solve();
-      Sched_Output out = result.output;
-      if (output_file.IsSet())
-        { // write the output on the file passed in the command line
-          ofstream os(static_cast<string>(output_file));
-          os << out << endl;
-          os << "Cost: " << result.cost.total << endl;
-	      os << "Time: " << result.running_time << "s " << endl;
-          os.close();
-        }
-      else
-        { // write the solution in the standard output
-          cout << out << endl;
-          cout << "Cost: " << result.cost.total << endl;
-		      cout << "Time: " << result.running_time << "s" << endl;
-		      //cout << "Time: " << result.running_time << endl;					
-        }
-   }
+      Sched_solver.SetRunner(Sched_sa);
+    }
+    else if (method == "HC")
+    {
+      Sched_solver.SetRunner(Sched_hc);
+    }
+    else if (method == "SD")
+    {
+      Sched_solver.SetRunner(Sched_sd);
+    }
+    else
+    {
+      cerr << "Unknown method " << static_cast<string>(method) << endl;
+      exit(1);
+    }
+
+    SolverResult<Sched_Input, Sched_Output> result = Sched_solver.Solve();
+    Sched_Output out = result.output;
+    if (output_file.IsSet())
+    { // write the output on the file passed in the command line
+      ofstream os(static_cast<string>(output_file));
+      os << out << endl;
+      os << "Cost: " << result.cost.total << endl;
+      os << "Time: " << result.running_time << "s " << endl;
+      os.close();
+    }
+    else
+    { // write the solution in the standard output
+      cout << out << endl;
+      cout << "Cost: " << result.cost.total << endl;
+      cout << "Time: " << result.running_time << "s" << endl;
+      //cout << "Time: " << result.running_time << endl;					
+    }
+  }
+
   return 0;
 }

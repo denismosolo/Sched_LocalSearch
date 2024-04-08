@@ -59,6 +59,10 @@ namespace {
   }
 }
 
+/***************************************************************************
+ * Solution Manager Code
+ ***************************************************************************/
+
 Sched_SolutionManager::Sched_SolutionManager(const Sched_Input & pin) 
   : SolutionManager<Sched_Input,Sched_Output>(pin, "SchedSolutionManager")  {} 
 
@@ -183,10 +187,10 @@ bool Sched_SolutionManager::CheckConsistency(const Sched_Output& out) const
 }
 
 /***************************************************************************
- * State Manager 
+ * Cost Components Code
  ***************************************************************************/
 
-int Sched_ProfUnavailability::ComputeCost(const Sched_Output& out) const
+int Sched_ProfUnavailability_CC::ComputeCost(const Sched_Output& out) const
 {
   unsigned p;
   unsigned violations = 0;
@@ -198,7 +202,7 @@ int Sched_ProfUnavailability::ComputeCost(const Sched_Output& out) const
   return violations * in.UnavailabilityViolationCost();
 }
 
-void Sched_ProfUnavailability::PrintViolations(const Sched_Output& out, ostream& os) const
+void Sched_ProfUnavailability_CC::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned p;
   
@@ -215,7 +219,7 @@ void Sched_ProfUnavailability::PrintViolations(const Sched_Output& out, ostream&
   }
 }
 
-int Sched_MaxSubjectHoursXDay::ComputeCost(const Sched_Output& out) const
+int Sched_MaxSubjectHoursXDay_CC::ComputeCost(const Sched_Output& out) const
 {
   unsigned c, s, d;
   unsigned violations = 0;
@@ -229,7 +233,7 @@ int Sched_MaxSubjectHoursXDay::ComputeCost(const Sched_Output& out) const
   return violations * in.MaxSubjectHoursXDayViolationCost();
 }
 
-void Sched_MaxSubjectHoursXDay::PrintViolations(const Sched_Output& out, ostream& os) const
+void Sched_MaxSubjectHoursXDay_CC::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned c, s, d;
 
@@ -243,7 +247,7 @@ void Sched_MaxSubjectHoursXDay::PrintViolations(const Sched_Output& out, ostream
             << endl;
 }
 
-int Sched_ProfMaxWeeklyHours::ComputeCost(const Sched_Output& out) const
+int Sched_ProfMaxWeeklyHours_CC::ComputeCost(const Sched_Output& out) const
 {
   unsigned p;
   unsigned violations = 0;
@@ -255,7 +259,7 @@ int Sched_ProfMaxWeeklyHours::ComputeCost(const Sched_Output& out) const
   return violations * in.MaxProfWeeklyHoursViolationCost();
 }
 
-void Sched_ProfMaxWeeklyHours::PrintViolations(const Sched_Output& out, ostream& os) const
+void Sched_ProfMaxWeeklyHours_CC::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned p;
 
@@ -266,7 +270,7 @@ void Sched_ProfMaxWeeklyHours::PrintViolations(const Sched_Output& out, ostream&
         << endl;
 }
 
-int Sched_ScheduleContiguity::ComputeCost(const Sched_Output& out) const
+int Sched_ScheduleContiguity_CC::ComputeCost(const Sched_Output& out) const
 {
   unsigned c, s, d, h;
   int subject_last_position;
@@ -294,7 +298,7 @@ int Sched_ScheduleContiguity::ComputeCost(const Sched_Output& out) const
   return violations * in.ScheduleContiguityViolationCost();
 }
 
-void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& out, ostream& os) const
+void Sched_ScheduleContiguity_CC::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned c, s, d, h;
   int subject_last_position;
@@ -322,7 +326,7 @@ void Sched_ScheduleContiguity::PrintViolations(const Sched_Output& out, ostream&
       }
 }
 
-int Sched_CompleteSolution::ComputeCost(const Sched_Output& out) const
+int Sched_SolutionComplete_CC::ComputeCost(const Sched_Output& out) const
 {
   unsigned c, d, h;
   unsigned violations = 0;
@@ -336,7 +340,7 @@ int Sched_CompleteSolution::ComputeCost(const Sched_Output& out) const
   return violations;
 }
 
-void Sched_CompleteSolution::PrintViolations(const Sched_Output& out, ostream& os) const
+void Sched_SolutionComplete_CC::PrintViolations(const Sched_Output& out, ostream& os) const
 {
   unsigned c, d, h;
 
@@ -350,9 +354,8 @@ void Sched_CompleteSolution::PrintViolations(const Sched_Output& out, ostream& o
             << endl;
 }
 
-
 /***************************************************************************
- * Sched_Change Neighborhood Explorer:
+ * Moves Code
  ***************************************************************************/
 
 Sched_Change::Sched_Change()
@@ -405,6 +408,10 @@ ostream& operator<<(ostream& os, const Sched_Change& mv)
   os << mv._class << ": (" << mv.old_day << ", " << mv.old_hour << ") -> (" << mv.new_day << ", " << mv.old_hour << ")";
   return os;
 }
+
+/***************************************************************************
+ * Sched_Change Neighborhood Explorer Code
+ ***************************************************************************/
 
 void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_Change& mv) const
 {
