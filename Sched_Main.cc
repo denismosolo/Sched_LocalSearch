@@ -33,15 +33,15 @@ int main(int argc, const char* argv[])
   Sched_ScheduleContiguity_CC cc4(in, 1, false);
   Sched_SolutionComplete_CC cc5(in, 1); // Hard constrain, set as default at definition
  
-  //Sched_ChangeDeltaProfUnavailability dcc1(in, cc1);
-  //Sched_ChangeDeltaMaxSubjectHoursXDay dcc2(in, cc2);
-  //Sched_ChangeDeltaProfMaxWeeklyHours dcc3(in, cc3);
-  //Sched_ChangeDeltaScheduleContiguity dcc4(in, cc4);
-  //Sched_ChangeDeltaCompleteSolution dcc5(in, cc5);
+  //Sched_SwapHoursDeltaProfUnavailability dcc1(in, cc1);
+  //Sched_SwapHoursDeltaMaxSubjectHoursXDay dcc2(in, cc2);
+  //Sched_SwapHoursDeltaProfMaxWeeklyHours dcc3(in, cc3);
+  //Sched_SwapHoursDeltaScheduleContiguity dcc4(in, cc4);
+  //Sched_SwapHoursDeltaCompleteSolution dcc5(in, cc5);
 
   // helpers
   Sched_SolutionManager Sched_sm(in);
-  Sched_ChangeNeighborhoodExplorer Sched_nhe(in, Sched_sm);
+  Sched_SwapHoursNeighborhoodExplorer Sched_SwapH_nhe(in, Sched_sm);
   
   // All cost components must be added to the state manager
   Sched_sm.AddCostComponent(cc1);
@@ -51,27 +51,27 @@ int main(int argc, const char* argv[])
   Sched_sm.AddCostComponent(cc5);
   
   // All delta cost components must be added to the neighborhood explorer
-  //Sched_nhe.AddDeltaCostComponent(dcc1);
-  //Sched_nhe.AddDeltaCostComponent(dcc2);
-  //Sched_nhe.AddDeltaCostComponent(dcc3);
-  //Sched_nhe.AddDeltaCostComponent(dcc4);
-  //Sched_nhe.AddDeltaCostComponent(dcc5);
+  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc1);
+  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc2);
+  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc3);
+  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc4);
+  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc5);
 
   // Add all cost component to neighborhood explorer - slower than with delta costs
-  Sched_nhe.AddCostComponent(cc1);
-  Sched_nhe.AddCostComponent(cc2);
-  Sched_nhe.AddCostComponent(cc3);
-  Sched_nhe.AddCostComponent(cc4);
-  Sched_nhe.AddCostComponent(cc5);
+  Sched_SwapH_nhe.AddCostComponent(cc1);
+  Sched_SwapH_nhe.AddCostComponent(cc2);
+  Sched_SwapH_nhe.AddCostComponent(cc3);
+  Sched_SwapH_nhe.AddCostComponent(cc4);
+  Sched_SwapH_nhe.AddCostComponent(cc5);
   
   // runners
-  HillClimbing<Sched_Input, Sched_Output, Sched_Change> Sched_hc(in, Sched_sm, Sched_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, Sched_Change> Sched_sd(in, Sched_sm, Sched_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_Change> Sched_sa(in, Sched_sm, Sched_nhe, "SA");
+  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
 
   // tester
   Tester<Sched_Input, Sched_Output> tester(in, Sched_sm);
-  MoveTester<Sched_Input, Sched_Output, Sched_Change> swap_move_test(in, Sched_sm, Sched_nhe, "Sched_Change move", tester); 
+  MoveTester<Sched_Input, Sched_Output, Sched_SwapHours> swap_move_test(in, Sched_sm, Sched_SwapH_nhe, "Sched_SwapHours move", tester); 
 
   SimpleLocalSearch<Sched_Input, Sched_Output> Sched_solver(in, Sched_sm, "Sched solver");
   if (!CommandLineParameters::Parse(argc, argv, true, false))

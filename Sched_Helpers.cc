@@ -67,8 +67,7 @@ Sched_SolutionManager::Sched_SolutionManager(const Sched_Input & pin)
   : SolutionManager<Sched_Input,Sched_Output>(pin, "SchedSolutionManager")  {} 
 
 void Sched_SolutionManager::RandomState(Sched_Output& out) 
-{
-  // to be implemented -- deve instrinsecamente rispettare il vincolo del singolo prof per materia
+{  
   unsigned c, s, p, d, h, i;
   vector<pair<unsigned, unsigned>> all_d_h_permutations;
   vector<unsigned> subjects(in.N_Subjects());
@@ -82,15 +81,15 @@ void Sched_SolutionManager::RandomState(Sched_Output& out)
 
   for (c = 0; c < in.N_Classes(); c++)
   {
-    // mescolo vettore materie
+    // shuffle subject vector
     shuffle(subjects.begin(), subjects.end(), Random::GetGenerator());
 
     for (s = 0; s < in.N_Subjects(); s++)
     {
-      //mescolo il vettore delle coppie giorno-ora
+      // shuffle d_h pairs
       shuffle(all_d_h_permutations.begin(), all_d_h_permutations.end(), Random::GetGenerator());
 
-      //seleziono a caso un prof della materia che non sia già pieno
+      // choose random a professor
       do
       {
         p = in.SubjectProf(s, Random::Uniform<unsigned>(0, in.N_ProfsXSubject(s)-1));
@@ -104,7 +103,7 @@ void Sched_SolutionManager::RandomState(Sched_Output& out)
           h++;
         
         if (h == in.N_HoursXSubject(s))
-          break;  // ho assegnato tutte le ore
+          break;  // all hours assigned
       }
     }  
   }
@@ -358,7 +357,7 @@ void Sched_SolutionComplete_CC::PrintViolations(const Sched_Output& out, ostream
  * Moves Code
  ***************************************************************************/
 
-Sched_Change::Sched_Change()
+Sched_SwapHours::Sched_SwapHours()
 {
   _class = -1;
   new_day = -1;
@@ -372,17 +371,17 @@ Sched_Change::Sched_Change()
   count = -1;
 }
 
-bool operator==(const Sched_Change& mv1, const Sched_Change& mv2)
+bool operator==(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
 {
   return mv1._class == mv2._class && mv1.new_day == mv2.new_day && mv1.new_hour == mv2.new_hour && mv1.old_day == mv2.old_day && mv1.old_hour == mv2.old_hour;
 }
 
-bool operator!=(const Sched_Change& mv1, const Sched_Change& mv2)
+bool operator!=(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
 {
   return mv1._class != mv2._class || mv1.new_day != mv2.new_day || mv1.new_hour != mv2.new_hour || mv1.old_day != mv2.old_day || mv1.old_hour != mv2.old_hour;
 }
 
-bool operator<(const Sched_Change& mv1, const Sched_Change& mv2)
+bool operator<(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
 {
   if (mv1._class != mv2._class)
     return mv1._class < mv2._class;
@@ -396,24 +395,24 @@ bool operator<(const Sched_Change& mv1, const Sched_Change& mv2)
     return mv1.new_hour < mv2.new_hour;
 }
 
-istream& operator>>(istream& is, Sched_Change& mv)
+istream& operator>>(istream& is, Sched_SwapHours& mv)
 {
   char ch;  //se è vuoto funziona come spazio?
   is >> mv._class >> ch >> mv.old_day >> ch >> mv.old_hour >> ch >> ch >> mv.new_day >> ch >> mv.new_hour;
   return is;
 }
 
-ostream& operator<<(ostream& os, const Sched_Change& mv)
+ostream& operator<<(ostream& os, const Sched_SwapHours& mv)
 {
   os << mv._class << ": (" << mv.old_day << ", " << mv.old_hour << ") -> (" << mv.new_day << ", " << mv.old_hour << ")";
   return os;
 }
 
 /***************************************************************************
- * Sched_Change Neighborhood Explorer Code
+ * Sched_SwapHours Neighborhood Explorer Code
  ***************************************************************************/
 
-void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_Change& mv) const
+void Sched_SwapHoursNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   vector<unsigned> available_profs;
 
@@ -441,7 +440,7 @@ void Sched_ChangeNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched
   
 } 
 
-bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_Change& mv) const
+bool Sched_SwapHoursNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
   // If the prof is the same (either the case that both are -1)
   if (mv.old_prof == mv.new_prof)
@@ -460,12 +459,12 @@ bool Sched_ChangeNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, con
   }
 } 
 
-void Sched_ChangeNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_Change& mv) const
+void Sched_SwapHoursNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_SwapHours& mv) const
 {
   out.SwapHours(mv._class, mv.old_day, mv.old_hour, mv._class, mv.new_day, mv.new_hour); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
 }  
 
-void Sched_ChangeNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_Change& mv) const
+void Sched_SwapHoursNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   vector<unsigned> available_profs;
 
@@ -496,7 +495,7 @@ void Sched_ChangeNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_
     mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
 }
 
-bool Sched_ChangeNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_Change& mv) const
+bool Sched_SwapHoursNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   do
   {
@@ -508,7 +507,7 @@ bool Sched_ChangeNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_C
   return true;
 }
 
-bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_Change& mv) const
+bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   vector<unsigned> available_profs;
 
@@ -531,7 +530,7 @@ bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sche
   }
   else
   {
-    // aumento la nuova ora di 1
+    // Move to next hour
     mv.new_hour++;
 
     mv.count = -1;
@@ -595,35 +594,35 @@ bool Sched_ChangeNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sche
   return true;
 }
 
-int Sched_ChangeDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
+int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
+int Sched_SwapHoursDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
+int Sched_SwapHoursDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
+int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
   return 0;
 }
 
-int Sched_ChangeDeltaCompleteSolution::ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const
+int Sched_SwapHoursDeltaCompleteSolution::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
 // to be implemented
 // sottrarre il costo della mossa che vado a togliere e sommare quello della nuova

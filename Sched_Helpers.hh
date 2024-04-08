@@ -72,18 +72,18 @@ public:
 };
 
 /***************************************************************************
- * Moves:
+ * Sched_SwapHours Neighborhood Explorer - Moves:
  ***************************************************************************/
 
-class Sched_Change
+class Sched_SwapHours
 {
-  friend bool operator==(const Sched_Change& m1, const Sched_Change& m2);
-  friend bool operator!=(const Sched_Change& m1, const Sched_Change& m2); //da implementare
-  friend bool operator<(const Sched_Change& m1, const Sched_Change& m2);  //da implementare
-  friend ostream& operator<<(ostream& os, const Sched_Change& c);
-  friend istream& operator>>(istream& is, Sched_Change& c);
+  friend bool operator==(const Sched_SwapHours& m1, const Sched_SwapHours& m2);
+  friend bool operator!=(const Sched_SwapHours& m1, const Sched_SwapHours& m2);
+  friend bool operator<(const Sched_SwapHours& m1, const Sched_SwapHours& m2);
+  friend ostream& operator<<(ostream& os, const Sched_SwapHours& c);
+  friend istream& operator>>(istream& is, Sched_SwapHours& c);
+
 public:
-  //int store, old_w, new_w;    //che variabili devo mettere qua? vecchia ora, nuova ora e professore? e se cambio professore?
   int _class;
   int new_day;
   int new_hour;
@@ -95,75 +95,75 @@ public:
   bool old_free;
   int count;
 
-  Sched_Change();
+  Sched_SwapHours();
 };
 
 /***************************************************************************
- * Sched_Change Neighborhood Explorer:
+ * Sched_SwapHours Neighborhood Explorer - Neighborhood Manager:
  ***************************************************************************/
 
-class Sched_ChangeDeltaProfUnavailability
-  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>
+class Sched_SwapHoursDeltaProfUnavailability
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>
 {
 public:
-  Sched_ChangeDeltaProfUnavailability(const Sched_Input& in, Sched_ProfUnavailability_CC& cc) 
-    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaProfUnavailability") 
+  Sched_SwapHoursDeltaProfUnavailability(const Sched_Input& in, Sched_ProfUnavailability_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaProfUnavailability") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
 };
 
-class Sched_ChangeDeltaMaxSubjectHoursXDay
-  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>
+class Sched_SwapHoursDeltaMaxSubjectHoursXDay
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>
 {
 public:
-  Sched_ChangeDeltaMaxSubjectHoursXDay(const Sched_Input& in, Sched_MaxSubjectHoursXDay_CC& cc) 
-    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaMaxSubjectHoursXDay") 
+  Sched_SwapHoursDeltaMaxSubjectHoursXDay(const Sched_Input& in, Sched_MaxSubjectHoursXDay_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaMaxSubjectHoursXDay") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
 };
 
-class Sched_ChangeDeltaProfMaxWeeklyHours
-  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>
+class Sched_SwapHoursDeltaProfMaxWeeklyHours
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>
 {
 public:
-  Sched_ChangeDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
-    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaProfMaxWeeklyHours") 
+  Sched_SwapHoursDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaProfMaxWeeklyHours") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
 };
 
-class Sched_ChangeDeltaScheduleContiguity
-  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>
+class Sched_SwapHoursDeltaScheduleContiguity
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>
 {
 public:
-  Sched_ChangeDeltaScheduleContiguity(const Sched_Input& in, Sched_ScheduleContiguity_CC& cc) 
-    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaScheduleContiguity") 
+  Sched_SwapHoursDeltaScheduleContiguity(const Sched_Input& in, Sched_ScheduleContiguity_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaScheduleContiguity") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
 };
 
-class Sched_ChangeDeltaCompleteSolution
-  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>
+class Sched_SwapHoursDeltaCompleteSolution
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>
 {
 public:
-  Sched_ChangeDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
-    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_Change>(in,cc,"Sched_ChangeDeltaCompleteSolution") 
+  Sched_SwapHoursDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaCompleteSolution") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_Change& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
 };
 
-class Sched_ChangeNeighborhoodExplorer
-  : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_Change> 
+class Sched_SwapHoursNeighborhoodExplorer
+  : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours> 
 {
 public:
-  Sched_ChangeNeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
-    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_Change>(pin, psm, "Sched_ChangeNeighborhoodExplorer") {} 
-  void RandomMove(const Sched_Output&, Sched_Change&) const override;          
-  bool FeasibleMove(const Sched_Output&, const Sched_Change&) const override;  
-  void MakeMove(Sched_Output&, const Sched_Change&) const override;             
-  void FirstMove(const Sched_Output&, Sched_Change&) const override;  
-  bool NextMove(const Sched_Output&, Sched_Change&) const override;   
+  Sched_SwapHoursNeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
+    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours>(pin, psm, "Sched_SwapHoursNeighborhoodExplorer") {} 
+  void RandomMove(const Sched_Output&, Sched_SwapHours&) const override;          
+  bool FeasibleMove(const Sched_Output&, const Sched_SwapHours&) const override;  
+  void MakeMove(Sched_Output&, const Sched_SwapHours&) const override;             
+  void FirstMove(const Sched_Output&, Sched_SwapHours&) const override;  
+  bool NextMove(const Sched_Output&, Sched_SwapHours&) const override;   
 protected:
-  bool AnyNextMove(const Sched_Output&, Sched_Change&) const;   
+  bool AnyNextMove(const Sched_Output&, Sched_SwapHours&) const;   
 };
 #endif
