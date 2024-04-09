@@ -73,13 +73,13 @@ int main(int argc, const char* argv[])
   Sched_AssignP_nhe.AddCostComponent(cc5);
   
   // runners
-  //HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
-  //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
-  //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
+  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
 
-  HillClimbing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_hc(in, Sched_sm, Sched_AssignP_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sd(in, Sched_sm, Sched_AssignP_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sa(in, Sched_sm, Sched_AssignP_nhe, "SA");
+  //HillClimbing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_hc(in, Sched_sm, Sched_AssignP_nhe, "HC");
+  //SteepestDescent<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sd(in, Sched_sm, Sched_AssignP_nhe, "SD");
+  //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sa(in, Sched_sm, Sched_AssignP_nhe, "SA");
 
   // tester
   Tester<Sched_Input, Sched_Output> tester(in, Sched_sm);

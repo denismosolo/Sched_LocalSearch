@@ -85,15 +85,10 @@ class Sched_SwapHours
 
 public:
   int _class;
-  int new_day;
-  int new_hour;
-  int new_prof;
-  bool new_free;
-  int old_day;
-  int old_hour;
-  int old_prof;
-  bool old_free;
-  int index;
+  int day_1;
+  int hour_1;
+  int day_2;
+  int hour_2;
 
   Sched_SwapHours();
 };
