@@ -93,7 +93,7 @@ public:
   int old_hour;
   int old_prof;
   bool old_free;
-  int count;
+  int index;
 
   Sched_SwapHours();
 };
@@ -165,5 +165,47 @@ public:
   bool NextMove(const Sched_Output&, Sched_SwapHours&) const override;   
 protected:
   bool AnyNextMove(const Sched_Output&, Sched_SwapHours&) const;   
+};
+
+
+/***************************************************************************
+ * Sched_AssignProf Neighborhood Explorer - Moves:
+ ***************************************************************************/
+
+class Sched_AssignProf
+{
+  friend bool operator==(const Sched_AssignProf& m1, const Sched_AssignProf& m2);
+  friend bool operator!=(const Sched_AssignProf& m1, const Sched_AssignProf& m2);
+  friend bool operator<(const Sched_AssignProf& m1, const Sched_AssignProf& m2);
+  friend ostream& operator<<(ostream& os, const Sched_AssignProf& c);
+  friend istream& operator>>(istream& is, Sched_AssignProf& c);
+
+public:
+  int _class;
+  int day;
+  int hour;
+  int prof;
+  int index;
+
+  Sched_AssignProf();
+};
+
+/***************************************************************************
+ * Sched_AssignProf Neighborhood Explorer - Neighborhood Manager:
+ ***************************************************************************/
+
+class Sched_AssignProfNeighborhoodExplorer
+  : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_AssignProf> 
+{
+public:
+  Sched_AssignProfNeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
+    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_AssignProf>(pin, psm, "Sched_AssignProfNeighborhoodExplorer") {} 
+  void RandomMove(const Sched_Output&, Sched_AssignProf&) const override;          
+  bool FeasibleMove(const Sched_Output&, const Sched_AssignProf&) const override;  
+  void MakeMove(Sched_Output&, const Sched_AssignProf&) const override;             
+  void FirstMove(const Sched_Output&, Sched_AssignProf&) const override;  
+  bool NextMove(const Sched_Output&, Sched_AssignProf&) const override;   
+protected:
+  bool AnyNextMove(const Sched_Output&, Sched_AssignProf&) const;   
 };
 #endif

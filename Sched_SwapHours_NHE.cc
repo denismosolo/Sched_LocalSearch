@@ -37,7 +37,7 @@ Sched_SwapHours::Sched_SwapHours()
   old_hour = -1;
   old_prof = -1;
   old_free = false;
-  count = -1;
+  index = -1;
 }
 
 bool operator==(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
@@ -66,8 +66,8 @@ bool operator<(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
 
 istream& operator>>(istream& is, Sched_SwapHours& mv)
 {
-  char ch;  //se è vuoto funziona come spazio?
-  is >> mv._class >> ch >> mv.old_day >> ch >> mv.old_hour >> ch >> ch >> mv.new_day >> ch >> mv.new_hour;
+  char ch;
+  is >> mv._class >> ch >> ch >> ch >> mv.old_day >> ch >> ch >> mv.old_hour >> ch >> ch >> ch >> ch >> ch >> ch >> mv.new_day >> ch >> ch >> mv.new_hour >> ch;
   return is;
 }
 
@@ -85,13 +85,13 @@ void Sched_SwapHoursNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
 {
   vector<unsigned> available_profs;
 
-  mv._class = Random::Uniform<int>(0, in.N_Classes()-1);
-
-  // Get all profs of the class with not all hours already assigned
-  available_profs = GetAvailableProfs(in, out, mv._class);
-
   do
   {
+    mv._class = Random::Uniform<int>(0, in.N_Classes()-1);
+
+    // Get all profs of the class with not all hours already assigned
+    available_profs = GetAvailableProfs(in, out, mv._class);
+
     mv.old_day = Random::Uniform<int>(0, in.N_Days()-1);
     mv.old_hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
     if (out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour)) // è un'ora buca
@@ -147,7 +147,7 @@ void Sched_SwapHoursNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sch
   {
     mv.old_free = true;
     mv.old_prof = available_profs[0];
-    mv.count++;
+    mv.index++;
   }
   else
     mv.old_prof = out.Class_Schedule(mv._class, mv.old_day, mv.old_hour);
@@ -158,7 +158,7 @@ void Sched_SwapHoursNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sch
   {
     mv.new_free = true;
     mv.new_prof = available_profs[0];
-    mv.count++;
+    mv.index++;
   }
   else
     mv.new_prof = out.Class_Schedule(mv._class, mv.new_day, mv.new_hour);
@@ -182,27 +182,27 @@ bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
 
   available_profs = GetAvailableProfs(in, out, mv._class);
 
-  if ((mv.new_free ^ mv.old_free) && mv.count < available_profs.size() && (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour) ^ out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour)))  // NOTE: ^ is XOR in C++
+  if ((mv.new_free ^ mv.old_free) && mv.index < available_profs.size() && (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour) ^ out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour)))  // NOTE: ^ is XOR in C++
   {
-    if (mv.count == available_profs.size() - 1)
+    if (mv.index == available_profs.size() - 1)
     {
-      mv.count++;
+      mv.index++;
       if (mv.new_free)
         mv.new_prof = -1;
       else
         mv.old_prof = -1;
     }
     else if (mv.new_free)
-      mv.new_prof = available_profs[++mv.count];
+      mv.new_prof = available_profs[++mv.index];
     else
-      mv.old_prof = available_profs[++mv.count];
+      mv.old_prof = available_profs[++mv.index];
   }
   else
   {
     // Move to next hour
     mv.new_hour++;
 
-    mv.count = -1;
+    mv.index = -1;
     mv.new_free = false;
     mv.old_free = false;
     
@@ -242,8 +242,8 @@ bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
         // se arrivo qui ho sicuro cambiato old quindi devo ricalcolarmi il professore
         if (out.IsClassHourFree(mv._class, mv.old_day, mv.old_hour))
         {
-          mv.count++;
-          mv.old_prof = available_profs[mv.count];
+          mv.index++;
+          mv.old_prof = available_profs[mv.index];
           mv.old_free = true;
         }
         else
@@ -252,8 +252,8 @@ bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
     }
     if (out.IsClassHourFree(mv._class, mv.new_day, mv.new_hour))
     {
-      mv.count++;
-      mv.new_prof = available_profs[mv.count];
+      mv.index++;
+      mv.new_prof = available_profs[mv.index];
       mv.new_free = true;
     }
     else

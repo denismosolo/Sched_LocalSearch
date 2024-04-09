@@ -42,6 +42,7 @@ int main(int argc, const char* argv[])
   // helpers
   Sched_SolutionManager Sched_sm(in);
   Sched_SwapHoursNeighborhoodExplorer Sched_SwapH_nhe(in, Sched_sm);
+  Sched_AssignProfNeighborhoodExplorer Sched_AssignP_nhe(in, Sched_sm);
   
   // All cost components must be added to the state manager
   Sched_sm.AddCostComponent(cc1);
@@ -63,15 +64,27 @@ int main(int argc, const char* argv[])
   Sched_SwapH_nhe.AddCostComponent(cc3);
   Sched_SwapH_nhe.AddCostComponent(cc4);
   Sched_SwapH_nhe.AddCostComponent(cc5);
+
+  // Add all cost component to neighborhood explorer - slower than with delta costs
+  Sched_AssignP_nhe.AddCostComponent(cc1);
+  Sched_AssignP_nhe.AddCostComponent(cc2);
+  Sched_AssignP_nhe.AddCostComponent(cc3);
+  Sched_AssignP_nhe.AddCostComponent(cc4);
+  Sched_AssignP_nhe.AddCostComponent(cc5);
   
   // runners
-  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
+  //HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
+  //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
+  //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
+
+  HillClimbing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_hc(in, Sched_sm, Sched_AssignP_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sd(in, Sched_sm, Sched_AssignP_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sa(in, Sched_sm, Sched_AssignP_nhe, "SA");
 
   // tester
   Tester<Sched_Input, Sched_Output> tester(in, Sched_sm);
-  MoveTester<Sched_Input, Sched_Output, Sched_SwapHours> swap_move_test(in, Sched_sm, Sched_SwapH_nhe, "Sched_SwapHours move", tester); 
+  MoveTester<Sched_Input, Sched_Output, Sched_SwapHours> swapH_move_test(in, Sched_sm, Sched_SwapH_nhe, "Sched_SwapHours move", tester);
+  MoveTester<Sched_Input, Sched_Output, Sched_AssignProf> assignP_move_test(in, Sched_sm, Sched_AssignP_nhe, "Sched_AssignProf move", tester); 
 
   SimpleLocalSearch<Sched_Input, Sched_Output> Sched_solver(in, Sched_sm, "Sched solver");
   if (!CommandLineParameters::Parse(argc, argv, true, false))
