@@ -65,13 +65,13 @@ int main(int argc, const char* argv[])
   Sched_nhe.AddCostComponent(cc5);
   
   // runners
-  HillClimbing<Sched_Input, Sched_Output, Sched_Change> Sched_hc(in, Sched_sm, Sched_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, Sched_Change> Sched_sd(in, Sched_sm, Sched_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_Change> Sched_sa(in, Sched_sm, Sched_nhe, "SA");
+  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours_M> Sched_hc(in, Sched_sm, Sched_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours_M> Sched_sd(in, Sched_sm, Sched_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours_M> Sched_sa(in, Sched_sm, Sched_nhe, "SA");
 
   // tester
   Tester<Sched_Input, Sched_Output> tester(in, Sched_sm);
-  MoveTester<Sched_Input, Sched_Output, Sched_Change> swap_move_test(in, Sched_sm, Sched_nhe, "Sched_Change move", tester); 
+  MoveTester<Sched_Input, Sched_Output, Sched_SwapHours_M> swap_move_test(in, Sched_sm, Sched_nhe, "Sched_SwapHours_M move", tester);
 
   SimpleLocalSearch<Sched_Input, Sched_Output> Sched_solver(in, Sched_sm, "Sched solver");
   if (!CommandLineParameters::Parse(argc, argv, true, false))

@@ -836,8 +836,9 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
 
   // If the hours are both free or assigned to the same professor, return false
   if (Class_Schedule(c1, d1, h1) == Class_Schedule(c2, d2, h2))
+  {
     return false;
-  
+  }
   else if (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) != -1)
   {
     p1 = Class_Schedule(c1, d1, h1);
@@ -853,7 +854,8 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
       AssignHour(c2, d2, h2, p1);
     }
     else
-      // Is this case possible ?
+      // The new hour for one of the two profs is already assigned
+      // In that case is necessary to free this hour (maybe with another swap)
       return false;
   }
   else // Case (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) == -1)
@@ -876,6 +878,8 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
       ComputeProfDayOff(p1);
     }
     else
+      // The new hour for the prof is already assigned
+      // In that case is necessary to free this hour (maybe with another swap)
       return false;
   }
 
