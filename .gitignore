@@ -6,3 +6,5 @@ csp
 *.o
 out.txt
 easylocal-3
+test.txt
+*.test
