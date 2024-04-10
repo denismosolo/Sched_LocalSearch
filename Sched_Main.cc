@@ -75,9 +75,9 @@ int main(int argc, const char* argv[])
   SetUnionNeighborhoodExplorer <Sched_Input, Sched_Output, DefaultCostStructure<int>, Sched_SwapHoursNeighborhoodExplorer, Sched_AssignProfNeighborhoodExplorer> Union_nhe(in, Sched_sm, "Union NHE", Sched_SwapH_nhe, Sched_AssignP_nhe/*, std::array<double, modality> bias = std::array<double, modality>{0.0}*/);
   
   // runners
-  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Union_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Union_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Union_nhe, "SA");
+  HillClimbing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>>> Sched_hc(in, Sched_sm, Union_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>>> Sched_sd(in, Sched_sm, Union_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>>> Sched_sa(in, Sched_sm, Union_nhe, "SA");
 
   //HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
   //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
