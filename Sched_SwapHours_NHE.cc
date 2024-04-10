@@ -47,7 +47,7 @@ istream& operator>>(istream& is, Sched_SwapHours& mv)
 
 ostream& operator<<(ostream& os, const Sched_SwapHours& mv)
 {
-  os << mv._class << ": (" << mv.day_1 << ", " << mv.hour_1 << ") -> (" << mv.day_2 << ", " << mv.hour_2 << ")";
+  os << "Class " << mv._class << " : (" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")";
   return os;
 }
 
@@ -76,7 +76,7 @@ bool Sched_SwapHoursNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
   int prof_1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   int prof_2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
 
-cerr << mv << "\t" << prof_1 << "-" << prof_2 << endl;
+  // cerr << mv << "\t" << prof_1 << "-" << prof_2 << endl;
 
   // If the prof is the same (either the case that both are -1)
   if (prof_1 == prof_2)
@@ -124,6 +124,30 @@ bool Sched_SwapHoursNeighborhoodExplorer::NextMove(const Sched_Output& out, Sche
 
 bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
+  // Debug
+  //cout << "  Enters: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
+
+  // Condizione che determina la fine della scansione dell'orario di una classe: non esiste nessuna mossa successiva allo scambio
+  // degli ultimi due slot orari.
+  if (mv.day_1 == in.N_Days() - 1 && mv.hour_1 == in.N_HoursXDay() - 2 && mv.day_2 == in.N_Days() - 1 && mv.hour_2 == in.N_HoursXDay() - 1)
+  {
+    mv._class++;
+
+    // Le classi sono finite
+    if (mv._class == in.N_Classes())
+      return false;
+
+    mv.day_1 = 0;
+    mv.hour_1 = 0;
+    mv.day_2 = 0;
+    mv.hour_2 = 1;
+
+    // Debug
+    //cout << "  Exits: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
+
+    return true;
+  }
+
   // Move to next hour
   mv.hour_2++;
   
@@ -136,6 +160,14 @@ bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
     {
       mv.hour_1++;
 
+      if (mv.hour_1 == in.N_HoursXDay())
+      {
+        mv.day_1++;
+        mv.hour_1 = 0;
+      }
+
+      // Comincio a scorrere il secondo slot temporale a partire da quello
+      // successivo al primo
       if (mv.hour_1 < in.N_HoursXDay() - 1)
       {
         mv.day_2 = mv.day_1;
@@ -143,30 +175,14 @@ bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
       }
       else
       {
-        mv.day_2 = mv.day_1 + 1;
-        mv.hour_2 = 0;
-      }
-      
-      if (mv.hour_1 == in.N_HoursXDay())
-      {
-        mv.day_1++;
-        mv.hour_1 = 0;
-        mv.day_2 = mv.day_1;
-        mv.hour_2 = 1;
-
-        if (mv.day_1 == in.N_Days() - 1) // Il confronto con l'ultimo giorno l'ho già eseguito
-        {
-          mv._class++;
-          mv.day_1 = 0;
-          mv.hour_1 = 0;
-          mv.day_2 = 0;
-          mv.hour_2 = 1;
-
-          if (mv._class == in.N_Classes())
-            return false;
-        }
+        mv.day_2 = mv.day_1 + 1;  // Passo al giorno successivo
+        mv.hour_2 = 0;            // Resetto l'ora a 0
       }
     }
   }
+  
+  // Debug
+  //cout << "  Exits: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
+
   return true;
 }
