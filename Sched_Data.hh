@@ -152,9 +152,9 @@ public:
   void PrintTAB(string output_filename) const; // same as Print but with TABs instead of spaces and dump in .txt for easy import in Excel
 
   // Schedule management methods
-  bool AssignHour(unsigned c, unsigned d, unsigned h, unsigned p);
-  bool FreeHour(unsigned c, unsigned d, unsigned h);
-  bool SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2, unsigned d2, unsigned h2);
+  void AssignHour(unsigned c, unsigned d, unsigned h, unsigned p);
+  void FreeHour(unsigned c, unsigned d, unsigned h);
+  void SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2, unsigned d2, unsigned h2);
 
   //boolean check functions
   bool IsClassHourFree(unsigned c, unsigned d, unsigned h) const {return Class_Schedule(c, d, h) == -1; }

@@ -94,7 +94,7 @@ bool Sched_SwapHours_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out,
 
 void Sched_SwapHours_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_SwapHours& mv) const
 {
-  out.SwapHours(mv._class, mv.day_1, mv.hour_1, mv._class, mv.day_2, mv.hour_2); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
+  out.SwapHours(mv._class, mv.day_1, mv.hour_1, mv._class, mv.day_2, mv.hour_2);
 }  
 
 void Sched_SwapHours_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapHours& mv) const

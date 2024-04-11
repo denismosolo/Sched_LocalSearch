@@ -769,19 +769,8 @@ void Sched_Output::PrintTAB(string output_filename) const
 }
 
 
-bool Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
+void Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
 {
-  // If the hour isn't already free in class or prof schedule, return false
-  if (Class_Schedule(c, d, h) != -1 || Prof_Schedule(p, d, h) != -1)
-    return false;
-
-  // If there is a prof already assigned for that subject is impossible to
-  // assign a new one
-  if (weekly_subject_assigned_hours[c][in.ProfSubject(p)] != 0)
-  {
-    return false;
-  }
-
   // the class "gains" a prof
   class_profs[c][in.ProfSubject(p)] = p;
 
@@ -797,18 +786,12 @@ bool Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
   daily_subject_assigned_hours[c][d][in.ProfSubject(p)]++;
 
   ComputeProfDayOff(p);
-
-  return true;
 }
 
 
-bool Sched_Output::FreeHour(unsigned c, unsigned d, unsigned h)
+void Sched_Output::FreeHour(unsigned c, unsigned d, unsigned h)
 {
   unsigned p;
-
-  // If the hour is already free return false
-  if (Class_Schedule(c, d, h) == -1)
-    return false;
 
   p = (unsigned)Class_Schedule(c, d, h);
 
@@ -831,35 +814,22 @@ bool Sched_Output::FreeHour(unsigned c, unsigned d, unsigned h)
   }
 
   ComputeProfDayOff(p);
-
-  return true;
 }
 
-bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2, unsigned d2, unsigned h2)
+void Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2, unsigned d2, unsigned h2)
 {
   unsigned p1, p2;
-
-  // If the hours are both free or assigned to the same professor, return false
-  if (Class_Schedule(c1, d1, h1) == Class_Schedule(c2, d2, h2))
-    return false;
   
-  else if (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) != -1)
+  if (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) != -1)
   {
     p1 = Class_Schedule(c1, d1, h1);
     p2 = Class_Schedule(c2, d2, h2);
 
-    // Is this check necessary?
-    if (Prof_Schedule(p1, d2, h2) == -1 && Prof_Schedule(p2, d1, h1) == -1)
-    {
-      FreeHour(c1, d1, h1);
-      FreeHour(c2, d2, h2);
+    FreeHour(c1, d1, h1);
+    FreeHour(c2, d2, h2);
 
-      AssignHour(c1, d1, h1, p2);
-      AssignHour(c2, d2, h2, p1);
-    }
-    else
-      // Is this case possible ?
-      return false;
+    AssignHour(c1, d1, h1, p2);
+    AssignHour(c2, d2, h2, p1);
   }
   else // Case (Class_Schedule(c1, d1, h1) != -1 && Class_Schedule(c2, d2, h2) == -1)
        //   or (Class_Schedule(c1, d1, h1) == -1 && Class_Schedule(c2, d2, h2) != -1)
@@ -872,19 +842,9 @@ bool Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
     }
 
     p1 = Class_Schedule(c1, d1, h1);
-
-    if (Prof_Schedule(p1, d2, h2) == -1)
-    {
-      FreeHour(c1, d1, h1);
-      AssignHour(c2, d2, h2, p1);
-
-      ComputeProfDayOff(p1);
-    }
-    else
-      return false;
+    FreeHour(c1, d1, h1);
+    AssignHour(c2, d2, h2, p1);
   }
-
-  return true;
 }
 
 bool Sched_Output::SuitableProf(unsigned c, unsigned p)

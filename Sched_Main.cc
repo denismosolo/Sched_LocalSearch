@@ -73,6 +73,13 @@ int main(int argc, const char* argv[])
   Sched_AssignP_nhe.AddCostComponent(cc4);
   Sched_AssignP_nhe.AddCostComponent(cc5);
 
+  // Add all cost component to neighborhood explorer - slower than with delta costs
+  Sched_SwapP_nhe.AddCostComponent(cc1);
+  Sched_SwapP_nhe.AddCostComponent(cc2);
+  Sched_SwapP_nhe.AddCostComponent(cc3);
+  Sched_SwapP_nhe.AddCostComponent(cc4);
+  Sched_SwapP_nhe.AddCostComponent(cc5);
+
   SetUnionNeighborhoodExplorer <Sched_Input, Sched_Output, DefaultCostStructure<int>, Sched_SwapHours_NeighborhoodExplorer, Sched_AssignProf_NeighborhoodExplorer, Sched_SwapProf_NeighborhoodExplorer> Union_nhe(in, Sched_sm, "Union NHE", Sched_SwapH_nhe, Sched_AssignP_nhe, Sched_SwapP_nhe/*, std::array<double, modality> bias = std::array<double, modality>{0.0}*/);
   
   // runners
