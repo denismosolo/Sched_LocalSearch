@@ -41,13 +41,13 @@ bool operator<(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
 istream& operator>>(istream& is, Sched_SwapHours& mv)
 {
   char ch;
-  is >> mv._class >> ch >> ch >> ch >> mv.day_1 >> ch >> ch >> mv.hour_1 >> ch >> ch >> ch >> ch >> ch >> ch >> mv.day_2 >> ch >> ch >> mv.hour_2 >> ch;
+  is >> mv._class >> ch >> ch >> ch >> mv.day_1 >> ch >> ch >> mv.hour_1 >> ch >> ch >> ch >> ch >> ch >> ch >> ch >> mv.day_2 >> ch >> ch >> mv.hour_2 >> ch;
   return is;
 }
 
 ostream& operator<<(ostream& os, const Sched_SwapHours& mv)
 {
-  os << "Class " << mv._class << " : (" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")";
+  os << mv._class << ": (" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")";
   return os;
 }
 
@@ -75,8 +75,6 @@ bool Sched_SwapHours_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out,
 {
   int prof_1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   int prof_2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
-
-  // cerr << mv << "\t" << prof_1 << "-" << prof_2 << endl;
 
   // If the prof is the same (either the case that both are -1)
   if (prof_1 == prof_2)
