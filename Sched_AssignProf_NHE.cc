@@ -72,7 +72,7 @@ ostream& operator<<(ostream& os, const Sched_AssignProf& mv)
  * Sched_AssignProf Neighborhood Explorer Code
  ***************************************************************************/
 
-void Sched_AssignProfNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_AssignProf& mv) const
+void Sched_AssignProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   vector<unsigned> available_profs;
 
@@ -94,19 +94,19 @@ void Sched_AssignProfNeighborhoodExplorer::RandomMove(const Sched_Output& out, S
   
 } 
 
-bool Sched_AssignProfNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_AssignProf& mv) const
+bool Sched_AssignProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
   // If both Class and Prof are free
   return mv.prof == -1 || (out.IsClassHourFree(mv._class, mv.day, mv.hour) && out.IsProfHourFree(mv.prof, mv.day, mv.hour));
 } 
 
-void Sched_AssignProfNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_AssignProf& mv) const
+void Sched_AssignProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_AssignProf& mv) const
 {
   if (mv.prof != -1)
     out.AssignHour(mv._class, mv.day, mv.hour, mv.prof); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
 }  
 
-void Sched_AssignProfNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
+void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   vector<unsigned> available_profs;
 
@@ -123,7 +123,7 @@ void Sched_AssignProfNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sc
     mv.prof = -1;
 }
 
-bool Sched_AssignProfNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_AssignProf& mv) const
+bool Sched_AssignProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   do
   {
@@ -135,7 +135,7 @@ bool Sched_AssignProfNeighborhoodExplorer::NextMove(const Sched_Output& out, Sch
   return true;
 }
 
-bool Sched_AssignProfNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_AssignProf& mv) const
+bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   vector<unsigned> available_profs;
 

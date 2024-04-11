@@ -147,12 +147,12 @@ public:
   int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
 };
 
-class Sched_SwapHoursNeighborhoodExplorer
+class Sched_SwapHours_NeighborhoodExplorer
   : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours> 
 {
 public:
-  Sched_SwapHoursNeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
-    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours>(pin, psm, "Sched_SwapHoursNeighborhoodExplorer") {} 
+  Sched_SwapHours_NeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
+    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours>(pin, psm, "Sched_SwapHours_NeighborhoodExplorer") {} 
   void RandomMove(const Sched_Output&, Sched_SwapHours&) const override;          
   bool FeasibleMove(const Sched_Output&, const Sched_SwapHours&) const override;  
   void MakeMove(Sched_Output&, const Sched_SwapHours&) const override;             
@@ -189,12 +189,12 @@ public:
  * Sched_AssignProf Neighborhood Explorer - Neighborhood Manager:
  ***************************************************************************/
 
-class Sched_AssignProfNeighborhoodExplorer
+class Sched_AssignProf_NeighborhoodExplorer
   : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_AssignProf> 
 {
 public:
-  Sched_AssignProfNeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
-    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_AssignProf>(pin, psm, "Sched_AssignProfNeighborhoodExplorer") {} 
+  Sched_AssignProf_NeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
+    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_AssignProf>(pin, psm, "Sched_AssignProf_NeighborhoodExplorer") {} 
   void RandomMove(const Sched_Output&, Sched_AssignProf&) const override;          
   bool FeasibleMove(const Sched_Output&, const Sched_AssignProf&) const override;  
   void MakeMove(Sched_Output&, const Sched_AssignProf&) const override;             
@@ -203,4 +203,45 @@ public:
 protected:
   bool AnyNextMove(const Sched_Output&, Sched_AssignProf&) const;   
 };
+
+
+/***************************************************************************
+ * Sched_SwapProf Neighborhood Explorer - Moves:
+ ***************************************************************************/
+
+class Sched_SwapProf
+{
+  friend bool operator==(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2);
+  friend bool operator!=(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2);
+  friend bool operator<(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2);
+  friend ostream& operator<<(ostream& os, const Sched_SwapProf& c);
+  friend istream& operator>>(istream& is, Sched_SwapProf& c);
+
+public:
+  int prof_subject;
+  int class_1;
+  int class_2;
+
+  Sched_SwapProf();
+};
+
+/***************************************************************************
+ * Sched_SwapProf Neighborhood Explorer - Neighborhood Manager:
+ ***************************************************************************/
+
+class Sched_SwapProf_NeighborhoodExplorer
+  : public NeighborhoodExplorer<Sched_Input, Sched_Output, Sched_SwapProf>
+{
+public:
+  Sched_SwapProf_NeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input, Sched_Output>& psm)
+    : NeighborhoodExplorer<Sched_Input, Sched_Output, Sched_SwapProf>(pin, psm, "Sched_SwapProf_NeighborhoodExplorer") {}
+  void RandomMove(const Sched_Output&, Sched_SwapProf&) const override;
+  bool FeasibleMove(const Sched_Output&, const Sched_SwapProf&) const override;
+  void MakeMove(Sched_Output&, const Sched_SwapProf&) const override;
+  void FirstMove(const Sched_Output&, Sched_SwapProf&) const override;
+  bool NextMove(const Sched_Output&, Sched_SwapProf&) const override;
+protected:
+  bool AnyNextMove(const Sched_Output&, Sched_SwapProf&) const;
+};
+
 #endif

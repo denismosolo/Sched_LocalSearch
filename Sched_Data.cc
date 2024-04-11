@@ -774,22 +774,27 @@ bool Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
   // If the hour isn't already free in class or prof schedule, return false
   if (Class_Schedule(c, d, h) != -1 || Prof_Schedule(p, d, h) != -1)
     return false;
-  
+
+  // If there is a prof already assigned for that subject is impossible to
+  // assign a new one
+  if (weekly_subject_assigned_hours[c][in.ProfSubject(p)] != 0)
+  {
+    return false;
+  }
+
+  // the class "gains" a prof
+  class_profs[c][in.ProfSubject(p)] = p;
+
+  // Update prof weekly assigned hours
+  prof_weekly_hours[p]++;
+
   // Assign hour to class and prof schedule
   schedule_class[c][d][h] = p;
   schedule_prof[p][d][h] = c;
-  
-  // If there weren't hours of a specific subject assigned yet
-  // the class "gains" a prof
-  if (weekly_subject_assigned_hours[c][in.ProfSubject(p)] == 0)
-    class_profs[c][in.ProfSubject(p)] = p;
 
   // Update Daily and weekly assigned hours
   weekly_subject_assigned_hours[c][in.ProfSubject(p)]++;
   daily_subject_assigned_hours[c][d][in.ProfSubject(p)]++;
-  
-  // Update prof weekly assigned hours
-  prof_weekly_hours[p]++;
 
   ComputeProfDayOff(p);
 

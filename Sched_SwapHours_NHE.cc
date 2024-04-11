@@ -55,7 +55,7 @@ ostream& operator<<(ostream& os, const Sched_SwapHours& mv)
  * Sched_SwapHours Neighborhood Explorer Code
  ***************************************************************************/
 
-void Sched_SwapHoursNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_SwapHours& mv) const
+void Sched_SwapHours_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   do
   {
@@ -71,7 +71,7 @@ void Sched_SwapHoursNeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
   
 } 
 
-bool Sched_SwapHoursNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_SwapHours& mv) const
+bool Sched_SwapHours_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
   int prof_1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   int prof_2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
@@ -94,12 +94,12 @@ bool Sched_SwapHoursNeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
   return mv.day_1 != mv.day_2 || mv.hour_1 != mv.hour_2;
 } 
 
-void Sched_SwapHoursNeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_SwapHours& mv) const
+void Sched_SwapHours_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_SwapHours& mv) const
 {
   out.SwapHours(mv._class, mv.day_1, mv.hour_1, mv._class, mv.day_2, mv.hour_2); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
 }  
 
-void Sched_SwapHoursNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapHours& mv) const
+void Sched_SwapHours_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   mv._class = 0;
 
@@ -110,7 +110,7 @@ void Sched_SwapHoursNeighborhoodExplorer::FirstMove(const Sched_Output& out, Sch
   mv.hour_2 = 1;
 }
 
-bool Sched_SwapHoursNeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_SwapHours& mv) const
+bool Sched_SwapHours_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   do
   {
@@ -122,7 +122,7 @@ bool Sched_SwapHoursNeighborhoodExplorer::NextMove(const Sched_Output& out, Sche
   return true;
 }
 
-bool Sched_SwapHoursNeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapHours& mv) const
+bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
   // Debug
   //cout << "  Enters: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
