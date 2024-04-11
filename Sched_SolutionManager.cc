@@ -53,19 +53,27 @@ void Sched_SolutionManager::RandomState(Sched_Output& out)
 {  
   unsigned c, s, p, d, h, i;
   vector<pair<unsigned, unsigned>> all_d_h_permutations;
-  vector<unsigned> subjects(in.N_Subjects());
+  vector<unsigned> subject(in.N_Subjects());
+  vector<unsigned> _class(in.N_Classes());
 
-  iota(subjects.begin(), subjects.end(), 0);
+  // Reset output
+  out.Reset();
+
+  iota(subject.begin(), subject.end(), 0);
+  iota(_class.begin(), _class.end(), 0);
 
   //load all day-hour permutations
   for (d = 0; d < in.N_Days(); d++)
     for (h = 0; h < in.N_HoursXDay(); h++)
       all_d_h_permutations.push_back(make_pair(d,h));
 
+  // shuffle class vector
+  shuffle(_class.begin(), _class.end(), Random::GetGenerator());
+
   for (c = 0; c < in.N_Classes(); c++)
   {
     // shuffle subject vector
-    shuffle(subjects.begin(), subjects.end(), Random::GetGenerator());
+    shuffle(subject.begin(), subject.end(), Random::GetGenerator());
 
     for (s = 0; s < in.N_Subjects(); s++)
     {
@@ -75,17 +83,20 @@ void Sched_SolutionManager::RandomState(Sched_Output& out)
       // choose random a professor
       do
       {
-        p = in.SubjectProf(s, Random::Uniform<unsigned>(0, in.N_ProfsXSubject(s)-1));
+        p = in.SubjectProf(subject[s], Random::Uniform<unsigned>(0, in.N_ProfsXSubject(subject[s])-1));
       } while (out.ProfWeeklyAssignedHours(p) >= (in.N_Days()*in.N_HoursXDay()));
 
       h = 0;
 
       for (i = 0; i < all_d_h_permutations.size(); i++)
       {
-        if (out.AssignHour(c, all_d_h_permutations[i].first, all_d_h_permutations[i].second, p))
+        if (out.IsClassHourFree(_class[c], all_d_h_permutations[i].first, all_d_h_permutations[i].second) && out.IsProfHourFree(p, all_d_h_permutations[i].first, all_d_h_permutations[i].second))
+        { 
+          out.AssignHour(_class[c], all_d_h_permutations[i].first, all_d_h_permutations[i].second, p);
           h++;
+        }
         
-        if (h == in.N_HoursXSubject(s))
+        if (h == in.N_HoursXSubject(subject[s]))
           break;  // all hours assigned
       }
     }  
@@ -165,5 +176,14 @@ void Sched_SolutionManager::GreedyState(Sched_Output& out)
 
 bool Sched_SolutionManager::CheckConsistency(const Sched_Output& out) const
 {
-  return true; //TBC if necessary or already handled by AssignHour method
+  unsigned c, s, d, h;
+
+  for (c = 0; c < in.N_Classes(); c++)
+    for (s = 0; s < in.N_Subjects(); s++)
+      for (d = 0; d < in.N_Days(); d++)
+        for (h = 0; h < in.N_HoursXDay(); h++)
+          // If there is a prof for the subject that is not the class' prof
+          if (!out.IsClassHourFree(c, d, h) && in.ProfSubject(out.Class_Schedule(c, d, h)) == s && out.Class_Schedule(c, d, h) != out.Subject_Prof(c, s))
+            return false;
+  return true;
 }
