@@ -972,7 +972,7 @@ unsigned Sched_Output::ScheduleContiguityViolations() const
         subject_last_position = -1;
 
         for (h = 0; h < in.N_HoursXDay(); h++)
-          if (Class_Schedule(c, d, h) != -1 && (unsigned)Class_Schedule(c, d, h) == s)
+          if (Class_Schedule(c, d, h) != -1 && in.ProfSubject(Class_Schedule(c, d, h)) == s)
           {
             if (subject_last_position != -1 && h - subject_last_position > 1)
               contiguity_violations++;

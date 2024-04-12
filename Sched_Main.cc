@@ -27,17 +27,17 @@ int main(int argc, const char* argv[])
     Random::SetSeed(seed);
   
   // cost components: second parameter is the cost, third is the type (true -> hard, false -> soft)
-  Sched_ProfUnavailability_CC cc1(in, 1, false);
-  Sched_MaxSubjectHoursXDay_CC cc2(in, 1, false);
-  Sched_ProfMaxWeeklyHours_CC cc3(in, 1, false);
-  Sched_ScheduleContiguity_CC cc4(in, 1, false);
-  Sched_SolutionComplete_CC cc5(in, 1); // Hard constrain, set as default at definition
+  Sched_ProfUnavailability_CC cc1(in, in.UnavailabilityViolationCost(), false);
+  Sched_MaxSubjectHoursXDay_CC cc2(in, in.MaxSubjectHoursXDayViolationCost(), false);
+  Sched_ProfMaxWeeklyHours_CC cc3(in, in.MaxProfWeeklyHoursViolationCost(), false);
+  Sched_ScheduleContiguity_CC cc4(in, in.ScheduleContiguityViolationCost(), false);
+  Sched_SolutionComplete_CC cc5(in, 1, true);
  
-  //Sched_SwapHoursDeltaProfUnavailability dcc1(in, cc1);
-  //Sched_SwapHoursDeltaMaxSubjectHoursXDay dcc2(in, cc2);
-  //Sched_SwapHoursDeltaProfMaxWeeklyHours dcc3(in, cc3);
-  //Sched_SwapHoursDeltaScheduleContiguity dcc4(in, cc4);
-  //Sched_SwapHoursDeltaCompleteSolution dcc5(in, cc5);
+  Sched_SwapHoursDeltaProfUnavailability dcc1(in, cc1);
+  Sched_SwapHoursDeltaMaxSubjectHoursXDay dcc2(in, cc2);
+  Sched_SwapHoursDeltaProfMaxWeeklyHours dcc3(in, cc3);
+  Sched_SwapHoursDeltaScheduleContiguity dcc4(in, cc4);
+  Sched_SwapHoursDeltaCompleteSolution dcc5(in, cc5);
 
   // helpers
   Sched_SolutionManager Sched_sm(in);
@@ -53,18 +53,18 @@ int main(int argc, const char* argv[])
   Sched_sm.AddCostComponent(cc5);
   
   // All delta cost components must be added to the neighborhood explorer
-  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc1);
-  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc2);
-  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc3);
-  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc4);
-  //Sched_SwapH_nhe.AddDeltaCostComponent(dcc5);
+  Sched_SwapH_nhe.AddDeltaCostComponent(dcc1);
+  Sched_SwapH_nhe.AddDeltaCostComponent(dcc2);
+  Sched_SwapH_nhe.AddDeltaCostComponent(dcc3);
+  Sched_SwapH_nhe.AddDeltaCostComponent(dcc4);
+  Sched_SwapH_nhe.AddDeltaCostComponent(dcc5);
 
   // Add all cost component to neighborhood explorer - slower than with delta costs
-  Sched_SwapH_nhe.AddCostComponent(cc1);
-  Sched_SwapH_nhe.AddCostComponent(cc2);
-  Sched_SwapH_nhe.AddCostComponent(cc3);
-  Sched_SwapH_nhe.AddCostComponent(cc4);
-  Sched_SwapH_nhe.AddCostComponent(cc5);
+  //Sched_SwapH_nhe.AddCostComponent(cc1);
+  //Sched_SwapH_nhe.AddCostComponent(cc2);
+  //Sched_SwapH_nhe.AddCostComponent(cc3);
+  //Sched_SwapH_nhe.AddCostComponent(cc4);
+  //Sched_SwapH_nhe.AddCostComponent(cc5);
 
   // Add all cost component to neighborhood explorer - slower than with delta costs
   Sched_AssignP_nhe.AddCostComponent(cc1);
@@ -83,13 +83,13 @@ int main(int argc, const char* argv[])
   SetUnionNeighborhoodExplorer <Sched_Input, Sched_Output, DefaultCostStructure<int>, Sched_SwapHours_NeighborhoodExplorer, Sched_AssignProf_NeighborhoodExplorer, Sched_SwapProf_NeighborhoodExplorer> Union_nhe(in, Sched_sm, "Union NHE", Sched_SwapH_nhe, Sched_AssignP_nhe, Sched_SwapP_nhe/*, std::array<double, modality> bias = std::array<double, modality>{0.0}*/);
   
   // runners
-  HillClimbing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_hc(in, Sched_sm, Union_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sd(in, Sched_sm, Union_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sa(in, Sched_sm, Union_nhe, "SA");
+  //HillClimbing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_hc(in, Sched_sm, Union_nhe, "HC");
+  //SteepestDescent<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sd(in, Sched_sm, Union_nhe, "SD");
+  //SimulatedAnnealing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sa(in, Sched_sm, Union_nhe, "SA");
 
-  //HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
-  //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
-  //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
+  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
 
   //HillClimbing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_hc(in, Sched_sm, Sched_AssignP_nhe, "HC");
   //SteepestDescent<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sd(in, Sched_sm, Sched_AssignP_nhe, "SD");

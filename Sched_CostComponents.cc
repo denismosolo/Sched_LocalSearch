@@ -14,7 +14,7 @@ int Sched_ProfUnavailability_CC::ComputeCost(const Sched_Output& out) const
     if (out.ProfAssignedDayOff(p) == -1 || (unsigned)out.ProfAssignedDayOff(p) != in.ProfUnavailability(p))
       violations++;
 
-  return violations * in.UnavailabilityViolationCost();
+  return violations;
 }
 
 void Sched_ProfUnavailability_CC::PrintViolations(const Sched_Output& out, ostream& os) const
@@ -45,7 +45,7 @@ int Sched_MaxSubjectHoursXDay_CC::ComputeCost(const Sched_Output& out) const
         if (out.DailySubjectAssignedHours(c, d, s) > in.SubjectMaxHoursXDay())
           violations += out.DailySubjectAssignedHours(c, d, s) - in.SubjectMaxHoursXDay();
 
-  return violations * in.MaxSubjectHoursXDayViolationCost();
+  return violations;
 }
 
 void Sched_MaxSubjectHoursXDay_CC::PrintViolations(const Sched_Output& out, ostream& os) const
@@ -71,7 +71,7 @@ int Sched_ProfMaxWeeklyHours_CC::ComputeCost(const Sched_Output& out) const
     if (out.ProfWeeklyAssignedHours(p) > in.ProfMaxWeeklyHours())
       violations += out.ProfWeeklyAssignedHours(p) - in.ProfMaxWeeklyHours();
 
-  return violations * in.MaxProfWeeklyHoursViolationCost();
+  return violations;
 }
 
 void Sched_ProfMaxWeeklyHours_CC::PrintViolations(const Sched_Output& out, ostream& os) const
@@ -101,7 +101,7 @@ int Sched_ScheduleContiguity_CC::ComputeCost(const Sched_Output& out) const
         subject_last_position = -1;
 
         for (h = 0; h < in.N_HoursXDay(); h++)
-          if (out.Class_Schedule(c, d, h) != -1 && (unsigned)out.Class_Schedule(c, d, h) == s)
+          if (out.Class_Schedule(c, d, h) != -1 && in.ProfSubject(out.Class_Schedule(c, d, h)) == s)
           {
             if (subject_last_position != -1 && h - subject_last_position > 1)
               violations++;
@@ -110,7 +110,7 @@ int Sched_ScheduleContiguity_CC::ComputeCost(const Sched_Output& out) const
           }
       }
 
-  return violations * in.ScheduleContiguityViolationCost();
+  return violations;
 }
 
 void Sched_ScheduleContiguity_CC::PrintViolations(const Sched_Output& out, ostream& os) const
@@ -175,35 +175,183 @@ void Sched_SolutionComplete_CC::PrintViolations(const Sched_Output& out, ostream
 
 int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
-// to be implemented
-// sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
-  return 0;
+  unsigned h;
+  int p1, p2;
+  int cost = 0;
+
+  p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
+  p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+
+  // sottraggo i vecchi costi
+  if (p1 != -1 && in.ProfUnavailability(p1) == mv.day_1)
+  {
+    for (h = 0; h < in.N_HoursXDay(); h++)
+      if (out.Class_Schedule(mv._class, mv.day_1, h) == p1 && mv.hour_1 != h) // se trovo il prof in un'altra ora della stessa giornata
+        break;
+    if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
+      cost--;  //  Il costo lo setta in automatico (weight)
+  }
+
+  if (p2 != -1 && in.ProfUnavailability(p2) == mv.day_2)
+  {
+    for (h = 0; h < in.N_HoursXDay(); h++)
+      if (out.Class_Schedule(mv._class, mv.day_2, h) == p2 && mv.hour_2 != h) // se trovo il prof in un'altra ora della stessa giornata
+        break;
+    if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
+      cost--;  //  Il costo lo setta in automatico (weight)
+  }
+
+  // sommo i nuovi costi
+  if (p1 != -1 && in.ProfUnavailability(p1) == mv.day_2)
+  {
+    for (h = 0; h < in.N_HoursXDay(); h++)
+      if (out.Class_Schedule(mv._class, mv.day_2, h) == p1 && mv.hour_2 != h) // se trovo il prof in un'altra ora della stessa giornata
+        break;
+    if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
+      cost++;  //  Il costo lo setta in automatico (weight)
+  }
+
+  if (p2 != -1 && in.ProfUnavailability(p2) == mv.day_1)
+  {
+    for (h = 0; h < in.N_HoursXDay(); h++)
+      if (out.Class_Schedule(mv._class, mv.day_1, h) == p2 && mv.hour_1 != h) // se trovo il prof in un'altra ora della stessa giornata
+        break;
+    if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
+      cost++;  //  Il costo lo setta in automatico (weight)
+  }
+
+  return cost;
 }
 
 int Sched_SwapHoursDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
-// to be implemented
-// sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
-  return 0;
+  int p1, p2;
+  int cost = 0;
+
+  p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
+  p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+
+  // sottraggo vecchi costi
+  if (p1 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_1, in.ProfSubject(p1)) > in.SubjectMaxHoursXDay())
+    cost--;
+  
+  if (p2 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_2, in.ProfSubject(p2)) > in.SubjectMaxHoursXDay())
+    cost--;
+
+  // sommo nuovi costi
+  if (p2 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_1, in.ProfSubject(p2)) >= in.SubjectMaxHoursXDay()) // aggiungo il caso = perché se sono al limite e ne aggiungo un'altra causo una violazione
+    cost++;
+
+  if (p1 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_2, in.ProfSubject(p1)) >= in.SubjectMaxHoursXDay())
+    cost++;
+
+  return cost;
 }
 
 int Sched_SwapHoursDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
-// to be implemented
-// sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
+  // Questa componente di costo non viene mai intaccata dalla mossa perché le ore settimanali assegnate ai prof non cambiano
   return 0;
 }
 
 int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
-// to be implemented
-// sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
-  return 0;
+  unsigned h, violations_old, violations_new;
+  int p1, p2, last_old_1, last_old_2, last_new_1, last_new_2;
+  int last_1, last_2;
+
+  violations_old = 0;
+  violations_new = 0;
+  p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
+  p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+  last_old_1 = -1;
+  last_old_2 = -1;
+  last_new_1 = -1;
+  last_new_2 = -1;
+  last_1 = -1;
+  last_2 = -1;
+
+  for (h = 0; h < in.N_HoursXDay(); h++)
+  {
+    // Devo verificare le nuove violazioni sia per la materia precedente che per quella nuova, per entrambe le giornate
+    // Violazioni attuali materia precedente
+    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1)
+    {
+      if (last_old_1 != -1 && h - last_old_1 > 1)
+        violations_old++;
+
+      last_1 = h;
+    }
+
+    // Violazioni attuali materia precedente
+    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2)
+    {
+      if (last_old_2 != -1 && h - last_old_2 > 1)
+        violations_old++;
+
+      last_2 = h;
+    }
+
+    // Violazioni attuali nuova materia
+    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
+    {
+      if (last_old_1 != -1 && h - last_old_1 > 1)
+        violations_old++;
+
+      last_1 = h;
+    }
+
+    // Violazioni attuali nuova materia
+    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
+    {
+      if (last_old_2 != -1 && h - last_old_2 > 1)
+        violations_old++;
+
+      last_2 = h;
+    }
+    
+    // Violazioni dovute alla rimozione della materia precedente
+    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
+    {
+      if (last_old_1 != -1 && h - last_old_1 > 1)
+        violations_new++;
+
+      last_old_1 = h;
+    }
+
+    // Violazioni dovute alla rimozione della materia precedente
+    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
+    {
+      if (last_old_2 != -1 && h - last_old_2 > 1)
+        violations_new++;
+
+      last_old_2 = h;
+    }
+
+    // Violazioni dovute all'inserimento della nuova materia
+    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p2)
+    {
+      if (last_new_1 != -1 && h - last_new_1 > 1)
+        violations_new++;
+
+      last_new_1 = h;
+    }
+
+    // Violazioni dovute all'inserimento della nuova materia
+    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p1)
+    {
+      if (last_new_2 != -1 && h - last_new_2 > 1)
+        violations_new++;
+
+      last_new_2 = h;
+    }
+  }
+
+  return violations_new - violations_old;
 }
 
 int Sched_SwapHoursDeltaCompleteSolution::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
-// to be implemented
-// sottrarre il costo della mossa che vado a togliere e sommare quello della nuova
+  // Questa componente di costo non viene mai intaccata dalla mossa perché le ore settimanali assegnate ai prof non cambiano
   return 0;
 }
