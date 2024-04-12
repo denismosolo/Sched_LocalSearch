@@ -257,19 +257,20 @@ int Sched_SwapHoursDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output&
 int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
   unsigned h, violations_old, violations_new;
-  int p1, p2, last_old_1, last_old_2, last_new_1, last_new_2;
-  int last_1, last_2;
+  int p1, p2, last_old_1, last_old_2, last_new_1, last_new_2, last_1, last_2, last_prev_1, last_prev_2;
 
   violations_old = 0;
   violations_new = 0;
   p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+  last_1 = -1;
+  last_2 = -1;
   last_old_1 = -1;
   last_old_2 = -1;
   last_new_1 = -1;
   last_new_2 = -1;
-  last_1 = -1;
-  last_2 = -1;
+  last_prev_1 = -1;
+  last_prev_2 = -1;
 
   for (h = 0; h < in.N_HoursXDay(); h++)
   {
@@ -280,7 +281,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
       if (last_old_1 != -1 && h - last_old_1 > 1)
         violations_old++;
 
-      last_1 = h;
+      last_prev_1 = h;
     }
 
     // Violazioni attuali materia precedente
@@ -289,7 +290,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
       if (last_old_2 != -1 && h - last_old_2 > 1)
         violations_old++;
 
-      last_2 = h;
+      last_prev_2 = h;
     }
 
     // Violazioni attuali nuova materia
