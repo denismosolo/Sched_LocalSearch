@@ -127,12 +127,12 @@ bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, 
 
   // Condizione che determina la fine della scansione dell'orario di una classe: non esiste nessuna mossa successiva allo scambio
   // degli ultimi due slot orari.
-  if (mv.day_1 == in.N_Days() - 1 && mv.hour_1 == in.N_HoursXDay() - 2 && mv.day_2 == in.N_Days() - 1 && mv.hour_2 == in.N_HoursXDay() - 1)
+  if (mv.day_1 == in.N_Days() - 1 && mv.hour_1 >= in.N_HoursXDay() - 2 && mv.day_2 == in.N_Days() - 1 && mv.hour_2 >= in.N_HoursXDay() - 1)
   {
     mv._class++;
 
     // Le classi sono finite
-    if (mv._class == in.N_Classes())
+    if (mv._class >= in.N_Classes())
       return false;
 
     mv.day_1 = 0;

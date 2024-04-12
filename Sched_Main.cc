@@ -87,9 +87,13 @@ int main(int argc, const char* argv[])
   //SteepestDescent<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sd(in, Sched_sm, Union_nhe, "SD");
   //SimulatedAnnealing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sa(in, Sched_sm, Union_nhe, "SA");
 
-  HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
-  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
-  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
+  HillClimbing<Sched_Input, Sched_Output, Sched_SwapProf> Sched_hc(in, Sched_sm, Sched_SwapP_nhe, "HC");
+  SteepestDescent<Sched_Input, Sched_Output, Sched_SwapProf> Sched_sd(in, Sched_sm, Sched_SwapP_nhe, "SD");
+  SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapProf> Sched_sa(in, Sched_sm, Sched_SwapP_nhe, "SA");
+
+  //HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
+  //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
+  //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
 
   //HillClimbing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_hc(in, Sched_sm, Sched_AssignP_nhe, "HC");
   //SteepestDescent<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sd(in, Sched_sm, Sched_AssignP_nhe, "SD");
@@ -99,6 +103,7 @@ int main(int argc, const char* argv[])
   Tester<Sched_Input, Sched_Output> tester(in, Sched_sm);
   MoveTester<Sched_Input, Sched_Output, Sched_SwapHours> swapH_move_test(in, Sched_sm, Sched_SwapH_nhe, "Sched_SwapHours move", tester);
   MoveTester<Sched_Input, Sched_Output, Sched_AssignProf> assignP_move_test(in, Sched_sm, Sched_AssignP_nhe, "Sched_AssignProf move", tester); 
+  MoveTester<Sched_Input, Sched_Output, Sched_SwapProf> swapP_move_test(in, Sched_sm, Sched_SwapP_nhe, "Sched_SwapProf move", tester);
 
   SimpleLocalSearch<Sched_Input, Sched_Output> Sched_solver(in, Sched_sm, "Sched solver");
   if (!CommandLineParameters::Parse(argc, argv, true, false))

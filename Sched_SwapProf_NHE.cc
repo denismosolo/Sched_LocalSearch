@@ -35,13 +35,20 @@ bool operator<(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2)
 istream& operator>>(istream& is, Sched_SwapProf& mv)
 {
   char ch;
-  is >> mv.prof_subject >> ch >> mv.class_1 >> ch >> mv.class_2;
+  
+  //is >> mv.prof_subject >> ch >> mv.class_1 >> ch >> mv.class_2;
+  //return is;
+
+  is >> mv.prof_subject >> ch >> ch >> mv.class_1 >> ch >> ch >> ch >> ch >> ch >> mv.class_2;
   return is;
 }
 
 ostream& operator<<(ostream& os, const Sched_SwapProf& mv)
 {
-  os << mv.prof_subject << " " << mv.class_1 << " " << mv.class_2;
+  //os << mv.prof_subject << " " << mv.class_1 << " " << mv.class_2;
+  //return os;
+
+  os << mv.prof_subject << ": " << mv.class_1 << " <-> " << mv.class_2;
   return os;
 }
 
@@ -74,16 +81,20 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
   if (out.Subject_Prof(mv.class_1, mv.prof_subject) == -1 || out.Subject_Prof(mv.class_2, mv.prof_subject) == -1)
     return false;
 
+  // Se le due classi hanno lo stesso prof per quella materia non ha senso lo scambio
+  if (out.Subject_Prof(mv.class_1, mv.prof_subject) == out.Subject_Prof(mv.class_2, mv.prof_subject))
+    return false;
+
   // Controlla incompatibilità di orario
   for(d = 0; d < in.N_Days(); d++)
     for (h = 0; h < in.N_HoursXDay(); h++)
     {
       // Il prof non è impegnato nella classe 1 e l'ora non è un ora buca (del prof):
       // il prof è quindi impengato con una classe terza non coinvolta nello scambio.
-      if (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) != mv.class_1 && out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) != -1)
+      if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) == mv.class_2 && (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) != mv.class_1 && out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) != -1))
         return false;
 
-      if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) != mv.class_2 && out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) != -1)
+      if (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) == mv.class_1 && (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) != mv.class_2 && out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) != -1))
         return false;
     }
 
@@ -116,10 +127,10 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
     }
 
   for (i = 0; i < hours_prof_1.size(); i++)
-    out.AssignHour(mv.class_2, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
+    out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
 
   for (i = 0; i < hours_prof_2.size(); i++)
-    out.AssignHour(mv.class_1, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
+    out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
 
 }  
 
@@ -145,17 +156,23 @@ bool Sched_SwapProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sche
 
 bool Sched_SwapProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
+  // Debug
+  //cerr << "Enters: " << "Subject: " << mv.prof_subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+
   // Ultimo scambio possibile tra due classi (a parità di materia)
-  if (mv.class_1 == in.N_Classes() - 2 && mv.class_2 == in.N_HoursXDay() - 1)
+  if (mv.class_1 >= in.N_Classes() - 2 && mv.class_2 >= in.N_Classes() - 1)
   {
     // Le materie sono finite
-    if (mv.prof_subject == in.N_Subjects() - 1)
+    if (mv.prof_subject >= in.N_Subjects() - 1)
       return false;
     
     mv.prof_subject++;
 
     mv.class_1 = 0;
     mv.class_2 = 1;
+
+    // Debug
+    //cerr << "Exits : " << "Subject: " << mv.prof_subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
 
     return true;
   }
@@ -169,6 +186,9 @@ bool Sched_SwapProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
     mv.class_1++;                 // Incrementa la classe 1
     mv.class_2 = mv.class_1 + 1;  // Imposta la classe 2 a quella successiva alla classe 1
   }
+
+  // Debug
+  //cerr << "Exits : " << "Subject: " << mv.prof_subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
 
   return true;
 }
