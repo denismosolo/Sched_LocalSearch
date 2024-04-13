@@ -89,21 +89,21 @@ void Sched_AssignProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, 
     if (available_profs.size() > 0)
       mv.prof = available_profs[Random::Uniform<int>(0, available_profs.size()-1)];
     else
-      mv.prof = -1; //break;
+      mv.prof = -1;
   } while (!FeasibleMove(out, mv));
   
 } 
 
 bool Sched_AssignProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  // If both Class and Prof are free
+  // If both Class and Prof are free  devo accettare il prof = -1 altrimenti RandomMove potrebbe trovarsi in un ciclo infinito se non esiste una mossa, tanto lo escludo il make move
   return mv.prof == -1 || (out.IsClassHourFree(mv._class, mv.day, mv.hour) && out.IsProfHourFree(mv.prof, mv.day, mv.hour));
 } 
 
 void Sched_AssignProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  if (mv.prof != -1)
-    out.AssignHour(mv._class, mv.day, mv.hour, mv.prof); //troppi check, sarebbero da rimuovere perché il codice deve essere efficiente non robusto -- valutare
+  if ( mv.prof != -1) //per risolvere il problema che potrebbe non esistere una mossa
+    out.AssignHour(mv._class, mv.day, mv.hour, mv.prof);
 }  
 
 void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
@@ -148,6 +148,8 @@ bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out,
     if (mv._class == in.N_Classes())
       return false;
 
+    mv.index = -1;
+    available_profs.clear();
     available_profs = GetAvailableProfs(in, out, mv._class);
   }
 
@@ -160,7 +162,7 @@ bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out,
   {
     // Move to next hour
     mv.hour++;
-    mv.index = -1;
+    mv.index = 0;
 
     if (mv.hour == in.N_HoursXDay())
     {
@@ -169,17 +171,23 @@ bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out,
 
       if (mv.day == in.N_Days())
       {
-        mv._class++;
-        mv.day = 0;
+        do
+        {
+          mv._class++;
 
-        if (mv._class == in.N_Classes())
-          return false;
+          if (mv._class == in.N_Classes())
+            return false;
         
-        available_profs.clear();
-        available_profs = GetAvailableProfs(in, out, mv._class);
+          available_profs.clear();
+          available_profs = GetAvailableProfs(in, out, mv._class);
+        } while (available_profs.size() == 0);
+
+        mv.day = 0;
       }
     }
   }
+
+  mv.prof = available_profs[mv.index];
 
   return true;
 }
