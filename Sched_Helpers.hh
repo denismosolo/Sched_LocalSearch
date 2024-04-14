@@ -97,6 +97,25 @@ public:
  * Sched_SwapHours Neighborhood Explorer - Neighborhood Manager:
  ***************************************************************************/
 
+class Sched_SwapHours_NeighborhoodExplorer
+  : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours> 
+{
+public:
+  Sched_SwapHours_NeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
+    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours>(pin, psm, "Sched_SwapHours_NeighborhoodExplorer") {} 
+  void RandomMove(const Sched_Output&, Sched_SwapHours&) const override;          
+  bool FeasibleMove(const Sched_Output&, const Sched_SwapHours&) const override;  
+  void MakeMove(Sched_Output&, const Sched_SwapHours&) const override;             
+  void FirstMove(const Sched_Output&, Sched_SwapHours&) const override;  
+  bool NextMove(const Sched_Output&, Sched_SwapHours&) const override;   
+protected:
+  bool AnyNextMove(const Sched_Output&, Sched_SwapHours&) const;   
+};
+
+/***************************************************************************
+ * Sched_SwapHours Neighborhood Explorer - DeltaCosts:
+ ***************************************************************************/
+
 class Sched_SwapHoursDeltaProfUnavailability
   : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>
 {
@@ -124,7 +143,7 @@ public:
   Sched_SwapHoursDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaProfMaxWeeklyHours") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override { return 0;};   // SwapHours can't change this cost
 };
 
 class Sched_SwapHoursDeltaScheduleContiguity
@@ -144,22 +163,7 @@ public:
   Sched_SwapHoursDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapHours>(in,cc,"Sched_SwapHoursDeltaCompleteSolution") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override;
-};
-
-class Sched_SwapHours_NeighborhoodExplorer
-  : public NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours> 
-{
-public:
-  Sched_SwapHours_NeighborhoodExplorer(const Sched_Input& pin, SolutionManager<Sched_Input,Sched_Output>& psm)  
-    : NeighborhoodExplorer<Sched_Input,Sched_Output,Sched_SwapHours>(pin, psm, "Sched_SwapHours_NeighborhoodExplorer") {} 
-  void RandomMove(const Sched_Output&, Sched_SwapHours&) const override;          
-  bool FeasibleMove(const Sched_Output&, const Sched_SwapHours&) const override;  
-  void MakeMove(Sched_Output&, const Sched_SwapHours&) const override;             
-  void FirstMove(const Sched_Output&, Sched_SwapHours&) const override;  
-  bool NextMove(const Sched_Output&, Sched_SwapHours&) const override;   
-protected:
-  bool AnyNextMove(const Sched_Output&, Sched_SwapHours&) const;   
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const override { return 0;};   // SwapHours can't change this cost
 };
 
 
@@ -204,6 +208,60 @@ protected:
   bool AnyNextMove(const Sched_Output&, Sched_AssignProf&) const;   
 };
 
+/***************************************************************************
+ * Sched_SwapProf Neighborhood Explorer - DeltaCosts:
+ ***************************************************************************/
+
+class Sched_AssignProfDeltaProfUnavailability
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>
+{
+public:
+  Sched_AssignProfDeltaProfUnavailability(const Sched_Input& in, Sched_ProfUnavailability_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaProfUnavailability") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+};
+
+class Sched_AssignProfDeltaMaxSubjectHoursXDay
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>
+{
+public:
+  Sched_AssignProfDeltaMaxSubjectHoursXDay(const Sched_Input& in, Sched_MaxSubjectHoursXDay_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaMaxSubjectHoursXDay") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+};
+
+class Sched_AssignProfDeltaProfMaxWeeklyHours
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>
+{
+public:
+  Sched_AssignProfDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaProfMaxWeeklyHours") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+};
+
+class Sched_AssignProfDeltaScheduleContiguity
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>
+{
+public:
+  Sched_AssignProfDeltaScheduleContiguity(const Sched_Input& in, Sched_ScheduleContiguity_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaScheduleContiguity") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+};
+
+class Sched_AssignProfDeltaCompleteSolution
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>
+{
+public:
+  Sched_AssignProfDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaCompleteSolution") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+};
+
 
 /***************************************************************************
  * Sched_SwapProf Neighborhood Explorer - Moves:
@@ -218,12 +276,13 @@ class Sched_SwapProf
   friend istream& operator>>(istream& is, Sched_SwapProf& c);
 
 public:
-  int prof_subject;
+  int subject;
   int class_1;
   int class_2;
 
   Sched_SwapProf();
 };
+
 
 /***************************************************************************
  * Sched_SwapProf Neighborhood Explorer - Neighborhood Manager:
@@ -244,4 +303,58 @@ protected:
   bool AnyNextMove(const Sched_Output&, Sched_SwapProf&) const;
 };
 
+
+/***************************************************************************
+ * Sched_SwapProf Neighborhood Explorer - DeltaCosts:
+ ***************************************************************************/
+
+class Sched_SwapProfDeltaProfUnavailability
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>
+{
+public:
+  Sched_SwapProfDeltaProfUnavailability(const Sched_Input& in, Sched_ProfUnavailability_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaProfUnavailability") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
+};
+
+class Sched_SwapProfDeltaMaxSubjectHoursXDay
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>
+{
+public:
+  Sched_SwapProfDeltaMaxSubjectHoursXDay(const Sched_Input& in, Sched_MaxSubjectHoursXDay_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaMaxSubjectHoursXDay") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
+};
+
+class Sched_SwapProfDeltaProfMaxWeeklyHours
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>
+{
+public:
+  Sched_SwapProfDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaProfMaxWeeklyHours") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
+};
+
+class Sched_SwapProfDeltaScheduleContiguity
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>
+{
+public:
+  Sched_SwapProfDeltaScheduleContiguity(const Sched_Input& in, Sched_ScheduleContiguity_CC& cc) 
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaScheduleContiguity") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
+};
+
+class Sched_SwapProfDeltaCompleteSolution
+  : public DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>
+{
+public:
+  Sched_SwapProfDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
+    : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaCompleteSolution") 
+  {}
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
+};
 #endif

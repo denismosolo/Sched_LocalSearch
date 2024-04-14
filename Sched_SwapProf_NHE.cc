@@ -9,23 +9,23 @@ Sched_SwapProf::Sched_SwapProf()
 {
   class_1 = -1;
   class_2 = -1;
-  prof_subject = -1;
+  subject = -1;
 }
 
 bool operator==(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2)
 {
-  return mv1.class_1 == mv2.class_1 && mv1.class_2 == mv2.class_2 && mv1.prof_subject == mv2.prof_subject;
+  return mv1.class_1 == mv2.class_1 && mv1.class_2 == mv2.class_2 && mv1.subject == mv2.subject;
 }
 
 bool operator!=(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2)
 {
-  return mv1.class_1 != mv2.class_1 || mv1.class_2 != mv2.class_2 || mv1.prof_subject != mv2.prof_subject;
+  return mv1.class_1 != mv2.class_1 || mv1.class_2 != mv2.class_2 || mv1.subject != mv2.subject;
 }
 
 bool operator<(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2)
 {
-  if (mv1.prof_subject != mv2.prof_subject)
-    return mv1.prof_subject < mv2.prof_subject;
+  if (mv1.subject != mv2.subject)
+    return mv1.subject < mv2.subject;
   else if (mv1.class_1 != mv2.class_1)
     return mv1.class_1 < mv2.class_1;
   else
@@ -36,19 +36,19 @@ istream& operator>>(istream& is, Sched_SwapProf& mv)
 {
   char ch;
   
-  //is >> mv.prof_subject >> ch >> mv.class_1 >> ch >> mv.class_2;
+  //is >> mv.subject >> ch >> mv.class_1 >> ch >> mv.class_2;
   //return is;
 
-  is >> mv.prof_subject >> ch >> ch >> mv.class_1 >> ch >> ch >> ch >> ch >> ch >> mv.class_2;
+  is >> mv.subject >> ch >> ch >> mv.class_1 >> ch >> ch >> ch >> ch >> ch >> mv.class_2;
   return is;
 }
 
 ostream& operator<<(ostream& os, const Sched_SwapProf& mv)
 {
-  //os << mv.prof_subject << " " << mv.class_1 << " " << mv.class_2;
+  //os << mv.subject << " " << mv.class_1 << " " << mv.class_2;
   //return os;
 
-  os << mv.prof_subject << ": " << mv.class_1 << " <-> " << mv.class_2;
+  os << mv.subject << ": " << mv.class_1 << " <-> " << mv.class_2;
   return os;
 }
 
@@ -60,7 +60,7 @@ void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
 {
   do
   {
-    mv.prof_subject = Random::Uniform<int>(0, in.N_Subjects() - 1);
+    mv.subject = Random::Uniform<int>(0, in.N_Subjects() - 1);
 
     mv.class_1 = Random::Uniform<int>(0, in.N_Classes() - 1);
     mv.class_2 = Random::Uniform<int>(0, in.N_Classes() - 1);
@@ -78,11 +78,11 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
 
   // Se non è stato assegnato ancora un prof per quella materia per una delle due classi,
   // la mossa non è valida (non esiste scambio)
-  if (out.Subject_Prof(mv.class_1, mv.prof_subject) == -1 || out.Subject_Prof(mv.class_2, mv.prof_subject) == -1)
+  if (out.Subject_Prof(mv.class_1, mv.subject) == -1 || out.Subject_Prof(mv.class_2, mv.subject) == -1)
     return false;
 
   // Se le due classi hanno lo stesso prof per quella materia non ha senso lo scambio
-  if (out.Subject_Prof(mv.class_1, mv.prof_subject) == out.Subject_Prof(mv.class_2, mv.prof_subject))
+  if (out.Subject_Prof(mv.class_1, mv.subject) == out.Subject_Prof(mv.class_2, mv.subject))
     return false;
 
   // Controlla incompatibilità di orario
@@ -91,10 +91,10 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
     {
       // Il prof non è impegnato nella classe 1 e l'ora non è un ora buca (del prof):
       // il prof è quindi impengato con una classe terza non coinvolta nello scambio.
-      if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) == mv.class_2 && (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) != mv.class_1 && out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) != -1))
+      if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) == mv.class_2 && (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) != mv.class_1 && out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) != -1))
         return false;
 
-      if (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.prof_subject), d, h) == mv.class_1 && (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) != mv.class_2 && out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.prof_subject), d, h) != -1))
+      if (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) == mv.class_1 && (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) != mv.class_2 && out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) != -1))
         return false;
     }
 
@@ -105,8 +105,8 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
 {
   unsigned d, h, i;
 
-  int prof_1 = out.Subject_Prof(mv.class_1, mv.prof_subject);
-  int prof_2 = out.Subject_Prof(mv.class_2, mv.prof_subject);
+  int prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
+  int prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
   vector<pair<unsigned, unsigned>> hours_prof_1(0);
   vector<pair<unsigned, unsigned>> hours_prof_2(0);
 
@@ -136,7 +136,7 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
 
 void Sched_SwapProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-  mv.prof_subject = 0;
+  mv.subject = 0;
 
   mv.class_1 = 0;
   mv.class_2 = 1;
@@ -157,22 +157,22 @@ bool Sched_SwapProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sche
 bool Sched_SwapProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
   // Debug
-  //cerr << "Enters: " << "Subject: " << mv.prof_subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+  //cerr << "Enters: " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
 
   // Ultimo scambio possibile tra due classi (a parità di materia)
   if (mv.class_1 >= in.N_Classes() - 2 && mv.class_2 >= in.N_Classes() - 1)
   {
     // Le materie sono finite
-    if (mv.prof_subject >= in.N_Subjects() - 1)
+    if (mv.subject >= in.N_Subjects() - 1)
       return false;
     
-    mv.prof_subject++;
+    mv.subject++;
 
     mv.class_1 = 0;
     mv.class_2 = 1;
 
     // Debug
-    //cerr << "Exits : " << "Subject: " << mv.prof_subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+    //cerr << "Exits : " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
 
     return true;
   }
@@ -188,7 +188,7 @@ bool Sched_SwapProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
   }
 
   // Debug
-  //cerr << "Exits : " << "Subject: " << mv.prof_subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+  //cerr << "Exits : " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
 
   return true;
 }
