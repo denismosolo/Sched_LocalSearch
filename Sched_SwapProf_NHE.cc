@@ -10,6 +10,8 @@ Sched_SwapProf::Sched_SwapProf()
   class_1 = -1;
   class_2 = -1;
   subject = -1;
+  moves = false;
+  first_move = false;
 }
 
 bool operator==(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2)
@@ -35,9 +37,6 @@ bool operator<(const Sched_SwapProf& mv1, const Sched_SwapProf& mv2)
 istream& operator>>(istream& is, Sched_SwapProf& mv)
 {
   char ch;
-  
-  //is >> mv.subject >> ch >> mv.class_1 >> ch >> mv.class_2;
-  //return is;
 
   is >> mv.subject >> ch >> ch >> mv.class_1 >> ch >> ch >> ch >> ch >> ch >> mv.class_2;
   return is;
@@ -45,9 +44,6 @@ istream& operator>>(istream& is, Sched_SwapProf& mv)
 
 ostream& operator<<(ostream& os, const Sched_SwapProf& mv)
 {
-  //os << mv.subject << " " << mv.class_1 << " " << mv.class_2;
-  //return os;
-
   os << mv.subject << ": " << mv.class_1 << " <-> " << mv.class_2;
   return os;
 }
@@ -58,15 +54,20 @@ ostream& operator<<(ostream& os, const Sched_SwapProf& mv)
 
 void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-  do
+  if (in.N_Profs() == in.N_Subjects())  // significa che ho un solo professore per ciascuna materia --> non esiste scambio (assumo che non ci siano materie senza professore, nel caso è un errore dell'utente)
+    mv.moves = false;
+  else
   {
-    mv.subject = Random::Uniform<int>(0, in.N_Subjects() - 1);
+    mv.moves = true;
+    do
+    {
+      mv.subject = Random::Uniform<int>(0, in.N_Subjects() - 1);
 
-    mv.class_1 = Random::Uniform<int>(0, in.N_Classes() - 1);
-    mv.class_2 = Random::Uniform<int>(0, in.N_Classes() - 1);
+      mv.class_1 = Random::Uniform<int>(0, in.N_Classes() - 1);
+      mv.class_2 = Random::Uniform<int>(0, in.N_Classes() - 1);
 
-  } while (!FeasibleMove(out, mv));
-  
+    } while (!FeasibleMove(out, mv));
+  }
 } 
 
 bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_SwapProf& mv) const
@@ -110,36 +111,48 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
   vector<pair<unsigned, unsigned>> hours_prof_1(0);
   vector<pair<unsigned, unsigned>> hours_prof_2(0);
 
-  for (d = 0; d < in.N_Days(); d++)
-    for (h = 0; h < in.N_HoursXDay(); h++)
+  if(mv.moves)
+    if ((mv.first_move && FeasibleMove(out, mv)) || !mv.first_move)
     {
-      if (out.Class_Schedule(mv.class_1, d, h) == prof_1)
-      {
-        hours_prof_1.push_back(pair<unsigned, unsigned>(d, h));
-        out.FreeHour(mv.class_1, d, h);
-      }
-      
-      if (out.Class_Schedule(mv.class_2, d, h) == prof_2)
-      {
-        hours_prof_2.push_back(pair<unsigned, unsigned>(d, h));
-        out.FreeHour(mv.class_2, d, h);
-      }
+      for (d = 0; d < in.N_Days(); d++)
+        for (h = 0; h < in.N_HoursXDay(); h++)
+        {
+          if (out.Class_Schedule(mv.class_1, d, h) == prof_1)
+          {
+            hours_prof_1.push_back(pair<unsigned, unsigned>(d, h));
+            out.FreeHour(mv.class_1, d, h);
+          }
+          
+          if (out.Class_Schedule(mv.class_2, d, h) == prof_2)
+          {
+            hours_prof_2.push_back(pair<unsigned, unsigned>(d, h));
+            out.FreeHour(mv.class_2, d, h);
+          }
+        }
+
+      for (i = 0; i < hours_prof_1.size(); i++)
+        out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
+
+      for (i = 0; i < hours_prof_2.size(); i++)
+        out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
     }
-
-  for (i = 0; i < hours_prof_1.size(); i++)
-    out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
-
-  for (i = 0; i < hours_prof_2.size(); i++)
-    out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
-
 }  
 
 void Sched_SwapProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-  mv.subject = 0;
+  mv.first_move = true;
 
-  mv.class_1 = 0;
-  mv.class_2 = 1;
+  if (in.N_Profs() == in.N_Subjects())  // significa che ho un solo professore per ciascuna materia --> non esiste scambio (assumo che non ci siano materie senza professore, nel caso è un errore dell'utente)
+    mv.moves = false;
+  else
+  {
+    mv.moves = true;
+
+    mv.subject = 0;
+
+    mv.class_1 = 0;
+    mv.class_2 = 1;
+  }
 }
 
 bool Sched_SwapProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_SwapProf& mv) const
@@ -158,6 +171,8 @@ bool Sched_SwapProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, S
 {
   // Debug
   //cerr << "Enters: " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+
+  mv.first_move = false;
 
   // Ultimo scambio possibile tra due classi (a parità di materia)
   if (mv.class_1 >= in.N_Classes() - 2 && mv.class_2 >= in.N_Classes() - 1)

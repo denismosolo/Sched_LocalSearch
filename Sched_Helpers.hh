@@ -282,6 +282,8 @@ public:
   int subject;
   int class_1;
   int class_2;
+  bool moves;
+  bool first_move;
 
   Sched_SwapProf();
 };
