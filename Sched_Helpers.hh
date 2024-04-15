@@ -89,6 +89,7 @@ public:
   int hour_1;
   int day_2;
   int hour_2;
+  bool first_move;
 
   Sched_SwapHours();
 };
