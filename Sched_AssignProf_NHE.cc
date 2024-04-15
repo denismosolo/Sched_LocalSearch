@@ -112,7 +112,7 @@ void Sched_AssignProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, 
 bool Sched_AssignProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
   // If both Class and Prof are free
-  return out.IsClassHourFree(mv._class, mv.day, mv.hour) && out.IsProfHourFree(mv.prof, mv.day, mv.hour);
+  return mv.moves && (out.IsClassHourFree(mv._class, mv.day, mv.hour) && out.IsProfHourFree(mv.prof, mv.day, mv.hour));
 } 
 
 void Sched_AssignProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_AssignProf& mv) const
@@ -131,6 +131,8 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
   for (c = 0; c < in.N_Classes(); c++)
     if (GetAvailableProfs(in, out, c).size() > 0)
       break;
+
+  cerr << c << endl;
 
   if (c == in.N_Classes())  // Non ci sono mosse
     mv.moves = false;

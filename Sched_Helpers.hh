@@ -222,7 +222,7 @@ public:
   Sched_AssignProfDeltaProfUnavailability(const Sched_Input& in, Sched_ProfUnavailability_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaProfUnavailability") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return 0;};
 };
 
 class Sched_AssignProfDeltaMaxSubjectHoursXDay
@@ -232,7 +232,7 @@ public:
   Sched_AssignProfDeltaMaxSubjectHoursXDay(const Sched_Input& in, Sched_MaxSubjectHoursXDay_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaMaxSubjectHoursXDay") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return 0;};
 };
 
 class Sched_AssignProfDeltaProfMaxWeeklyHours
@@ -242,7 +242,7 @@ public:
   Sched_AssignProfDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaProfMaxWeeklyHours") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return 0;};
 };
 
 class Sched_AssignProfDeltaScheduleContiguity
@@ -252,7 +252,7 @@ public:
   Sched_AssignProfDeltaScheduleContiguity(const Sched_Input& in, Sched_ScheduleContiguity_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaScheduleContiguity") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return 0;};
 };
 
 class Sched_AssignProfDeltaCompleteSolution
@@ -262,7 +262,7 @@ public:
   Sched_AssignProfDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaCompleteSolution") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return -1;};
 };
 
 
@@ -340,7 +340,7 @@ public:
   Sched_SwapProfDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaProfMaxWeeklyHours") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0;};
 };
 
 class Sched_SwapProfDeltaScheduleContiguity
