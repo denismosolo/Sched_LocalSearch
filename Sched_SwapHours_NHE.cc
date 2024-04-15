@@ -96,7 +96,7 @@ bool Sched_SwapHours_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out,
 void Sched_SwapHours_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_SwapHours& mv) const
 {
   if ((mv.first_move && FeasibleMove(out, mv)) || !mv.first_move)
-  out.SwapHours(mv._class, mv.day_1, mv.hour_1, mv._class, mv.day_2, mv.hour_2);
+    out.SwapHours(mv._class, mv.day_1, mv.hour_1, mv._class, mv.day_2, mv.hour_2);
 }  
 
 void Sched_SwapHours_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapHours& mv) const
@@ -126,9 +126,6 @@ bool Sched_SwapHours_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sch
 
 bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
-  // Debug
-  //cout << "  Enters: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
-
   mv.first_move = false;
 
   // Condizione che determina la fine della scansione dell'orario di una classe: non esiste nessuna mossa successiva allo scambio
@@ -145,9 +142,6 @@ bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, 
     mv.hour_1 = 0;
     mv.day_2 = 0;
     mv.hour_2 = 1;
-
-    // Debug
-    //cout << "  Exits: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
 
     return true;
   }
@@ -184,9 +178,6 @@ bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, 
       }
     }
   }
-  
-  // Debug
-  //cout << "  Exits: " << "(" << mv.day_1 << ", " << mv.hour_1 << ") <-> (" << mv.day_2 << ", " << mv.hour_2 << ")" << endl;
 
   return true;
 }
