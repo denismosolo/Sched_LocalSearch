@@ -250,100 +250,156 @@ int Sched_SwapHoursDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output
 
 int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
-  unsigned h, violations_old, violations_new;
-  int p1, p2, last_old_1, last_old_2, last_new_1, last_new_2, last_1, last_2, last_prev_1, last_prev_2;
+  unsigned h;
+  unsigned violations_old = 0;
+  unsigned violations_new = 0;
 
-  violations_old = 0;
-  violations_new = 0;
-  p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
-  p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
-  last_1 = -1;
-  last_2 = -1;
-  last_old_1 = -1;
-  last_old_2 = -1;
-  last_new_1 = -1;
-  last_new_2 = -1;
-  last_prev_1 = -1;
-  last_prev_2 = -1;
+  int p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
+  int p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+  int last_old_1 = -1;
+  int last_old_2 = -1;
+  int last_new_1 = -1;
+  int last_new_2 = -1;
 
+  // Scorro l'orario per ora valutando solo le giornate coinvolte dallo scambio di ore
   for (h = 0; h < in.N_HoursXDay(); h++)
   {
-    // Devo verificare le nuove violazioni sia per la materia precedente che per quella nuova, per entrambe le giornate
-    // Violazioni attuali materia precedente
-    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1)
+
+    // Violazioni attuali della "materia 1" nella giornata coinvolta nello scambio
+    if (out.Class_Schedule(mv._class, mv.day_1, h) == p1)
     {
-      if (last_old_1 != -1 && h - last_old_1 > 1)
+      if(last_old_1 != -1 && h - last_old_1 > 1)
         violations_old++;
-
-      last_prev_1 = h;
-    }
-
-    // Violazioni attuali materia precedente
-    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2)
-    {
-      if (last_old_2 != -1 && h - last_old_2 > 1)
-        violations_old++;
-
-      last_prev_2 = h;
-    }
-
-    // Violazioni attuali nuova materia
-    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
-    {
-      if (last_old_1 != -1 && h - last_old_1 > 1)
-        violations_old++;
-
-      last_1 = h;
-    }
-
-    // Violazioni attuali nuova materia
-    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
-    {
-      if (last_old_2 != -1 && h - last_old_2 > 1)
-        violations_old++;
-
-      last_2 = h;
-    }
-    
-    // Violazioni dovute alla rimozione della materia precedente
-    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
-    {
-      if (last_old_1 != -1 && h - last_old_1 > 1)
-        violations_new++;
-
       last_old_1 = h;
     }
-
-    // Violazioni dovute alla rimozione della materia precedente
-    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
+    
+    // Violazioni attuali della "materia 2" nella giornata coinvolta nello scambio
+    if (out.Class_Schedule(mv._class, mv.day_2, h) == p2)
     {
       if (last_old_2 != -1 && h - last_old_2 > 1)
-        violations_new++;
-
+        violations_old++;
       last_old_2 = h;
     }
 
-    // Violazioni dovute all'inserimento della nuova materia
-    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p2)
+    // Violazioni della "materia 1" nella giornata attualmente occupata dalla "materia 2" se lo scambio viene effettuato.
+    // NOTA: l'ora nella giornata 2 è attualmente occupata dalla materia 1, oppure è l'ora che verrà occupata dalla "materia 1" 
+    // se lo scambio viene effettuato.
+    if (out.Class_Schedule(mv._class, mv.day_2, h) == p1 || h == mv.hour_2)
     {
       if (last_new_1 != -1 && h - last_new_1 > 1)
         violations_new++;
-
       last_new_1 = h;
     }
 
-    // Violazioni dovute all'inserimento della nuova materia
-    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p1)
+    // Violazioni della "materia 2" nella giornata attualmente occupata dalla "materia 1" se lo scambio viene effettuato.
+    if (out.Class_Schedule(mv._class, mv.day_1, h) == p2 || h == mv.hour_1)
     {
       if (last_new_2 != -1 && h - last_new_2 > 1)
         violations_new++;
-
       last_new_2 = h;
     }
+
   }
 
   return violations_new - violations_old;
 }
+
+//int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
+//{
+//  unsigned h;
+//  unsigned violations_old = 0;
+//  unsigned violations_new = 0;
+//  
+//  int p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
+//  int p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+//  int last_1 = -1;
+//  int last_2 = -1;
+//  int last_old_1 = -1;
+//  int last_old_2 = -1;
+//  int last_new_1 = -1;
+//  int last_new_2 = -1;
+//  int last_prev_1 = -1;
+//  int last_prev_2 = -1;
+//
+//  for (h = 0; h < in.N_HoursXDay(); h++)
+//  {
+//    // Devo verificare le nuove violazioni sia per la materia precedente che per quella nuova, per entrambe le giornate
+//
+//    // Violazioni attuali materia precedente
+//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1)
+//    {
+//      if (last_old_1 != -1 && h - last_old_1 > 1)
+//        violations_old++;
+//
+//      last_prev_1 = h;
+//    }
+//
+//    // Violazioni attuali materia precedente
+//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2)
+//    {
+//      if (last_old_2 != -1 && h - last_old_2 > 1)
+//        violations_old++;
+//
+//      last_prev_2 = h;
+//    }
+//
+//    // Violazioni attuali nuova materia
+//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
+//    {
+//      if (last_old_1 != -1 && h - last_old_1 > 1)
+//        violations_old++;
+//
+//      last_1 = h;
+//    }
+//
+//    // Violazioni attuali nuova materia
+//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
+//    {
+//      if (last_old_2 != -1 && h - last_old_2 > 1)
+//        violations_old++;
+//
+//      last_2 = h;
+//    }
+//    
+//    // Violazioni dovute alla rimozione della materia precedente
+//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
+//    {
+//      if (last_old_1 != -1 && h - last_old_1 > 1)
+//        violations_new++;
+//
+//      last_old_1 = h;
+//    }
+//
+//    // Violazioni dovute alla rimozione della materia precedente
+//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
+//    {
+//      if (last_old_2 != -1 && h - last_old_2 > 1)
+//        violations_new++;
+//
+//      last_old_2 = h;
+//    }
+//
+//    // Violazioni dovute all'inserimento della nuova materia
+//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p2)
+//    {
+//      if (last_new_1 != -1 && h - last_new_1 > 1)
+//        violations_new++;
+//
+//      last_new_1 = h;
+//    }
+//
+//    // Violazioni dovute all'inserimento della nuova materia
+//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p1)
+//    {
+//      if (last_new_2 != -1 && h - last_new_2 > 1)
+//        violations_new++;
+//
+//      last_new_2 = h;
+//    }
+//  }
+//
+//  return violations_new - violations_old;
+//}
 
 
 /***************************************************************************
