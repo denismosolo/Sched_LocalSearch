@@ -27,17 +27,29 @@ int main(int argc, const char* argv[])
     Random::SetSeed(seed);
   
   // cost components: second parameter is the cost, third is the type (true -> hard, false -> soft)
-  Sched_ProfUnavailability_CC cc1(in, in.UnavailabilityViolationCost(), false);
-  Sched_MaxSubjectHoursXDay_CC cc2(in, in.MaxSubjectHoursXDayViolationCost(), false);
-  Sched_ProfMaxWeeklyHours_CC cc3(in, in.MaxProfWeeklyHoursViolationCost(), false);
-  Sched_ScheduleContiguity_CC cc4(in, in.ScheduleContiguityViolationCost(), false);
-  Sched_SolutionComplete_CC cc5(in, 1, true);
+  Sched_ProfUnavailability_CC cc_PU(in, in.UnavailabilityViolationCost(), false);
+  Sched_MaxSubjectHoursXDay_CC cc_MSHD(in, in.MaxSubjectHoursXDayViolationCost(), false);
+  Sched_ProfMaxWeeklyHours_CC cc_PWMH(in, in.MaxProfWeeklyHoursViolationCost(), false);
+  Sched_ScheduleContiguity_CC cc_SC(in, in.ScheduleContiguityViolationCost(), false);
+  Sched_SolutionComplete_CC cc_CS(in, 1, true);
  
-  Sched_SwapHoursDeltaProfUnavailability dcc1(in, cc1);
-  Sched_SwapHoursDeltaMaxSubjectHoursXDay dcc2(in, cc2);
-  Sched_SwapHoursDeltaProfMaxWeeklyHours dcc3(in, cc3);
-  Sched_SwapHoursDeltaScheduleContiguity dcc4(in, cc4);
-  Sched_SwapHoursDeltaCompleteSolution dcc5(in, cc5);
+  Sched_SwapHoursDeltaProfUnavailability SwapH_dcc_PU(in, cc_PU);
+  Sched_SwapHoursDeltaMaxSubjectHoursXDay SwapH_dcc_MSHD(in, cc_MSHD);
+  Sched_SwapHoursDeltaProfMaxWeeklyHours SwapH_dcc_PMWH(in, cc_PWMH);
+  Sched_SwapHoursDeltaScheduleContiguity SwapH_dcc_SC(in, cc_SC);
+  Sched_SwapHoursDeltaCompleteSolution SwapH_dcc_CS(in, cc_CS);
+
+  Sched_AssignProfDeltaProfUnavailability  AssignP_dcc_PU(in, cc_PU);
+  Sched_AssignProfDeltaMaxSubjectHoursXDay AssignP_dcc_MSHD(in, cc_MSHD);
+  Sched_AssignProfDeltaProfMaxWeeklyHours AssignP_dcc_PMWH(in, cc_PWMH);
+  Sched_AssignProfDeltaScheduleContiguity AssignP_dcc_SC(in, cc_SC);
+  Sched_AssignProfDeltaCompleteSolution AssignP_dcc_CS(in, cc_CS);
+
+  Sched_SwapProfDeltaProfUnavailability  SwapP_dcc_PU(in, cc_PU);
+  Sched_SwapProfDeltaMaxSubjectHoursXDay SwapP_dcc_MSHD(in, cc_MSHD);
+  Sched_SwapProfDeltaProfMaxWeeklyHours SwapP_dcc_PMWH(in, cc_PWMH);
+  Sched_SwapProfDeltaScheduleContiguity SwapP_dcc_SC(in, cc_SC);
+  Sched_SwapProfDeltaCompleteSolution SwapP_dcc_CS(in, cc_CS);
 
   // helpers
   Sched_SolutionManager Sched_sm(in);
@@ -46,39 +58,53 @@ int main(int argc, const char* argv[])
   Sched_SwapProf_NeighborhoodExplorer Sched_SwapP_nhe(in, Sched_sm);
   
   // All cost components must be added to the state manager
-  Sched_sm.AddCostComponent(cc1);
-  Sched_sm.AddCostComponent(cc2);
-  Sched_sm.AddCostComponent(cc3);
-  Sched_sm.AddCostComponent(cc4);
-  Sched_sm.AddCostComponent(cc5);
+  Sched_sm.AddCostComponent(cc_PU);
+  Sched_sm.AddCostComponent(cc_MSHD);
+  Sched_sm.AddCostComponent(cc_PWMH);
+  Sched_sm.AddCostComponent(cc_SC);
+  Sched_sm.AddCostComponent(cc_CS);
   
-  // All delta cost components must be added to the neighborhood explorer
-  Sched_SwapH_nhe.AddDeltaCostComponent(dcc1);
-  Sched_SwapH_nhe.AddDeltaCostComponent(dcc2);
-  Sched_SwapH_nhe.AddDeltaCostComponent(dcc3);
-  Sched_SwapH_nhe.AddDeltaCostComponent(dcc4);
-  Sched_SwapH_nhe.AddDeltaCostComponent(dcc5);
+  // Add all cost components for SwapHour to the neighborhood explorer
+  Sched_SwapH_nhe.AddCostComponent(cc_PU);
+  Sched_SwapH_nhe.AddCostComponent(cc_MSHD);
+  Sched_SwapH_nhe.AddCostComponent(cc_PWMH);
+  Sched_SwapH_nhe.AddCostComponent(cc_SC);
+  Sched_SwapH_nhe.AddCostComponent(cc_CS);
 
-  // Add all cost component to neighborhood explorer - slower than with delta costs
-  //Sched_SwapH_nhe.AddCostComponent(cc1);
-  //Sched_SwapH_nhe.AddCostComponent(cc2);
-  //Sched_SwapH_nhe.AddCostComponent(cc3);
-  //Sched_SwapH_nhe.AddCostComponent(cc4);
-  //Sched_SwapH_nhe.AddCostComponent(cc5);
+  // All delta cost components for SwapHour to the neighborhood explorer
+  Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_PU);
+  Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_MSHD);
+  Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_PMWH);
+  Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_SC);
+  Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_CS);
 
-  // Add all cost component to neighborhood explorer - slower than with delta costs
-  Sched_AssignP_nhe.AddCostComponent(cc1);
-  Sched_AssignP_nhe.AddCostComponent(cc2);
-  Sched_AssignP_nhe.AddCostComponent(cc3);
-  Sched_AssignP_nhe.AddCostComponent(cc4);
-  Sched_AssignP_nhe.AddCostComponent(cc5);
+  // Add all cost components for AssignProf to the neighborhood explorer
+  Sched_AssignP_nhe.AddCostComponent(cc_PU);
+  Sched_AssignP_nhe.AddCostComponent(cc_MSHD);
+  Sched_AssignP_nhe.AddCostComponent(cc_PWMH);
+  Sched_AssignP_nhe.AddCostComponent(cc_SC);
+  Sched_AssignP_nhe.AddCostComponent(cc_CS);
 
-  // Add all cost component to neighborhood explorer - slower than with delta costs
-  Sched_SwapP_nhe.AddCostComponent(cc1);
-  Sched_SwapP_nhe.AddCostComponent(cc2);
-  Sched_SwapP_nhe.AddCostComponent(cc3);
-  Sched_SwapP_nhe.AddCostComponent(cc4);
-  Sched_SwapP_nhe.AddCostComponent(cc5);
+  // All delta cost components for AssignProf to the neighborhood explorer
+  Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_PU);
+  Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_MSHD);
+  Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_PMWH);
+  Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_SC);
+  Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_CS);
+
+  // Add all cost components for SwapProf to the neighborhood explorer
+  Sched_SwapP_nhe.AddCostComponent(cc_PU);
+  Sched_SwapP_nhe.AddCostComponent(cc_MSHD);
+  Sched_SwapP_nhe.AddCostComponent(cc_PWMH);
+  Sched_SwapP_nhe.AddCostComponent(cc_SC);
+  Sched_SwapP_nhe.AddCostComponent(cc_CS);
+
+  // All delta cost components for SwapProf to the neighborhood explorer
+  Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_PU);
+  Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_MSHD);
+  Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_PMWH);
+  Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_SC);
+  Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_CS);
 
   SetUnionNeighborhoodExplorer <Sched_Input, Sched_Output, DefaultCostStructure<int>, Sched_SwapHours_NeighborhoodExplorer, Sched_AssignProf_NeighborhoodExplorer, Sched_SwapProf_NeighborhoodExplorer> Union_nhe(in, Sched_sm, "Union NHE", Sched_SwapH_nhe, Sched_AssignP_nhe, Sched_SwapP_nhe/*, std::array<double, modality> bias = std::array<double, modality>{0.0}*/);
   
