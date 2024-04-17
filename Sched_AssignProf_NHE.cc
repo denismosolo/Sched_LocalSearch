@@ -132,8 +132,6 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
     if (GetAvailableProfs(in, out, c).size() > 0)
       break;
 
-  cerr << c << endl;
-
   if (c == in.N_Classes())  // Non ci sono mosse
     mv.moves = false;
   else

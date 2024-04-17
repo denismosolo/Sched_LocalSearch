@@ -252,8 +252,7 @@ int Sched_SwapHoursDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output
 int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
 {
   unsigned h;
-  unsigned violations_old = 0;
-  unsigned violations_new = 0;
+  int cost = 0;
 
   int p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   int p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
@@ -270,7 +269,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     if (out.Class_Schedule(mv._class, mv.day_1, h) == p1)
     {
       if(last_old_1 != -1 && h - last_old_1 > 1)
-        violations_old++;
+        cost--;
       last_old_1 = h;
     }
     
@@ -278,7 +277,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     if (out.Class_Schedule(mv._class, mv.day_2, h) == p2)
     {
       if (last_old_2 != -1 && h - last_old_2 > 1)
-        violations_old++;
+        cost--;
       last_old_2 = h;
     }
 
@@ -288,7 +287,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     if (out.Class_Schedule(mv._class, mv.day_2, h) == p1 || h == mv.hour_2)
     {
       if (last_new_1 != -1 && h - last_new_1 > 1)
-        violations_new++;
+        cost++;
       last_new_1 = h;
     }
 
@@ -296,111 +295,12 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     if (out.Class_Schedule(mv._class, mv.day_1, h) == p2 || h == mv.hour_1)
     {
       if (last_new_2 != -1 && h - last_new_2 > 1)
-        violations_new++;
+        cost++;
       last_new_2 = h;
     }
-
   }
-
-  return violations_new - violations_old;
+  return cost;
 }
-
-//int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapHours& mv) const
-//{
-//  unsigned h;
-//  unsigned violations_old = 0;
-//  unsigned violations_new = 0;
-//  
-//  int p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
-//  int p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
-//  int last_1 = -1;
-//  int last_2 = -1;
-//  int last_old_1 = -1;
-//  int last_old_2 = -1;
-//  int last_new_1 = -1;
-//  int last_new_2 = -1;
-//  int last_prev_1 = -1;
-//  int last_prev_2 = -1;
-//
-//  for (h = 0; h < in.N_HoursXDay(); h++)
-//  {
-//    // Devo verificare le nuove violazioni sia per la materia precedente che per quella nuova, per entrambe le giornate
-//
-//    // Violazioni attuali materia precedente
-//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1)
-//    {
-//      if (last_old_1 != -1 && h - last_old_1 > 1)
-//        violations_old++;
-//
-//      last_prev_1 = h;
-//    }
-//
-//    // Violazioni attuali materia precedente
-//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2)
-//    {
-//      if (last_old_2 != -1 && h - last_old_2 > 1)
-//        violations_old++;
-//
-//      last_prev_2 = h;
-//    }
-//
-//    // Violazioni attuali nuova materia
-//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
-//    {
-//      if (last_old_1 != -1 && h - last_old_1 > 1)
-//        violations_old++;
-//
-//      last_1 = h;
-//    }
-//
-//    // Violazioni attuali nuova materia
-//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
-//    {
-//      if (last_old_2 != -1 && h - last_old_2 > 1)
-//        violations_old++;
-//
-//      last_2 = h;
-//    }
-//    
-//    // Violazioni dovute alla rimozione della materia precedente
-//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
-//    {
-//      if (last_old_1 != -1 && h - last_old_1 > 1)
-//        violations_new++;
-//
-//      last_old_1 = h;
-//    }
-//
-//    // Violazioni dovute alla rimozione della materia precedente
-//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
-//    {
-//      if (last_old_2 != -1 && h - last_old_2 > 1)
-//        violations_new++;
-//
-//      last_old_2 = h;
-//    }
-//
-//    // Violazioni dovute all'inserimento della nuova materia
-//    if (out.Class_Schedule(mv._class, mv.day_1, h) != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p2)
-//    {
-//      if (last_new_1 != -1 && h - last_new_1 > 1)
-//        violations_new++;
-//
-//      last_new_1 = h;
-//    }
-//
-//    // Violazioni dovute all'inserimento della nuova materia
-//    if (out.Class_Schedule(mv._class, mv.day_2, h) != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p1)
-//    {
-//      if (last_new_2 != -1 && h - last_new_2 > 1)
-//        violations_new++;
-//
-//      last_new_2 = h;
-//    }
-//  }
-//
-//  return violations_new - violations_old;
-//}
 
 
 /***************************************************************************
@@ -460,24 +360,32 @@ int Sched_AssignProfDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output
 {
   unsigned h;
   int last_hour = -1;
-  int cost = 0;
 
   if (!mv.moves)
     return numeric_limits<int>::infinity(); // idealmente infinito
 
+  // Se pongo la nuova ora successiva ad una della stessa materia il costo resta invariato
+  if (mv.hour > 0)
+    if (out.Class_Schedule(mv._class, mv.day, mv.hour-1) == mv.prof)
+      return 0;
+
+  // Se pongo la nuova ora precedente ad una della stessa materia il costo resta invariato
+  if (mv.hour < in.N_HoursXDay()-1)
+    if (out.Class_Schedule(mv._class, mv.day, mv.hour+1) == mv.prof)
+      return 0;
+
+  // Caso in cui pongo la nuova ora lontano dalle altre ore della stessa materia -> in qualsiasi caso introduco una delta nel costo pari ad 1
   for (h = 0; h < in.N_HoursXDay(); h++)
   {
     if (out.Class_Schedule(mv._class, mv.day, h) == mv.prof || h == mv.hour)
     {
       if (last_hour != -1 && h - last_hour > 1)
-        cost++;
+        return 1;
 
       last_hour = h;
     }
-    
   }
-
-  return cost;
+  return 0;
 }
 
 
@@ -492,7 +400,7 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
   int cost = 0;
 
   if(!mv.moves)
-    return 10000; // idealemnte infinito
+    return numeric_limits<int>::infinity(); // idealemnte infinito
 
   prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
   prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
