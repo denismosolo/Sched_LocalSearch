@@ -1,5 +1,6 @@
 // File Sched_CostComponents.cc
 #include "Sched_Helpers.hh"
+#include <limits.h>
 
 /***************************************************************************
  * Cost Components Code
@@ -408,75 +409,76 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
 
 // Se la mossa è feasible va a risolvere una violazione hard e ciò è sempre superiore a qualsiasi costo soft
 
-/*int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
+int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
   unsigned h;
-  int cost = 0;
 
   if(!mv.moves)
-    return 100000; // idealmente infinito
+    return numeric_limits<int>::infinity(); // idealmente infinito
 
   // Non ho vecchi costi di indisponibilità perché sto aggiungendo il professore
   if (in.ProfUnavailability(mv.prof) == mv.day)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (out.Class_Schedule(mv._class, mv.day, h) == mv.prof && mv.hour != h) // se trovo il prof in un'altra ora della stessa giornata
-        break;
-    if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata --> introduco una violazione
-      cost = 1;  //  Il costo lo setta in automatico (weight)
+      if (out.Class_Schedule(mv._class, mv.day, h) == mv.prof && h != mv.hour) // se trovo il prof in un'altra ora della stessa giornata
+        return 0;
+
+    // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata --> ottengo una (1) violazione
+    return 1;
   }
 
-  return cost;
+  // Il giorno in cui viene aggiunto il prof non è quello della sua giornata libera richiesta
+  return 0;
 }
 
 int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  int cost = 0;
-
   if(!mv.moves)
-    return 100000; // idealmente infinito
+    return numeric_limits<int>::infinity(); // idealmente infinito
 
   // Non ho vecchi costi da sottrarre
 
   // sommo nuovi costi
   if (out.DailySubjectAssignedHours(mv._class, mv.day, in.ProfSubject(mv.prof)) >= in.SubjectMaxHoursXDay())
-    cost = 1;
+    return 1;
 
-  return cost;
+  return 0;
 }
 
 int Sched_AssignProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  int cost = 0;
-
-  if(!mv.moves)
-    return 100000; // idealmente infinito
+  if (!mv.moves)
+    return numeric_limits<int>::infinity(); // idealmente infinito
 
   if (out.ProfWeeklyAssignedHours(mv.prof) >= in.ProfMaxWeeklyHours())
-    cost = 1;
+    return 1;
 
-  return cost;
+  return 0;
 }
 
 int Sched_AssignProfDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
   unsigned h;
+  int last_hour = -1;
   int cost = 0;
 
-  if(!mv.moves)
-    return 100000; // idealmente infinito
-
-  // se non è la prima o l'ultima ora
-  if (mv.hour > 0 && mv.hour < in.N_HoursXDay()-1)
-    if (out.Class_Schedule(mv._class, mv.day, mv.hour-1) == mv.prof && out.Class_Schedule(mv._class, mv.day, mv.hour+1) == mv.prof)
-      cost--;
+  if (!mv.moves)
+    return numeric_limits<int>::infinity(); // idealmente infinito
 
   for (h = 0; h < in.N_HoursXDay(); h++)
-    if (out.Class_Schedule(mv._class, mv.day, h) == mv.prof && abs((int)(h - mv.hour)) > 1)
-      cost++;
+  {
+    if (out.Class_Schedule(mv._class, mv.day, h) == mv.prof || h == mv.hour)
+    {
+      if (last_hour != -1 && h - last_hour > 1)
+        cost++;
+
+      last_hour = h;
+    }
+    
+  }
 
   return cost;
-}*/
+}
 
 
 
