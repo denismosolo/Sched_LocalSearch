@@ -42,7 +42,7 @@ bool operator<(const Sched_SwapHours& mv1, const Sched_SwapHours& mv2)
 istream& operator>>(istream& is, Sched_SwapHours& mv)
 {
   char ch;
-  is >> mv._class >> ch >> ch >> ch >> mv.day_1 >> ch >> ch >> mv.hour_1 >> ch >> ch >> ch >> ch >> ch >> ch >> ch >> mv.day_2 >> ch >> ch >> mv.hour_2 >> ch;
+  is >> mv._class >> ch >> ch >> mv.day_1 >> ch >> mv.hour_1 >> ch >> ch >> ch >> ch >> ch >> mv.day_2 >> ch >> mv.hour_2 >> ch;
   return is;
 }
 
@@ -80,16 +80,15 @@ bool Sched_SwapHours_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out,
   // If the prof is the same (either the case that both are -1)
   if (prof_1 == prof_2)
     return false;
-  else
-  {
+
     // If there is only one class the move is always feasible
-    if (in.N_Classes() == 1)
-    {
-      // If at least one of the profs has their "new" hour already assigned
-      if ((prof_1 != -1 && !out.IsProfHourFree(prof_1, mv.day_2, mv.hour_2)) || (prof_2 != -1 && !out.IsProfHourFree(prof_2, mv.day_1, mv.hour_1)))
-        return false;
-    }
-  }
+  if (in.N_Classes() == 1)
+    return true;
+
+  // If at least one of the profs has their "new" hour already assigned
+  if ((prof_1 != -1 && !out.IsProfHourFree(prof_1, mv.day_2, mv.hour_2)) || (prof_2 != -1 && !out.IsProfHourFree(prof_2, mv.day_1, mv.hour_1)))
+    return false;
+
   return mv.day_1 != mv.day_2 || mv.hour_1 != mv.hour_2;
 } 
 

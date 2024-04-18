@@ -38,7 +38,7 @@ Sched_AssignProf::Sched_AssignProf()
   prof = -1;
   index = -1;
   first_move = false;
-  moves = false;
+  moves = true;
 }
 
 bool operator==(const Sched_AssignProf& mv1, const Sched_AssignProf& mv2)
@@ -64,7 +64,7 @@ bool operator<(const Sched_AssignProf& mv1, const Sched_AssignProf& mv2)
 istream& operator>>(istream& is, Sched_AssignProf& mv)
 {
   char ch;
-  is >> mv._class >> ch >> ch >> ch >> mv.day >> ch >> ch >> mv.hour >> ch >> ch >> ch >> ch >> ch >> mv.prof;
+  is >> mv._class >> ch >> ch >> mv.day >> ch >> mv.hour >> ch >> ch >> ch >> mv.prof;
   return is;
 }
 

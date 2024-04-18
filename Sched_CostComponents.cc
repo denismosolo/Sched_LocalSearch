@@ -183,11 +183,14 @@ int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output&
   p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
 
+  if (mv.day_1 == mv.day_2)
+    return 0;
+
   // sottraggo i vecchi costi
   if (p1 != -1 && in.ProfUnavailability(p1) == mv.day_1)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (out.Class_Schedule(mv._class, mv.day_1, h) == p1 && mv.hour_1 != h) // se trovo il prof in un'altra ora della stessa giornata
+      if (!out.IsProfHourFree(p1, mv.day_1, h) && mv.hour_1 != h) // se trovo il prof in un'altra ora della stessa giornata
         break;
     if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
       cost--;  //  Il costo lo setta in automatico (weight)
@@ -196,7 +199,7 @@ int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output&
   if (p2 != -1 && in.ProfUnavailability(p2) == mv.day_2)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (out.Class_Schedule(mv._class, mv.day_2, h) == p2 && mv.hour_2 != h) // se trovo il prof in un'altra ora della stessa giornata
+      if (!out.IsProfHourFree(p2, mv.day_2, h) && mv.hour_2 != h) // se trovo il prof in un'altra ora della stessa giornata
         break;
     if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
       cost--;  //  Il costo lo setta in automatico (weight)
@@ -206,7 +209,7 @@ int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output&
   if (p1 != -1 && in.ProfUnavailability(p1) == mv.day_2)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (out.Class_Schedule(mv._class, mv.day_2, h) == p1 && mv.hour_2 != h) // se trovo il prof in un'altra ora della stessa giornata
+      if (!out.IsProfHourFree(p1, mv.day_2, h) && mv.hour_2 != h) // se trovo il prof in un'altra ora della stessa giornata
         break;
     if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
       cost++;  //  Il costo lo setta in automatico (weight)
@@ -215,7 +218,7 @@ int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output&
   if (p2 != -1 && in.ProfUnavailability(p2) == mv.day_1)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (out.Class_Schedule(mv._class, mv.day_1, h) == p2 && mv.hour_1 != h) // se trovo il prof in un'altra ora della stessa giornata
+      if (!out.IsProfHourFree(p2, mv.day_1, h) && mv.hour_1 != h) // se trovo il prof in un'altra ora della stessa giornata
         break;
     if (h == in.N_HoursXDay()) // sono arrivato in fondo al ciclo quindi il prof è presente 1 ora sola nella giornata
       cost++;  //  Il costo lo setta in automatico (weight)
@@ -231,6 +234,9 @@ int Sched_SwapHoursDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output
 
   p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+
+  if (mv.day_1 == mv.day_2)
+    return 0;
 
   // sottraggo vecchi costi
   if (p1 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_1, in.ProfSubject(p1)) > in.SubjectMaxHoursXDay())
@@ -284,7 +290,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     // Violazioni della "materia 1" nella giornata attualmente occupata dalla "materia 2" se lo scambio viene effettuato.
     // NOTA: l'ora nella giornata 2 è attualmente occupata dalla materia 1, oppure è l'ora che verrà occupata dalla "materia 1" 
     // se lo scambio viene effettuato.
-    if (out.Class_Schedule(mv._class, mv.day_2, h) == p1 || h == mv.hour_2)
+    if ((out.Class_Schedule(mv._class, mv.day_2, h) == p1 && h != mv.hour_1) || h == mv.hour_2)
     {
       if (last_new_1 != -1 && h - last_new_1 > 1)
         cost++;
@@ -292,7 +298,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     }
 
     // Violazioni della "materia 2" nella giornata attualmente occupata dalla "materia 1" se lo scambio viene effettuato.
-    if (out.Class_Schedule(mv._class, mv.day_1, h) == p2 || h == mv.hour_1)
+    if ((out.Class_Schedule(mv._class, mv.day_1, h) == p2 && h != mv.hour_2) || h == mv.hour_1)
     {
       if (last_new_2 != -1 && h - last_new_2 > 1)
         cost++;
@@ -428,5 +434,55 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
     if (h == in.N_HoursXDay()) // il prof_2 nella giornata libera di prof_1 non ha la classe_2
       cost--;
   }
+  return cost;
+}
+
+int Sched_SwapProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const
+{
+  unsigned p1, p2;
+  int p1_extra_hours, p2_extra_hours;
+  int cost = 0;
+
+  p1 = out.Subject_Prof(mv.class_1, mv.subject);
+  p2 = out.Subject_Prof(mv.class_2, mv.subject);
+
+  p1_extra_hours = out.ProfWeeklyAssignedHours(p1) - in.ProfMaxWeeklyHours();
+  p2_extra_hours = out.ProfWeeklyAssignedHours(p2) - in.ProfMaxWeeklyHours();
+
+  // il costo è != 0 solo se una delle due materie non è completamente assegnata per la classe
+  if (out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0) // la classe 1 non ha tutte le ore assegnate quindi si riducono le ore del prof 2 e aumentano quelle del prof 1
+  {
+    if (p2_extra_hours > 0)
+    {
+      if (p2_extra_hours > out.WeeklySubjectResidualHours(mv.class_1, mv.subject))
+        cost -= out.WeeklySubjectResidualHours(mv.class_1, mv.subject);
+      else
+        cost -= p2_extra_hours;
+    }
+
+    if (p1_extra_hours > 0)
+      cost += out.WeeklySubjectResidualHours(mv.class_1, mv.subject);
+    else
+      if (p1_extra_hours + out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0)
+        cost += (p1_extra_hours + out.WeeklySubjectResidualHours(mv.class_1, mv.subject));
+  }
+
+  if (out.WeeklySubjectResidualHours(mv.class_2, mv.subject) > 0)
+  {
+    if (p1_extra_hours > 0)
+    {
+      if (p1_extra_hours > out.WeeklySubjectResidualHours(mv.class_2, mv.subject))
+        cost -= out.WeeklySubjectResidualHours(mv.class_2, mv.subject);
+      else
+        cost -= p1_extra_hours;
+    }
+
+    if (p2_extra_hours > 0)
+      cost += out.WeeklySubjectResidualHours(mv.class_2, mv.subject);
+    else
+      if (p2_extra_hours + out.WeeklySubjectResidualHours(mv.class_2, mv.subject) > 0)
+        cost += (p2_extra_hours + out.WeeklySubjectResidualHours(mv.class_2, mv.subject));
+  }
+
   return cost;
 }

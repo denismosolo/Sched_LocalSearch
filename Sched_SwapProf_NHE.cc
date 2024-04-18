@@ -10,7 +10,7 @@ Sched_SwapProf::Sched_SwapProf()
   class_1 = -1;
   class_2 = -1;
   subject = -1;
-  moves = false;
+  moves = true;
   first_move = false;
 }
 
@@ -38,7 +38,7 @@ istream& operator>>(istream& is, Sched_SwapProf& mv)
 {
   char ch;
 
-  is >> mv.subject >> ch >> ch >> mv.class_1 >> ch >> ch >> ch >> ch >> ch >> mv.class_2;
+  is >> mv.subject >> ch >> mv.class_1 >> ch >> ch >> ch >> mv.class_2;
   return is;
 }
 

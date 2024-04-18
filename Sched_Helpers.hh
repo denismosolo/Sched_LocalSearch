@@ -340,7 +340,7 @@ public:
   Sched_SwapProfDeltaProfMaxWeeklyHours(const Sched_Input& in, Sched_ProfMaxWeeklyHours_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaProfMaxWeeklyHours") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override;
 };
 
 class Sched_SwapProfDeltaScheduleContiguity
