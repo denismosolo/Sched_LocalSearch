@@ -262,17 +262,26 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
 
   int p1 = out.Class_Schedule(mv._class, mv.day_1, mv.hour_1);
   int p2 = out.Class_Schedule(mv._class, mv.day_2, mv.hour_2);
+
   int last_old_1 = -1;
   int last_old_2 = -1;
+  int last_res_1 = -1;
+  int last_res_2 = -1;
   int last_new_1 = -1;
   int last_new_2 = -1;
+  int last_arr_1 = -1;
+  int last_arr_2 = -1;
+
+  // per escludere l'eventuale errore sulla first move nel caso la prima mossa non sia feasible
+  // in realtà questo caso è escluso da feasible move, first_move la accetta ma non la esegue
+  if ( p1 == p2)
+    return 0;
 
   // Scorro l'orario per ora valutando solo le giornate coinvolte dallo scambio di ore
   for (h = 0; h < in.N_HoursXDay(); h++)
   {
-
     // Violazioni attuali della "materia 1" nella giornata coinvolta nello scambio
-    if (out.Class_Schedule(mv._class, mv.day_1, h) == p1)
+    if (p1 != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1)
     {
       if(last_old_1 != -1 && h - last_old_1 > 1)
         cost--;
@@ -280,17 +289,36 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     }
     
     // Violazioni attuali della "materia 2" nella giornata coinvolta nello scambio
-    if (out.Class_Schedule(mv._class, mv.day_2, h) == p2)
+    if (p2 != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2)
     {
       if (last_old_2 != -1 && h - last_old_2 > 1)
         cost--;
       last_old_2 = h;
     }
 
+    // Violazioni della "materia 1" già presenti nella giornata di arrivo - ma solo se giorni diversi
+    if (mv.day_1 != mv.day_2)
+    {
+      if (p1 != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p1)
+      {
+        if(last_arr_1 != -1 && h - last_arr_1 > 1)
+          cost--;
+        last_arr_1 = h;
+      }
+      
+      // Violazioni della "materia 2" già presenti nella giornata di arrivo
+      if (p2 != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p2)
+      {
+        if (last_arr_2 != -1 && h - last_arr_2 > 1)
+          cost--;
+        last_arr_2 = h;
+      }
+    }
+
     // Violazioni della "materia 1" nella giornata attualmente occupata dalla "materia 2" se lo scambio viene effettuato.
     // NOTA: l'ora nella giornata 2 è attualmente occupata dalla materia 1, oppure è l'ora che verrà occupata dalla "materia 1" 
     // se lo scambio viene effettuato.
-    if ((out.Class_Schedule(mv._class, mv.day_2, h) == p1 && h != mv.hour_1) || h == mv.hour_2)
+    if (p1 != -1 && (out.Class_Schedule(mv._class, mv.day_2, h) == p1 || h == mv.hour_2) && !(mv.day_1 == mv.day_2 && h == mv.hour_1))
     {
       if (last_new_1 != -1 && h - last_new_1 > 1)
         cost++;
@@ -298,11 +326,30 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     }
 
     // Violazioni della "materia 2" nella giornata attualmente occupata dalla "materia 1" se lo scambio viene effettuato.
-    if ((out.Class_Schedule(mv._class, mv.day_1, h) == p2 && h != mv.hour_2) || h == mv.hour_1)
+    if (p2 != -1 && (out.Class_Schedule(mv._class, mv.day_1, h) == p2 || h == mv.hour_1) && !(mv.day_1 == mv.day_2 && h == mv.hour_2))
     {
       if (last_new_2 != -1 && h - last_new_2 > 1)
         cost++;
       last_new_2 = h;
+    }
+
+    // Violazioni della "materia 1" residue nella giornata di partenza. solo giorni diversi
+    if (mv.day_1 != mv.day_2)
+    {
+      if (p1 != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
+      {
+        if (last_res_1 != -1 && h - last_res_1 > 1)
+          cost++;
+        last_res_1 = h;
+      }
+
+      // Violazioni della "materia 2" residue nella giornata di partenza.
+      if (p2 != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
+      {
+        if (last_res_2 != -1 && h - last_res_2 > 1)
+          cost++;
+        last_res_2 = h;
+      }
     }
   }
   return cost;
@@ -450,7 +497,7 @@ int Sched_SwapProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& 
   p2_extra_hours = out.ProfWeeklyAssignedHours(p2) - in.ProfMaxWeeklyHours();
 
   // il costo è != 0 solo se una delle due materie non è completamente assegnata per la classe
-  if (out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0) // la classe 1 non ha tutte le ore assegnate quindi si riducono le ore del prof 2 e aumentano quelle del prof 1
+  if (out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0)
   {
     if (p2_extra_hours > 0)
     {
