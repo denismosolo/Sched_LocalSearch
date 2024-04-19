@@ -106,35 +106,42 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
 {
   unsigned d, h, i;
 
-  int prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
-  int prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
+  int prof_1;
+  int prof_2;
   vector<pair<unsigned, unsigned>> hours_prof_1(0);
   vector<pair<unsigned, unsigned>> hours_prof_2(0);
 
-  if(mv.moves)
-    if ((mv.first_move && FeasibleMove(out, mv)) || !mv.first_move)
+  // check on class and subject only to avoid seg_fault while using move tester's check costs function
+  if (mv.subject != -1 && mv.class_1 != -1 && mv.class_2 != -1)
+    if(mv.moves)
     {
-      for (d = 0; d < in.N_Days(); d++)
-        for (h = 0; h < in.N_HoursXDay(); h++)
-        {
-          if (out.Class_Schedule(mv.class_1, d, h) == prof_1)
-          {
-            hours_prof_1.push_back(pair<unsigned, unsigned>(d, h));
-            out.FreeHour(mv.class_1, d, h);
-          }
-          
-          if (out.Class_Schedule(mv.class_2, d, h) == prof_2)
-          {
-            hours_prof_2.push_back(pair<unsigned, unsigned>(d, h));
-            out.FreeHour(mv.class_2, d, h);
-          }
-        }
+      prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
+      prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
 
-      for (i = 0; i < hours_prof_1.size(); i++)
-        out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
+      if ((mv.first_move && FeasibleMove(out, mv)) || !mv.first_move)
+      {
+        for (d = 0; d < in.N_Days(); d++)
+          for (h = 0; h < in.N_HoursXDay(); h++)
+          {
+            if (out.Class_Schedule(mv.class_1, d, h) == prof_1)
+            {
+              hours_prof_1.push_back(pair<unsigned, unsigned>(d, h));
+              out.FreeHour(mv.class_1, d, h);
+            }
+            
+            if (out.Class_Schedule(mv.class_2, d, h) == prof_2)
+            {
+              hours_prof_2.push_back(pair<unsigned, unsigned>(d, h));
+              out.FreeHour(mv.class_2, d, h);
+            }
+          }
 
-      for (i = 0; i < hours_prof_2.size(); i++)
-        out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
+        for (i = 0; i < hours_prof_1.size(); i++)
+          out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
+
+        for (i = 0; i < hours_prof_2.size(); i++)
+          out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
+      }
     }
 }  
 
