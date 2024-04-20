@@ -460,14 +460,19 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
 
   for (h = 0; h < in.N_HoursXDay(); h++)
     if (out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_1), h) != -1 && out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_1), h) != mv.class_1)
-      break; // il prof_1 è impegnato con anche un'altra classe nel suo giorno libero
-  if (h == in.N_HoursXDay()) // il prof_1 nella giornata libera ha solo la classe_1
+      break; // il prof_1 è impegnato con anche un'altra classe nel suo giorno libero => non modifico le violazioni per prof_1
+  if (h == in.N_HoursXDay()) // il prof_1 nella giornata libera ha al limite solo la classe_1 => possono esserci modifiche alle violazioni
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
       if (out.Prof_Schedule(prof_2, in.ProfUnavailability(prof_1), h) == mv.class_2)
-        break; //i due costi si compensano
-    if (h == in.N_HoursXDay()) // il prof_2 nella giornata libera di prof_1 non ha la classe_2
+        break; //  viene introdotta una lezione nel giorno libero di prof_1
+    // Non vengono introdotte lezioni nel giorno libero di prof_1 E c'è una violazione (so già che è dovuta solo a classe_1) => risolvo
+    if (h == in.N_HoursXDay() && out.ProfAssignedDayOff(prof_1) != in.ProfUnavailability(prof_1))
       cost--;
+    // Vengono introdotte lezioni nel giorno libero di prof_1 E non c'era già violazione => introduco
+    else if (h < in.N_HoursXDay() && out.ProfAssignedDayOff(prof_1) == in.ProfUnavailability(prof_1))
+      cost++;
+    // else => non cambio nulla
   }
 
   for (h = 0; h < in.N_HoursXDay(); h++)
@@ -477,9 +482,14 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
       if (out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_2), h) == mv.class_1)
-        break; //i due costi si compensano
-    if (h == in.N_HoursXDay()) // il prof_2 nella giornata libera di prof_1 non ha la classe_2
+        break; //  viene introdotta una lezione nel giorno libero di prof_2
+    // Non vengono introdotte lezioni nel giorno libero di prof_2 E c'è una violazione (so già che è dovuta solo a classe_2) => risolvo
+    if (h == in.N_HoursXDay() && out.ProfAssignedDayOff(prof_2) != in.ProfUnavailability(prof_2))
       cost--;
+    // Vengono introdotte lezioni nel giorno libero di prof_2 E non c'era già violazione => introduco
+    else if (h < in.N_HoursXDay() && out.ProfAssignedDayOff(prof_2) == in.ProfUnavailability(prof_2))
+      cost++;
+    // else => non cambio nulla
   }
   return cost;
 }
