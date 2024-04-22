@@ -37,8 +37,6 @@ Sched_AssignProf::Sched_AssignProf()
   hour = -1;
   prof = -1;
   index = -1;
-  first_move = false;
-  moves = true;
 }
 
 bool operator==(const Sched_AssignProf& mv1, const Sched_AssignProf& mv2)
@@ -88,40 +86,32 @@ void Sched_AssignProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, 
     if (GetAvailableProfs(in, out, c).size() > 0)
       class_with_moves.push_back(c);
 
-  if (class_with_moves.size() == 0)
-    mv.moves = false;
-  else
+  do
   {
-    mv.moves = true;
-    do
-    {
-      mv._class = class_with_moves[Random::Uniform<int>(0, class_with_moves.size()-1)];
+    mv._class = class_with_moves[Random::Uniform<int>(0, class_with_moves.size()-1)];
 
-      // Get all profs of the class with not all hours already assigned
-      available_profs.clear();
-      available_profs = GetAvailableProfs(in, out, mv._class);
+    // Get all profs of the class with not all hours already assigned
+    available_profs.clear();
+    available_profs = GetAvailableProfs(in, out, mv._class);
 
-      mv.day = Random::Uniform<int>(0, in.N_Days()-1);
-      mv.hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
-      mv.prof = available_profs[Random::Uniform<int>(0, available_profs.size()-1)];
+    mv.day = Random::Uniform<int>(0, in.N_Days()-1);
+    mv.hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
+    mv.prof = available_profs[Random::Uniform<int>(0, available_profs.size()-1)];
 
-    } while (!FeasibleMove(out, mv));
-  }
+  } while (!FeasibleMove(out, mv));
 } 
 
 bool Sched_AssignProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
   // If both Class and Prof are free
-  return mv.moves && (out.IsClassHourFree(mv._class, mv.day, mv.hour) && out.IsProfHourFree(mv.prof, mv.day, mv.hour));
+  return out.IsClassHourFree(mv._class, mv.day, mv.hour) && out.IsProfHourFree(mv.prof, mv.day, mv.hour);
 } 
 
 void Sched_AssignProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  //if (mv.prof != -1) //per risolvere il problema che potrebbe non esistere una mossa
-  if (mv.moves)
-    if ((mv.first_move && FeasibleMove(out, mv)) || !mv.first_move)
-      out.AssignHour(mv._class, mv.day, mv.hour, mv.prof);
-}  
+  if (FeasibleMove(out, mv))
+    out.AssignHour(mv._class, mv.day, mv.hour, mv.prof);
+}
 
 void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
@@ -133,7 +123,7 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
       break;
 
   if (c == in.N_Classes())  // Non ci sono mosse
-    mv.moves = false;
+    throw std::logic_error("Empty neighborhood");
   else
   {
     mv._class = c;
@@ -144,8 +134,6 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
     mv.hour = 0;
     mv.index = 0;
     mv.prof = available_profs[mv.index];
-    mv.first_move = true;
-    mv.moves = true;
   }
 }
 
@@ -164,8 +152,6 @@ bool Sched_AssignProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sc
 bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   vector<unsigned> available_profs;
-
-  mv.first_move = false;
   
   if (mv._class >= in.N_Classes())
       return false;
