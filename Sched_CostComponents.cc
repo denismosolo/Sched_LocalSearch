@@ -1,6 +1,5 @@
 // File Sched_CostComponents.cc
 #include "Sched_Helpers.hh"
-#include <limits.h>
 
 /***************************************************************************
  * Cost Components Code
@@ -366,9 +365,6 @@ int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output
 {
   unsigned h;
 
-  // if(!mv.moves)
-  //   return numeric_limits<int>::infinity(); // idealmente infinito
-
   // Non ho vecchi costi di indisponibilità perché sto aggiungendo il professore
   if (in.ProfUnavailability(mv.prof) == mv.day)
   {
@@ -386,9 +382,6 @@ int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output
 
 int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  // if(!mv.moves)
-  //   return numeric_limits<int>::infinity(); // idealmente infinito
-
   // Non ho vecchi costi da sottrarre
 
   // sommo nuovi costi
@@ -400,8 +393,6 @@ int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Outpu
 
 int Sched_AssignProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  // if (!mv.moves)
-  //   return numeric_limits<int>::infinity(); // idealmente infinito
 
   if (out.ProfWeeklyAssignedHours(mv.prof) >= in.ProfMaxWeeklyHours())
     return 1;
@@ -413,9 +404,6 @@ int Sched_AssignProfDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output
 {
   unsigned h;
   int last_hour = -1;
-
-  // if (!mv.moves)
-  //   return numeric_limits<int>::infinity(); // idealmente infinito
 
   // Se pongo la nuova ora successiva ad una della stessa materia il costo resta invariato
   if (mv.hour > 0)
@@ -451,9 +439,6 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
 {
   unsigned prof_1, prof_2, h;
   int cost = 0;
-
-  if(!mv.moves)
-    return numeric_limits<int>::infinity(); // idealemnte infinito
 
   prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
   prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
@@ -499,9 +484,6 @@ int Sched_SwapProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& 
   unsigned p1, p2;
   int p1_extra_hours, p2_extra_hours;
   int cost = 0;
-
-  if(!mv.moves)
-    return numeric_limits<int>::infinity(); // idealemnte infinito
 
   p1 = out.Subject_Prof(mv.class_1, mv.subject);
   p2 = out.Subject_Prof(mv.class_2, mv.subject);

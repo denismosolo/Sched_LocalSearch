@@ -186,8 +186,6 @@ public:
   int hour;
   int prof;
   int index;
-  // bool first_move;
-  // bool moves;
 
   Sched_AssignProf();
 };
