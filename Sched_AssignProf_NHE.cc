@@ -117,15 +117,38 @@ void Sched_AssignProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sc
 
 void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
-  do
+  unsigned c;
+  vector<unsigned> available_profs;
+
+  for (c = 0; c < in.N_Classes(); c++)
+    if (GetAvailableProfs(in, out, c).size() > 0)
+      break;
+
+  if (c == in.N_Classes())  // Non ci sono mosse
+    throw EmptyNeighborhood();
+  
+  mv._class = c;
+
+  available_profs = GetAvailableProfs(in, out, mv._class);
+
+  // Bisogna selezionare anche giorno e ora corretti
+  mv.day = 0;
+  mv.hour = 0;
+  mv.index = 0;
+  mv.prof = available_profs[mv.index];
+
+  if(!FeasibleMove(out, mv))
   {
-    if (!AnyFirstMove(out,mv))
-      throw EmptyNeighborhood();
-  }  
-  while (!FeasibleMove(out,mv));
+    do
+    {
+      if (!AnyNextMove(out,mv))
+        throw EmptyNeighborhood();
+    }  
+    while (!FeasibleMove(out,mv));
+  }
 } 
 
-bool Sched_AssignProf_NeighborhoodExplorer::AnyFirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
+/*bool Sched_AssignProf_NeighborhoodExplorer::AnyFirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   unsigned c;
   vector<unsigned> available_profs;
@@ -148,7 +171,7 @@ bool Sched_AssignProf_NeighborhoodExplorer::AnyFirstMove(const Sched_Output& out
   mv.prof = available_profs[mv.index];
 
   return true;
-}
+}*/
 
 bool Sched_AssignProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
