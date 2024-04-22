@@ -366,8 +366,8 @@ int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output
 {
   unsigned h;
 
-  if(!mv.moves)
-    return numeric_limits<int>::infinity(); // idealmente infinito
+  // if(!mv.moves)
+  //   return numeric_limits<int>::infinity(); // idealmente infinito
 
   // Non ho vecchi costi di indisponibilità perché sto aggiungendo il professore
   if (in.ProfUnavailability(mv.prof) == mv.day)
@@ -386,8 +386,8 @@ int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output
 
 int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  if(!mv.moves)
-    return numeric_limits<int>::infinity(); // idealmente infinito
+  // if(!mv.moves)
+  //   return numeric_limits<int>::infinity(); // idealmente infinito
 
   // Non ho vecchi costi da sottrarre
 
@@ -400,8 +400,8 @@ int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Outpu
 
 int Sched_AssignProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  if (!mv.moves)
-    return numeric_limits<int>::infinity(); // idealmente infinito
+  // if (!mv.moves)
+  //   return numeric_limits<int>::infinity(); // idealmente infinito
 
   if (out.ProfWeeklyAssignedHours(mv.prof) >= in.ProfMaxWeeklyHours())
     return 1;
@@ -414,8 +414,8 @@ int Sched_AssignProfDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output
   unsigned h;
   int last_hour = -1;
 
-  if (!mv.moves)
-    return numeric_limits<int>::infinity(); // idealmente infinito
+  // if (!mv.moves)
+  //   return numeric_limits<int>::infinity(); // idealmente infinito
 
   // Se pongo la nuova ora successiva ad una della stessa materia il costo resta invariato
   if (mv.hour > 0)

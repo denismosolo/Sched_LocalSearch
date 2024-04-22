@@ -186,8 +186,8 @@ public:
   int hour;
   int prof;
   int index;
-  bool first_move;
-  bool moves;
+  // bool first_move;
+  // bool moves;
 
   Sched_AssignProf();
 };
@@ -208,7 +208,8 @@ public:
   void FirstMove(const Sched_Output&, Sched_AssignProf&) const override;  
   bool NextMove(const Sched_Output&, Sched_AssignProf&) const override;   
 protected:
-  bool AnyNextMove(const Sched_Output&, Sched_AssignProf&) const;   
+  bool AnyNextMove(const Sched_Output&, Sched_AssignProf&) const;
+  bool AnyFirstMove(const Sched_Output&, Sched_AssignProf&) const;   
 };
 
 /***************************************************************************
