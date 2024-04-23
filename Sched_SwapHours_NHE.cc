@@ -106,14 +106,20 @@ void Sched_SwapHours_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sc
   mv.day_2 = 0;
   mv.hour_2 = 1;
 
-  if (!FeasibleMove(out, mv))
+  while (!FeasibleMove(out, mv))
+  {
+    if (!AnyNextMove(out, mv))
+      throw EmptyNeighborhood();
+  }
+
+  /*if (!FeasibleMove(out, mv))
   {
     do
     {
       if (!AnyNextMove(out,mv))
         throw EmptyNeighborhood();
     } while (!FeasibleMove(out,mv));
-  }
+  }*/
 }
 
 bool Sched_SwapHours_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_SwapHours& mv) const

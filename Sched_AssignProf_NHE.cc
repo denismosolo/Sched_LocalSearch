@@ -137,7 +137,13 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
   mv.index = 0;
   mv.prof = available_profs[mv.index];
 
-  if(!FeasibleMove(out, mv))
+  while (!FeasibleMove(out, mv))
+  {
+    if (!AnyNextMove(out, mv))
+      throw EmptyNeighborhood();
+  }
+
+  /*if(!FeasibleMove(out, mv))
   {
     do
     {
@@ -145,7 +151,7 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
         throw EmptyNeighborhood();
     }  
     while (!FeasibleMove(out,mv));
-  }
+  }*/
 } 
 
 /*bool Sched_AssignProf_NeighborhoodExplorer::AnyFirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
