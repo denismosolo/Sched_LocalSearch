@@ -1,0 +1,175 @@
+$orario
+Days 6
+HoursXDay 5
+SubjectMaxHoursXDay 2
+ProfMaxWeeklyHours 18
+
+$materie
+scienze 3
+matematica 4
+italiano 7
+latino 3
+filosofia 3
+storia 2
+inglese 3
+storia_arte 2
+educazione_fisica 2
+religione 1
+
+$professori
+Giulia_Romano scienze lun
+Matilde_Greco scienze mer
+Vittoria_Bianchi scienze mer
+Edoardo_Costa scienze sab
+Ginevra_Moretti scienze sab
+Vittoria_Greco scienze ven
+Andrea_Martinelli scienze mar
+Emma_Giordano scienze gio
+Riccardo_Conti scienze mer
+Matilde_Giordano scienze lun
+Matilde_Fontana matematica gio
+Andrea_Ricci matematica mar
+Aurora_Ricci matematica sab
+Gabriele_Conti matematica gio
+Vittoria_Bruno matematica lun
+Riccardo_Costa matematica ven
+Tommaso_Colombo matematica gio
+Lorenzo_Giordano matematica lun
+Sofia_Ferrari matematica lun
+Alice_Gallo matematica lun
+Ginevra_Longo matematica sab
+Aurora_Fontana matematica sab
+Matilde_Barbieri matematica gio
+Andrea_Bruno matematica mer
+Riccardo_Rossi matematica ven
+Ginevra_Barbieri italiano lun
+Tommaso_Costa italiano sab
+Lorenzo_Bruno italiano gio
+Edoardo_Greco italiano sab
+Beatrice_Rossi italiano lun
+Edoardo_Mancini italiano sab
+Vittoria_Costa italiano ven
+Vittoria_Gallo italiano ven
+Riccardo_Ferrari italiano lun
+Giulia_Greco italiano mer
+Lorenzo_Gallo italiano mer
+Aurora_Rossi italiano mer
+Beatrice_Colombo italiano gio
+Leonardo_Gallo italiano ven
+Alessandro_Martinelli italiano ven
+Andrea_Rossi italiano sab
+Giulia_Lombardi italiano gio
+Matilde_Rossi italiano ven
+Aurora_Conti italiano mar
+Alessandro_Gallo italiano ven
+Andrea_Ferrari latino mar
+Sofia_Bruno latino sab
+Aurora_Ferrari latino mer
+Alessandro_Conti latino gio
+Beatrice_Moretti latino gio
+Alessandro_Marino latino lun
+Edoardo_Lombardi latino mar
+Francesco_Greco latino sab
+Giulia_Moretti latino mar
+Beatrice_Bianchi latino mar
+Aurora_Moretti filosofia lun
+Mattia_Ferrari filosofia sab
+Vittoria_Ferrari filosofia mer
+Beatrice_Lombardi filosofia ven
+Ludovica_Marino filosofia mer
+Lorenzo_Lombardi filosofia mer
+Leonardo_Costa filosofia mer
+Sofia_Moretti filosofia lun
+Andrea_Bianchi filosofia mar
+Alice_Mancini storia gio
+Alice_Longo storia mer
+Leonardo_Barbieri storia ven
+Edoardo_Bianchi storia mer
+Ludovica_Colombo storia lun
+Andrea_Fontana storia sab
+Lorenzo_Costa storia lun
+Riccardo_Gallo storia mer
+Beatrice_Marino inglese gio
+Beatrice_Ferrari inglese mer
+Lorenzo_Mancini inglese sab
+Mattia_Giordano inglese lun
+Ludovica_Giordano inglese lun
+Aurora_Costa inglese mar
+Emma_Romano inglese sab
+Emma_Bianchi inglese mar
+Aurora_Greco inglese mar
+Ludovica_Bruno storia_arte lun
+Giulia_Costa storia_arte mer
+Edoardo_Barbieri storia_arte ven
+Francesco_Martinelli storia_arte mar
+Alice_Moretti storia_arte lun
+Leonardo_Ricci storia_arte mar
+Emma_Gallo storia_arte mer
+Andrea_Moretti educazione_fisica gio
+Tommaso_Ferrari educazione_fisica ven
+Ludovica_Gallo educazione_fisica mer
+Emma_Fontana educazione_fisica ven
+Riccardo_Moretti educazione_fisica ven
+Beatrice_Ricci religione gio
+Francesco_Giordano religione lun
+Gabriele_Giordano religione gio
+Vittoria_Ricci religione mar
+Lorenzo_Ricci religione gio
+
+$classi
+1A
+2A
+3A
+4A
+5A
+1B
+2B
+3B
+4B
+5B
+1C
+2C
+3C
+4C
+5C
+1D
+2D
+3D
+4D
+5D
+1E
+2E
+3E
+4E
+5E
+1F
+2F
+3F
+4F
+5F
+1G
+2G
+3G
+4G
+5G
+1H
+2H
+3H
+4H
+5H
+1I
+2I
+3I
+4I
+5I
+1J
+2J
+3J
+4J
+5J
+
+$costi
+UnavailabilityViolation 10
+MaxSubjectHoursXDayViolation 5
+MaxProfWeeklyHoursViolation 15
+ScheduleContiguityViolation 5
