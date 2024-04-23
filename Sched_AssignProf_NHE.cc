@@ -81,6 +81,8 @@ void Sched_AssignProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, 
   unsigned c;
   vector<unsigned> available_profs;
   vector<unsigned> class_with_moves;
+  unsigned max_iterations = 1000000;
+  unsigned iterations = 0;
 
   for (c = 0; c < in.N_Classes(); c++)
     if (GetAvailableProfs(in, out, c).size() > 0)
@@ -93,13 +95,17 @@ void Sched_AssignProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, 
   {
     mv._class = class_with_moves[Random::Uniform<int>(0, class_with_moves.size()-1)];
 
-  // Get all profs of the class with not all hours already assigned
-  available_profs.clear();
-  available_profs = GetAvailableProfs(in, out, mv._class);
+    // Get all profs of the class with not all hours already assigned
+    available_profs.clear();
+    available_profs = GetAvailableProfs(in, out, mv._class);
 
-  mv.day = Random::Uniform<int>(0, in.N_Days()-1);
-  mv.hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
-  mv.prof = available_profs[Random::Uniform<int>(0, available_profs.size()-1)];
+    mv.day = Random::Uniform<int>(0, in.N_Days()-1);
+    mv.hour = Random::Uniform<int>(0, in.N_HoursXDay()-1);
+    mv.prof = available_profs[Random::Uniform<int>(0, available_profs.size()-1)];
+
+    iterations++;
+    if (iterations > max_iterations)
+      throw EmptyNeighborhood();
 
   } while (!FeasibleMove(out, mv));
 } 
@@ -131,53 +137,15 @@ void Sched_AssignProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, S
 
   available_profs = GetAvailableProfs(in, out, mv._class);
 
-  // Bisogna selezionare anche giorno e ora corretti
   mv.day = 0;
   mv.hour = 0;
   mv.index = 0;
   mv.prof = available_profs[mv.index];
 
   while (!FeasibleMove(out, mv))
-  {
     if (!AnyNextMove(out, mv))
       throw EmptyNeighborhood();
-  }
-
-  /*if(!FeasibleMove(out, mv))
-  {
-    do
-    {
-      if (!AnyNextMove(out,mv))
-        throw EmptyNeighborhood();
-    }  
-    while (!FeasibleMove(out,mv));
-  }*/
 } 
-
-/*bool Sched_AssignProf_NeighborhoodExplorer::AnyFirstMove(const Sched_Output& out, Sched_AssignProf& mv) const
-{
-  unsigned c;
-  vector<unsigned> available_profs;
-
-  for (c = 0; c < in.N_Classes(); c++)
-    if (GetAvailableProfs(in, out, c).size() > 0)
-      break;
-
-  if (c == in.N_Classes())  // Non ci sono mosse
-    return false;
-  
-  mv._class = c;
-
-  available_profs = GetAvailableProfs(in, out, mv._class);
-
-  // Bisogna selezionare anche giorno e ora corretti
-  mv.day = 0;
-  mv.hour = 0;
-  mv.index = 0;
-  mv.prof = available_profs[mv.index];
-
-  return true;
-}*/
 
 bool Sched_AssignProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {

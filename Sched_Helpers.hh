@@ -261,7 +261,7 @@ public:
   Sched_AssignProfDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaCompleteSolution") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return mv.prof == -1 || !out.IsClassHourFree(mv._class, mv.day, mv.hour) || !out.IsProfHourFree(mv.prof, mv.day, mv.hour) ? 0 : -1; }
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return -1; }
 };
 
 

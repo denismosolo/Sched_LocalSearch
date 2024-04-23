@@ -52,6 +52,12 @@ ostream& operator<<(ostream& os, const Sched_SwapProf& mv)
 
 void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
+  unsigned max_iterations = 1000000;
+  unsigned iterations = 0;
+
+  if (in.N_Profs() == in.N_Subjects())  // significa che ho un solo professore per ciascuna materia --> non esiste scambio (assumo che non ci siano materie senza professore, nel caso è un errore dell'utente)
+    throw EmptyNeighborhood();
+  
   do
   {
     mv.subject = Random::Uniform<int>(0, in.N_Subjects() - 1);
@@ -59,6 +65,10 @@ void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
     mv.class_1 = Random::Uniform<int>(0, in.N_Classes() - 1);
     mv.class_2 = Random::Uniform<int>(0, in.N_Classes() - 1);
 
+    iterations++;
+    if (iterations > max_iterations)
+      throw EmptyNeighborhood();
+      
   } while (!FeasibleMove(out, mv));
 } 
 
@@ -135,7 +145,6 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
 
 void Sched_SwapProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-
   if (in.N_Profs() == in.N_Subjects())  // significa che ho un solo professore per ciascuna materia --> non esiste scambio (assumo che non ci siano materie senza professore, nel caso è un errore dell'utente)
     throw EmptyNeighborhood();
   

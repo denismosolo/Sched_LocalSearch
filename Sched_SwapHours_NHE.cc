@@ -57,6 +57,9 @@ ostream& operator<<(ostream& os, const Sched_SwapHours& mv)
 
 void Sched_SwapHours_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
+  unsigned max_iterations = 1000000;
+  unsigned iterations = 0;
+
   do
   {
     mv._class = Random::Uniform<int>(0, in.N_Classes()-1);
@@ -67,8 +70,11 @@ void Sched_SwapHours_NeighborhoodExplorer::RandomMove(const Sched_Output& out, S
     mv.day_2 = Random::Uniform<int>(0, in.N_Days()-1);
     mv.hour_2 = Random::Uniform<int>(0, in.N_HoursXDay()-1);
 
+    iterations++;
+    if (iterations > max_iterations)
+      throw EmptyNeighborhood();
+
   } while (!FeasibleMove(out, mv));
-  
 } 
 
 bool Sched_SwapHours_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_SwapHours& mv) const
@@ -107,19 +113,8 @@ void Sched_SwapHours_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sc
   mv.hour_2 = 1;
 
   while (!FeasibleMove(out, mv))
-  {
     if (!AnyNextMove(out, mv))
       throw EmptyNeighborhood();
-  }
-
-  /*if (!FeasibleMove(out, mv))
-  {
-    do
-    {
-      if (!AnyNextMove(out,mv))
-        throw EmptyNeighborhood();
-    } while (!FeasibleMove(out,mv));
-  }*/
 }
 
 bool Sched_SwapHours_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sched_SwapHours& mv) const

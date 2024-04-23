@@ -444,7 +444,7 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
   prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
 
   for (h = 0; h < in.N_HoursXDay(); h++)
-    if (out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_1), h) != -1 && out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_1), h) != mv.class_1)
+    if ( !out.IsProfHourFree(prof_1, in.ProfUnavailability(prof_1), h) && out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_1), h) != mv.class_1)
       break; // il prof_1 è impegnato con anche un'altra classe nel suo giorno libero => non modifico le violazioni per prof_1
   if (h == in.N_HoursXDay()) // il prof_1 nella giornata libera ha al limite solo la classe_1 => possono esserci modifiche alle violazioni
   {
@@ -461,7 +461,7 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
   }
 
   for (h = 0; h < in.N_HoursXDay(); h++)
-    if (out.Prof_Schedule(prof_2, in.ProfUnavailability(prof_2), h) != -1 && out.Prof_Schedule(prof_2, in.ProfUnavailability(prof_2), h) != mv.class_2)
+    if ( !out.IsProfHourFree(prof_2, in.ProfUnavailability(prof_2), h) && out.Prof_Schedule(prof_2, in.ProfUnavailability(prof_2), h) != mv.class_2)
       break; // il prof_1 è impegnato con anche un'altra classe nel suo giorno libero
   if (h == in.N_HoursXDay()) // il prof_1 nella giornata libera ha solo la classe_1
   {
