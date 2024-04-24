@@ -89,7 +89,6 @@ public:
   int hour_1;
   int day_2;
   int hour_2;
-  // bool first_move;
 
   Sched_SwapHours();
 };
@@ -111,7 +110,6 @@ public:
   bool NextMove(const Sched_Output&, Sched_SwapHours&) const override;   
 protected:
   bool AnyNextMove(const Sched_Output&, Sched_SwapHours&) const;
-  // bool AnyFirstMove(const Sched_Output&, Sched_SwapHours&) const;
 };
 
 /***************************************************************************

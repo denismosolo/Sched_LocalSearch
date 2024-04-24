@@ -55,9 +55,9 @@ void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
   unsigned max_iterations = 1000000;
   unsigned iterations = 0;
 
-  if (in.N_Profs() == in.N_Subjects())  // means I have only one professor for each subject --> no swap exists (assuming there are no subjects without a professor, otherwise it is a user error)
+  if (in.N_Profs() == in.N_Subjects())  // significa che ho un solo professore per ciascuna materia --> non esiste scambio (assumo che non ci siano materie senza professore, nel caso è un errore dell'utente)
     throw EmptyNeighborhood();
-
+  
   do
   {
     mv.subject = Random::Uniform<int>(0, in.N_Subjects() - 1);
@@ -68,9 +68,9 @@ void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
     iterations++;
     if (iterations > max_iterations)
       throw EmptyNeighborhood();
-
+      
   } while (!FeasibleMove(out, mv));
-}
+} 
 
 bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, const Sched_SwapProf& mv) const
 {
@@ -79,21 +79,21 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
   if (mv.class_1 == mv.class_2)
     return false;
 
-  // If a professor has not been assigned yet for that subject for one of the two classes,
-  // the move is not valid (there is no swap)
+  // Se non è stato assegnato ancora un prof per quella materia per una delle due classi,
+  // la mossa non è valida (non esiste scambio)
   if (out.Subject_Prof(mv.class_1, mv.subject) == -1 || out.Subject_Prof(mv.class_2, mv.subject) == -1)
     return false;
 
-  // If the two classes have the same professor for that subject, the swap does not make sense
+  // Se le due classi hanno lo stesso prof per quella materia non ha senso lo scambio
   if (out.Subject_Prof(mv.class_1, mv.subject) == out.Subject_Prof(mv.class_2, mv.subject))
     return false;
 
-  // Check time incompatibility
-  for (d = 0; d < in.N_Days(); d++)
+  // Controlla incompatibilità di orario
+  for(d = 0; d < in.N_Days(); d++)
     for (h = 0; h < in.N_HoursXDay(); h++)
     {
-      // The professor is not busy in class 1 and the hour is not a free hour for the professor:
-      // the professor is thus busy with a third class not involved in the swap.
+      // Il prof non è impegnato nella classe 1 e l'ora non è un ora buca (del prof):
+      // il prof è quindi impengato con una classe terza non coinvolta nello scambio.
       if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) == mv.class_2 && (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) != mv.class_1 && out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) != -1))
         return false;
 
@@ -102,7 +102,7 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
     }
 
   return true;
-}
+} 
 
 void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sched_SwapProf& mv) const
 {
@@ -141,13 +141,13 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
     for (i = 0; i < hours_prof_2.size(); i++)
       out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
   }
-}
+}  
 
 void Sched_SwapProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-  if (in.N_Profs() == in.N_Subjects())  // means I have only one professor for each subject --> no swap exists (assuming there are no subjects without a professor, otherwise it is a user error)
+  if (in.N_Profs() == in.N_Subjects())  // significa che ho un solo professore per ciascuna materia --> non esiste scambio (assumo che non ci siano materie senza professore, nel caso è un errore dell'utente)
     throw EmptyNeighborhood();
-
+  
   mv.subject = 0;
   mv.class_1 = 0;
   mv.class_2 = 1;
@@ -163,39 +163,49 @@ bool Sched_SwapProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sche
 {
   do
   {
-    if (!AnyNextMove(out, mv))
+    if (!AnyNextMove(out,mv))
       return false;
-  } while (!FeasibleMove(out, mv));
-
+  }  
+  while (!FeasibleMove(out,mv));
+  
   return true;
 }
 
 bool Sched_SwapProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-  // Last possible swap between two classes (for the same subject)
+  // Debug
+  //cerr << "Enters: " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+
+  // Ultimo scambio possibile tra due classi (a parità di materia)
   if (mv.class_1 >= in.N_Classes() - 2 && mv.class_2 >= in.N_Classes() - 1)
   {
-    // Subjects are finished
+    // Le materie sono finite
     if (mv.subject >= in.N_Subjects() - 1)
       return false;
-
+    
     mv.subject++;
 
     mv.class_1 = 0;
     mv.class_2 = 1;
 
+    // Debug
+    //cerr << "Exits : " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
+
     return true;
   }
 
-  // Increment class 2
+  // Incrementa la classe 2
   mv.class_2++;
-
-  // If class 2 has reached the end
+  
+  // Se la classe 2 è arrivata in fondo
   if (mv.class_2 == in.N_Classes())
   {
-    mv.class_1++;                 // Increment class 1
-    mv.class_2 = mv.class_1 + 1;  // Set class 2 to the one after class 1
+    mv.class_1++;                 // Incrementa la classe 1
+    mv.class_2 = mv.class_1 + 1;  // Imposta la classe 2 a quella successiva alla classe 1
   }
+
+  // Debug
+  //cerr << "Exits : " << "Subject: " << mv.subject << " class_1: " << mv.class_1 << " <-> class_2: " << mv.class_2 << endl;
 
   return true;
 }

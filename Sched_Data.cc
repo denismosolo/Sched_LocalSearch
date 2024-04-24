@@ -459,17 +459,6 @@ void Sched_Output::Reset()
   }
 }
 
-pair<int, int> Sched_Output::GetFirstFreeHour(unsigned c, unsigned p)
-{
-  unsigned d, h;
-
-  for (d = 0; d < in.N_Days(); d++)
-    for (h = 0; h < in.N_HoursXDay(); h++)
-      if (IsClassHourFree(c, d, h) && IsProfHourFree(p, d, h))
-        return make_pair(d, h);
-  return make_pair(6, 0); //lo metto di domenica
-}
-
 void Sched_Output::Print(ostream& os) const
 {
   unsigned s, c, p, d, h;
@@ -606,28 +595,9 @@ void Sched_Output::Print(ostream& os) const
       os << endl;
     }
     
-    //os << "----------------------" << endl;
     os << "======================" << endl;
   }
-
-  // Print violations and costs
-  /*os << "======================" << endl;
-  os << "Violations and costs" << endl;
-  os << "======================" << endl;
-  os << "Unavailability violations: " << ProfUnavailabilityViolations() << endl;
-  os << "Maximum daily subject's hours violations: " << MaxSubjectHoursXDayViolations() << endl;
-  os << "Maximum professor weekly hours violations: " << ProfMaxWeeklyHoursViolations() << endl;
-  os << "Schedule contiguity violations: " << ScheduleContiguityViolations() << endl;
-  os << "----------------------" << endl;
-  os << "Unavailability violations cost: " << ProfUnavailabilityViolationsCost() << endl;
-  os << "Maximum daily subject's hours violations cost: " << MaxSubjectHoursXDayViolationsCost() << endl;
-  os << "Maximum professor weekly hours violations cost: " << ProfMaxWeeklyHoursViolationsCost() << endl;
-  os << "Schedule contiguity violations cost: " << ScheduleContiguityViolationsCost() << endl;
-  os << "----------------------" << endl;
-  os << "Total cost: " << SolutionTotalCost() << endl;
-  os << "----------------------" << endl;*/
 }
-
 
 void Sched_Output::PrintTAB(string output_filename) const
 {
@@ -748,26 +718,7 @@ void Sched_Output::PrintTAB(string output_filename) const
     
     os << "======================" << endl;
   }
-
-  // Print violations and costs
-  /*os << "======================" << endl;
-  os << "Violations and costs" << endl;
-  os << "======================" << endl;
-  os << "Unavailability violations: " << ProfUnavailabilityViolations() << endl;
-  os << "Maximum daily subject's hours violations: " << MaxSubjectHoursXDayViolations() << endl;
-  os << "Maximum professor weekly hours violations: " << ProfMaxWeeklyHoursViolations() << endl;
-  os << "Schedule contiguity violations: " << ScheduleContiguityViolations() << endl;
-  os << "----------------------" << endl;
-  os << "Unavailability violations cost: " << ProfUnavailabilityViolationsCost() << endl;
-  os << "Maximum daily subject's hours violations cost: " << MaxSubjectHoursXDayViolationsCost() << endl;
-  os << "Maximum professor weekly hours violations cost: " << ProfMaxWeeklyHoursViolationsCost() << endl;
-  os << "Schedule contiguity violations cost: " << ScheduleContiguityViolationsCost() << endl;
-  os << "----------------------" << endl;
-  os << "Total cost: " << SolutionTotalCost() << endl;
-  os << "----------------------" << endl;*/
-
 }
-
 
 void Sched_Output::AssignHour(unsigned c, unsigned d, unsigned h, unsigned p)
 {
@@ -847,21 +798,6 @@ void Sched_Output::SwapHours(unsigned c1, unsigned d1, unsigned h1, unsigned c2,
   }
 }
 
-bool Sched_Output::SuitableProf(unsigned c, unsigned p)
-{
-  unsigned d, h;
-  unsigned compatible_hours;
-
-  compatible_hours = 0;
-  
-  for (d = 0; d < in.N_Days(); d++)
-    for (h = 0; h < in.N_HoursXDay(); h++)
-      if (IsProfHourFree(p, d, h) && IsClassHourFree(c ,d, h))
-        compatible_hours++;
-  
-  return compatible_hours >= in.N_HoursXSubject(in.ProfSubject(p));
-}
-
 void Sched_Output::ComputeProfDayOff(unsigned p)
 {
   unsigned d, h;
@@ -911,77 +847,6 @@ void Sched_Output::ComputeProfDayOff(unsigned p)
   // Day off doesn't exist
   prof_day_off[p] = -1;
   return;
-}
-
-unsigned  Sched_Output::ProfUnavailabilityViolations() const
-{
-  unsigned p;
-  unsigned solution_unavailability_violations = 0;
-  
-
-  for (p = 0; p < in.N_Profs(); p++)
-    if (ProfAssignedDayOff(p) == -1 || (unsigned)ProfAssignedDayOff(p) != in.ProfUnavailability(p))
-      solution_unavailability_violations++;
-
-  return solution_unavailability_violations;
-}
-
-unsigned  Sched_Output::MaxSubjectHoursXDayViolations() const
-{
-  unsigned c, s, d;
-  unsigned solution_max_subject_hours_x_day_violations = 0;
-
-  for (c = 0; c < in.N_Classes(); c++)
-    for (d = 0; d < in.N_Days(); d++)
-      for (s = 0; s < in.N_Subjects(); s++)
-      {
-        if (daily_subject_assigned_hours[c][d][s] > in.SubjectMaxHoursXDay())
-          solution_max_subject_hours_x_day_violations += daily_subject_assigned_hours[c][d][s] - in.SubjectMaxHoursXDay();
-      }
-
-  return solution_max_subject_hours_x_day_violations;
-}
-
-unsigned Sched_Output::ProfMaxWeeklyHoursViolations() const
-{
-  unsigned p;
-  unsigned solution_max_prof_weekly_hours_violations = 0;
-
-  for (p = 0; p < in.N_Profs(); p++)
-  {
-    if (prof_weekly_hours[p] > in.ProfMaxWeeklyHours())
-      solution_max_prof_weekly_hours_violations += prof_weekly_hours[p] - in.ProfMaxWeeklyHours();
-  }
-
-  return solution_max_prof_weekly_hours_violations;
-}
-
-unsigned Sched_Output::ScheduleContiguityViolations() const
-{
-  unsigned c, s, d, h;
-  int subject_last_position;
-  unsigned contiguity_violations = 0;
-
-  if (in.N_HoursXDay() < 3)
-    return 0;
-
-  for(c = 0; c < in.N_Classes(); c++)
-    for (s = 0; s < in.N_Subjects(); s++)
-      for (d = 0; d < in.N_Days(); d++)
-      {
-        subject_last_position = -1;
-
-        for (h = 0; h < in.N_HoursXDay(); h++)
-          if (Class_Schedule(c, d, h) != -1 && in.ProfSubject(Class_Schedule(c, d, h)) == s)
-          {
-            if (subject_last_position != -1 && h - subject_last_position > 1)
-              contiguity_violations++;
-
-            subject_last_position = h;
-          }
-      }
-
-  return contiguity_violations;
 }
 
 ostream& operator<<(ostream& os, const Sched_Output& out)

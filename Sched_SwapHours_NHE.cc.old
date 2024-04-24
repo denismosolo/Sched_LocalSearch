@@ -131,12 +131,13 @@ bool Sched_SwapHours_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sch
 
 bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_SwapHours& mv) const
 {
-  // Condition that determines the end of scanning the schedule of a class: there is no next move after swapping the last two time slots.
+  // Condizione che determina la fine della scansione dell'orario di una classe: non esiste nessuna mossa successiva allo scambio
+  // degli ultimi due slot orari.
   if (mv.day_1 == in.N_Days() - 1 && mv.hour_1 >= in.N_HoursXDay() - 2 && mv.day_2 == in.N_Days() - 1 && mv.hour_2 >= in.N_HoursXDay() - 1)
   {
     mv._class++;
 
-    // Classes are finished
+    // Le classi sono finite
     if (mv._class >= in.N_Classes())
       return false;
 
@@ -150,7 +151,7 @@ bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, 
 
   // Move to next hour
   mv.hour_2++;
-
+  
   if (mv.hour_2 == in.N_HoursXDay())
   {
     mv.day_2++;
@@ -166,8 +167,8 @@ bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, 
         mv.hour_1 = 0;
       }
 
-      // Start scanning the second time slot from the one
-      // following the first one
+      // Comincio a scorrere il secondo slot temporale a partire da quello
+      // successivo al primo
       if (mv.hour_1 < in.N_HoursXDay() - 1)
       {
         mv.day_2 = mv.day_1;
@@ -175,8 +176,8 @@ bool Sched_SwapHours_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, 
       }
       else
       {
-        mv.day_2 = mv.day_1 + 1;  // Move to the next day
-        mv.hour_2 = 0;            // Reset the hour to 0
+        mv.day_2 = mv.day_1 + 1;  // Passo al giorno successivo
+        mv.hour_2 = 0;            // Resetto l'ora a 0
       }
     }
   }
