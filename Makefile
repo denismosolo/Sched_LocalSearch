@@ -5,7 +5,7 @@ LINKOPTS = -lboost_program_options -pthread
 
 SOURCE_FILES = Sched_Data.cc Sched_SolutionManager.cc Sched_SwapHours_NHE.cc Sched_AssignProf_NHE.cc Sched_SwapProf_NHE.cc Sched_CostComponents.cc  Sched_Main.cc
 OBJECT_FILES = Sched_Data.o Sched_SolutionManager.o Sched_SwapHours_NHE.o Sched_AssignProf_NHE.o Sched_SwapProf_NHE.o Sched_CostComponents.o Sched_Main.o
-HEADER_FILES = Sched_Data.hh Sched_Helpers.hh  
+HEADER_FILES = Sched_Data.hh Sched_Headers.hh  
 
 csp: $(OBJECT_FILES)
 	g++ $(OBJECT_FILES) $(LINKOPTS) -o csp

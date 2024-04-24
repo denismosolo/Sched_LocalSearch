@@ -1,4 +1,4 @@
-#include "Sched_Helpers.hh"
+#include "Sched_Headers.hh"
 
 using namespace EasyLocal::Debug;
 
@@ -26,13 +26,14 @@ int main(int argc, const char* argv[])
   if (seed.IsSet())
     Random::SetSeed(seed);
   
-  // cost components: second parameter is the cost, third is the type (true -> hard, false -> soft)
+  // Cost Components: second parameter is the cost, third is the type (true -> hard, false -> soft)
   Sched_ProfUnavailability_CC cc_PU(in, in.UnavailabilityViolationCost(), false);
   Sched_MaxSubjectHoursXDay_CC cc_MSHD(in, in.MaxSubjectHoursXDayViolationCost(), false);
   Sched_ProfMaxWeeklyHours_CC cc_PWMH(in, in.MaxProfWeeklyHoursViolationCost(), false);
   Sched_ScheduleContiguity_CC cc_SC(in, in.ScheduleContiguityViolationCost(), false);
   Sched_SolutionComplete_CC cc_CS(in, 1, true);
  
+  //  Delta Cost Components
   Sched_SwapHoursDeltaProfUnavailability SwapH_dcc_PU(in, cc_PU);
   Sched_SwapHoursDeltaMaxSubjectHoursXDay SwapH_dcc_MSHD(in, cc_MSHD);
   Sched_SwapHoursDeltaProfMaxWeeklyHours SwapH_dcc_PMWH(in, cc_PWMH);
@@ -64,47 +65,52 @@ int main(int argc, const char* argv[])
   Sched_sm.AddCostComponent(cc_SC);
   Sched_sm.AddCostComponent(cc_CS);
 
-  // All delta cost components for SwapHour to the neighborhood explorer
+  // Add all delta cost components for SwapHour to the neighborhood explorer
   Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_PU);
   Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_MSHD);
   Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_PMWH);
   Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_SC);
   Sched_SwapH_nhe.AddDeltaCostComponent(SwapH_dcc_CS);
 
-  // All delta cost components for AssignProf to the neighborhood explorer
+  // Add all delta cost components for AssignProf to the neighborhood explorer
   Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_PU);
   Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_MSHD);
   Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_PMWH);
   Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_SC);
   Sched_AssignP_nhe.AddDeltaCostComponent(AssignP_dcc_CS);
 
-  // All delta cost components for SwapProf to the neighborhood explorer
+  // Add all delta cost components for SwapProf to the neighborhood explorer
   Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_PU);
   Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_MSHD);
   Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_PMWH);
   Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_SC);
   Sched_SwapP_nhe.AddDeltaCostComponent(SwapP_dcc_CS);
 
-  SetUnionNeighborhoodExplorer <Sched_Input, Sched_Output, DefaultCostStructure<int>, Sched_SwapHours_NeighborhoodExplorer, Sched_AssignProf_NeighborhoodExplorer, Sched_SwapProf_NeighborhoodExplorer> Union_nhe(in, Sched_sm, "Union NHE", Sched_SwapH_nhe, Sched_AssignP_nhe, Sched_SwapP_nhe/*, std::array<double, modality> bias = std::array<double, modality>{0.0}*/);
+  // Union of neighborhoods creation
+  SetUnionNeighborhoodExplorer <Sched_Input, Sched_Output, DefaultCostStructure<int>, Sched_SwapHours_NeighborhoodExplorer, Sched_AssignProf_NeighborhoodExplorer, Sched_SwapProf_NeighborhoodExplorer> Union_nhe(in, Sched_sm, "Union NHE", Sched_SwapH_nhe, Sched_AssignP_nhe, Sched_SwapP_nhe);
   
-  // runners
+  // Runners
+  // Union
   HillClimbing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_hc(in, Sched_sm, Union_nhe, "HC");
   SteepestDescent<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sd(in, Sched_sm, Union_nhe, "SD");
   SimulatedAnnealing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sa(in, Sched_sm, Union_nhe, "SA");
 
+  // SwapProf
   //HillClimbing<Sched_Input, Sched_Output, Sched_SwapProf> Sched_hc(in, Sched_sm, Sched_SwapP_nhe, "HC");
   //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapProf> Sched_sd(in, Sched_sm, Sched_SwapP_nhe, "SD");
   //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapProf> Sched_sa(in, Sched_sm, Sched_SwapP_nhe, "SA");
 
+  // SwapHours
   //HillClimbing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_hc(in, Sched_sm, Sched_SwapH_nhe, "HC");
   //SteepestDescent<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sd(in, Sched_sm, Sched_SwapH_nhe, "SD");
   //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_SwapHours> Sched_sa(in, Sched_sm, Sched_SwapH_nhe, "SA");
 
+  // AssignProf
   //HillClimbing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_hc(in, Sched_sm, Sched_AssignP_nhe, "HC");
   //SteepestDescent<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sd(in, Sched_sm, Sched_AssignP_nhe, "SD");
   //SimulatedAnnealing<Sched_Input, Sched_Output, Sched_AssignProf> Sched_sa(in, Sched_sm, Sched_AssignP_nhe, "SA");
 
-  // tester
+  // Tester
   Tester<Sched_Input, Sched_Output> tester(in, Sched_sm);
   MoveTester<Sched_Input, Sched_Output, Sched_SwapHours> swapH_move_test(in, Sched_sm, Sched_SwapH_nhe, "Sched_SwapHours move", tester);
   MoveTester<Sched_Input, Sched_Output, Sched_AssignProf> assignP_move_test(in, Sched_sm, Sched_AssignP_nhe, "Sched_AssignProf move", tester); 
@@ -155,8 +161,7 @@ int main(int argc, const char* argv[])
     { // write the solution in the standard output
       cout << out << endl;
       cout << "Cost: " << result.cost.total << endl;
-      cout << "Time: " << result.running_time << "s" << endl;
-      //cout << "Time: " << result.running_time << endl;					
+      cout << "Time: " << result.running_time << "s" << endl;				
     }
   }
 

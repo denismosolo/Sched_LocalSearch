@@ -89,7 +89,7 @@ public:
   vector<string> class_name;
 
   // Subject data structures
-  vector<vector<unsigned>> profs_x_subject;   //profs for each subject
+  vector<vector<unsigned>> profs_x_subject;
   
   // Cost thresholds
   unsigned subject_max_hours_x_day;
@@ -121,8 +121,7 @@ public:
   void Reset();
 
   // Classes selectors
-  int Class_Schedule(unsigned c, unsigned d, unsigned h) const { return schedule_class[c][d][h]; }  // Get the class' schedule
-                                                                                                    // NOTE: Return the prof assigned to an hour
+  int Class_Schedule(unsigned c, unsigned d, unsigned h) const { return schedule_class[c][d][h]; }  // Get the class' schedule - NOTE: Return the prof assigned to an hour
   int Subject_Prof(unsigned c, unsigned s) const { return class_profs[c][s]; } // Get the subject's prof of a specific class
   unsigned DailySubjectAssignedHours(unsigned c, unsigned d, unsigned s) const { return daily_subject_assigned_hours[c][d][s]; }
   unsigned WeeklySubjectAssignedHours(unsigned c, unsigned s) const { return weekly_subject_assigned_hours[c][s]; }
@@ -135,7 +134,7 @@ public:
 
   // Print methods
   void Print(ostream& os) const;  // Print output class in a user-readable manner
-  void PrintTAB(string output_filename) const; // same as Print but with TABs instead of spaces and dump in .txt for easy import in Excel
+  void PrintTAB(string output_filename) const; // same as Print but with TABs instead of spaces and dump in .txt for easy import into Excel
 
   // Schedule management methods
   void AssignHour(unsigned c, unsigned d, unsigned h, unsigned p);

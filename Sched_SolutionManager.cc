@@ -1,9 +1,9 @@
 // File Sched_SolutionManager.cc
-#include "Sched_Helpers.hh"
+#include "Sched_Headers.hh"
 
 namespace
 {
-  // Greedy V6_1 help function
+  // Greedy help function
   // Creates a list of randomly chosen possibile compatible hours for a professor checking free hours in professor and class schedule, 
   // taking in account maximum hours per day and, optionally, hours not compatible with professor day off.
   vector<pair<unsigned, unsigned>> find_randomized_day_ordered_compatible_hours(const Sched_Input& in, Sched_Output& out, unsigned c, unsigned p, const unsigned& extra_daily_hours, const bool& check_unavailability_day)
@@ -105,8 +105,6 @@ void Sched_SolutionManager::RandomState(Sched_Output& out)
 
 void Sched_SolutionManager::GreedyState(Sched_Output& out) 
 {
-  // Greedy_V6_1 algorithm
-
   unsigned c, s, p, i;
   vector<vector<unsigned>> profs_assignation_order_per_subject;
   vector<unsigned> subjects_assignation_order(in.N_Subjects());
@@ -161,8 +159,7 @@ void Sched_SolutionManager::GreedyState(Sched_Output& out)
           }
         }
 
-        // If no professor has been found suitable to class schedule, relax constraint for maximum subject hours per day or professor unavailability
-        // depending on costs
+        // If no professor has been found suitable to class schedule, relax constraint for maximum subject hours per day or professor unavailability depending on costs
         if (!prof_assigned)
         {
           if ((in.UnavailabilityViolationCost() < (extra_daily_hours + 1) * in.MaxSubjectHoursXDayViolationCost() || in.SubjectMaxHoursXDay() + extra_daily_hours == in.N_HoursXDay()) && take_in_account_unavailability)

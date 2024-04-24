@@ -374,7 +374,6 @@ void Sched_Input::Print(ostream& os) const
 bool operator==(const Sched_Output& out1, const Sched_Output& out2)
 {
   if (
-    //&out1.in == &out2.in &&
     out1.schedule_class == out2.schedule_class &&
     out1.class_profs == out2.class_profs &&
     out1.daily_subject_assigned_hours == out2.daily_subject_assigned_hours &&

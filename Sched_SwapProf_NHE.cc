@@ -1,5 +1,5 @@
 // File Sched_SwapProf_NHE.cc
-#include "Sched_Helpers.hh"
+#include "Sched_Headers.hh"
 
 /***************************************************************************
  * Moves Code
@@ -55,7 +55,7 @@ void Sched_SwapProf_NeighborhoodExplorer::RandomMove(const Sched_Output& out, Sc
   unsigned max_iterations = 1000000;
   unsigned iterations = 0;
 
-  if (in.N_Profs() == in.N_Subjects())  // means I have only one professor for each subject --> no swap exists (assuming there are no subjects without a professor, otherwise it is a user error)
+  if (in.N_Profs() == in.N_Subjects())  // There is only one professor for each subject => no swap exists
     throw EmptyNeighborhood();
 
   do
@@ -79,8 +79,7 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
   if (mv.class_1 == mv.class_2)
     return false;
 
-  // If a professor has not been assigned yet for that subject for one of the two classes,
-  // the move is not valid (there is no swap)
+  // If a class doesn't have an assigned professor for that class the move is not valid (there is no swap)
   if (out.Subject_Prof(mv.class_1, mv.subject) == -1 || out.Subject_Prof(mv.class_2, mv.subject) == -1)
     return false;
 
@@ -94,10 +93,14 @@ bool Sched_SwapProf_NeighborhoodExplorer::FeasibleMove(const Sched_Output& out, 
     {
       // The professor is not busy in class 1 and the hour is not a free hour for the professor:
       // the professor is thus busy with a third class not involved in the swap.
-      if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) == mv.class_2 && (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) != mv.class_1 && out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) != -1))
+      if (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) == mv.class_2 
+       && !(out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) == mv.class_1 
+          || out.IsProfHourFree(out.Subject_Prof(mv.class_1, mv.subject), d, h)))
         return false;
 
-      if (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) == mv.class_1 && (out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) != mv.class_2 && out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) != -1))
+      if (out.Prof_Schedule(out.Subject_Prof(mv.class_1, mv.subject), d, h) == mv.class_1 
+       && !(out.Prof_Schedule(out.Subject_Prof(mv.class_2, mv.subject), d, h) == mv.class_2 
+          || out.IsProfHourFree(out.Subject_Prof(mv.class_2, mv.subject), d, h)))
         return false;
     }
 
@@ -113,39 +116,35 @@ void Sched_SwapProf_NeighborhoodExplorer::MakeMove(Sched_Output& out, const Sche
   vector<pair<unsigned, unsigned>> hours_prof_1(0);
   vector<pair<unsigned, unsigned>> hours_prof_2(0);
 
-  // check on class and subject only to avoid seg_fault while using move tester's check costs function
-  if (mv.subject != -1 && mv.class_1 != -1 && mv.class_2 != -1)
-  {
-    prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
-    prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
+  prof_1 = out.Subject_Prof(mv.class_1, mv.subject);
+  prof_2 = out.Subject_Prof(mv.class_2, mv.subject);
 
-    for (d = 0; d < in.N_Days(); d++)
-      for (h = 0; h < in.N_HoursXDay(); h++)
+  for (d = 0; d < in.N_Days(); d++)
+    for (h = 0; h < in.N_HoursXDay(); h++)
+    {
+      if (out.Class_Schedule(mv.class_1, d, h) == prof_1)
       {
-        if (out.Class_Schedule(mv.class_1, d, h) == prof_1)
-        {
-          hours_prof_1.push_back(pair<unsigned, unsigned>(d, h));
-          out.FreeHour(mv.class_1, d, h);
-        }
-
-        if (out.Class_Schedule(mv.class_2, d, h) == prof_2)
-        {
-          hours_prof_2.push_back(pair<unsigned, unsigned>(d, h));
-          out.FreeHour(mv.class_2, d, h);
-        }
+        hours_prof_1.push_back(pair<unsigned, unsigned>(d, h));
+        out.FreeHour(mv.class_1, d, h);
       }
 
-    for (i = 0; i < hours_prof_1.size(); i++)
-      out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
+      if (out.Class_Schedule(mv.class_2, d, h) == prof_2)
+      {
+        hours_prof_2.push_back(pair<unsigned, unsigned>(d, h));
+        out.FreeHour(mv.class_2, d, h);
+      }
+    }
 
-    for (i = 0; i < hours_prof_2.size(); i++)
-      out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
-  }
+  for (i = 0; i < hours_prof_1.size(); i++)
+    out.AssignHour(mv.class_1, hours_prof_1[i].first, hours_prof_1[i].second, prof_2);
+
+  for (i = 0; i < hours_prof_2.size(); i++)
+    out.AssignHour(mv.class_2, hours_prof_2[i].first, hours_prof_2[i].second, prof_1);
 }
 
 void Sched_SwapProf_NeighborhoodExplorer::FirstMove(const Sched_Output& out, Sched_SwapProf& mv) const
 {
-  if (in.N_Profs() == in.N_Subjects())  // means I have only one professor for each subject --> no swap exists (assuming there are no subjects without a professor, otherwise it is a user error)
+  if (in.N_Profs() == in.N_Subjects())  // There is only one professor for each subject => no swap exists
     throw EmptyNeighborhood();
 
   mv.subject = 0;

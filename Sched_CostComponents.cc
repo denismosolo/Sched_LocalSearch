@@ -1,5 +1,5 @@
 // File Sched_CostComponents.cc
-#include "Sched_Helpers.hh"
+#include "Sched_Headers.hh"
 
 /***************************************************************************
  * Cost Components Code
@@ -191,36 +191,36 @@ int Sched_SwapHoursDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output&
     for (h = 0; h < in.N_HoursXDay(); h++)
       if (!out.IsProfHourFree(p1, mv.day_1, h) && mv.hour_1 != h) // if I find the professor in another hour of the same day
         break;
-    if (h == in.N_HoursXDay()) // I have reached the end of the loop so the professor is present only 1 hour in the day
-      cost--;  // The cost is automatically set (weight)
+    if (h == in.N_HoursXDay()) // The professor is present only 1 hour in the day
+      cost--;  
   }
 
   if (p2 != -1 && in.ProfUnavailability(p2) == mv.day_2)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (!out.IsProfHourFree(p2, mv.day_2, h) && mv.hour_2 != h) // if I find the professor in another hour of the same day
+      if (!out.IsProfHourFree(p2, mv.day_2, h) && mv.hour_2 != h)
         break;
-    if (h == in.N_HoursXDay()) // I have reached the end of the loop so the professor is present only 1 hour in the day
-      cost--;  // The cost is automatically set (weight)
+    if (h == in.N_HoursXDay())
+      cost--;  
   }
 
   // Add new costs
   if (p1 != -1 && in.ProfUnavailability(p1) == mv.day_2)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (!out.IsProfHourFree(p1, mv.day_2, h) && mv.hour_2 != h) // if I find the professor in another hour of the same day
+      if (!out.IsProfHourFree(p1, mv.day_2, h) && mv.hour_2 != h)
         break;
-    if (h == in.N_HoursXDay()) // I have reached the end of the loop so the professor is present only 1 hour in the day
-      cost++;  // The cost is automatically set (weight)
+    if (h == in.N_HoursXDay())
+      cost++;
   }
 
   if (p2 != -1 && in.ProfUnavailability(p2) == mv.day_1)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
-      if (!out.IsProfHourFree(p2, mv.day_1, h) && mv.hour_1 != h) // if I find the professor in another hour of the same day
+      if (!out.IsProfHourFree(p2, mv.day_1, h) && mv.hour_1 != h)
         break;
-    if (h == in.N_HoursXDay()) // I have reached the end of the loop so the professor is present only 1 hour in the day
-      cost++;  // The cost is automatically set (weight)
+    if (h == in.N_HoursXDay())
+      cost++;
   }
 
   return cost;
@@ -245,7 +245,7 @@ int Sched_SwapHoursDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output
     cost--;
 
   // Add new costs
-  if (p2 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_1, in.ProfSubject(p2)) >= in.SubjectMaxHoursXDay()) // add the case "=" because if I am at the limit and I add another one I cause a violation
+  if (p2 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_1, in.ProfSubject(p2)) >= in.SubjectMaxHoursXDay()) // add the case "=" because if I am at the limit adding another one cause a violation
     cost++;
 
   if (p1 != -1 && out.DailySubjectAssignedHours(mv._class, mv.day_2, in.ProfSubject(p1)) >= in.SubjectMaxHoursXDay())
@@ -271,11 +271,6 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
   int last_arr_1 = -1;
   int last_arr_2 = -1;
 
-  // To exclude the possible error on the first move if the first move is not feasible
-  // in reality, this case is excluded by feasible move, first_move accepts it but does not execute it
-  if (p1 == p2)
-    return 0;
-
   // Iterating over the schedule hour by hour, considering only the days involved in the hour swap
   for (h = 0; h < in.N_HoursXDay(); h++)
   {
@@ -295,7 +290,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
       last_old_2 = h;
     }
 
-    // Violations of "subject 1" already present on the arrival day - but only if different days
+    // Violations already present on the arrival day - but only if different days
     if (mv.day_1 != mv.day_2)
     {
       if (p1 != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p1)
@@ -305,7 +300,6 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
         last_arr_1 = h;
       }
 
-      // Violations of "subject 2" already present on the arrival day
       if (p2 != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p2)
       {
         if (last_arr_2 != -1 && h - last_arr_2 > 1)
@@ -315,8 +309,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
     }
 
     // Violations of "subject 1" on the day currently occupied by "subject 2" if the swap is made.
-    // NOTE: the hour on day 2 is currently occupied by subject 1, or it's the hour that will be occupied by "subject 1"
-    // if the swap is made.
+    // NOTE: the hour on day 2 is currently occupied by subject 1, or it's the hour that will be occupied by "subject 1" if the swap is made.
     if (p1 != -1 && (out.Class_Schedule(mv._class, mv.day_2, h) == p1 || h == mv.hour_2) && !(mv.day_1 == mv.day_2 && h == mv.hour_1))
     {
       if (last_new_1 != -1 && h - last_new_1 > 1)
@@ -332,7 +325,7 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
       last_new_2 = h;
     }
 
-    // Residual violations of "subject 1" on the departure day. only if different days
+    // Residual violations on the departure day. only if different days
     if (mv.day_1 != mv.day_2)
     {
       if (p1 != -1 && out.Class_Schedule(mv._class, mv.day_1, h) == p1 && h != mv.hour_1)
@@ -342,7 +335,6 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
         last_res_1 = h;
       }
 
-      // Residual violations of "subject 2" on the departure day.
       if (p2 != -1 && out.Class_Schedule(mv._class, mv.day_2, h) == p2 && h != mv.hour_2)
       {
         if (last_res_2 != -1 && h - last_res_2 > 1)
@@ -359,13 +351,12 @@ int Sched_SwapHoursDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output&
  * Delta Cost Components Code - Sched_AssignProf
  ***************************************************************************/
 
- // If the move is feasible, it resolves a hard violation, which is always superior to any soft cost.
-
 int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
   unsigned h;
 
-  // I don't have old unavailability costs because I'm adding the professor
+  // There's no old costs to subtract
+
   if (in.ProfUnavailability(mv.prof) == mv.day)
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
@@ -376,15 +367,14 @@ int Sched_AssignProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output
     return 1;
   }
 
-  // The day when the professor is added is not their requested day off
+  // The day where the professor is added is not his requested day off
   return 0;
 }
 
 int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
-  // I don't have old costs to subtract
+  // There's no old costs to subtract
 
-  // sum new costs
   if (out.DailySubjectAssignedHours(mv._class, mv.day, in.ProfSubject(mv.prof)) >= in.SubjectMaxHoursXDay())
     return 1;
 
@@ -393,6 +383,7 @@ int Sched_AssignProfDeltaMaxSubjectHoursXDay::ComputeDeltaCost(const Sched_Outpu
 
 int Sched_AssignProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const
 {
+  // There's no old costs to subtract
 
   if (out.ProfWeeklyAssignedHours(mv.prof) >= in.ProfMaxWeeklyHours())
     return 1;
@@ -404,6 +395,8 @@ int Sched_AssignProfDeltaScheduleContiguity::ComputeDeltaCost(const Sched_Output
 {
   unsigned h;
   int last_hour = -1;
+
+  // There's no old costs to subtract
 
   // If I place the new hour next to one of the same subject, the cost remains unchanged
   if (mv.hour > 0)
@@ -445,7 +438,7 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
 
   for (h = 0; h < in.N_HoursXDay(); h++)
     if (!out.IsProfHourFree(prof_1, in.ProfUnavailability(prof_1), h) && out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_1), h) != mv.class_1)
-      break; // prof_1 is engaged with another class on their day off => I don't modify the violations for prof_1
+      break; // prof_1 is engaged with another class on his day off => I don't modify the violations for prof_1
   if (h == in.N_HoursXDay()) // prof_1 on the free day has at most only class_1 => there may be changes to violations
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
@@ -462,8 +455,8 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
 
   for (h = 0; h < in.N_HoursXDay(); h++)
     if (!out.IsProfHourFree(prof_2, in.ProfUnavailability(prof_2), h) && out.Prof_Schedule(prof_2, in.ProfUnavailability(prof_2), h) != mv.class_2)
-      break; // prof_1 is engaged with another class on their day off
-  if (h == in.N_HoursXDay()) // prof_1 on the free day has only class_1
+      break; // prof_2 is engaged with another class on their day off
+  if (h == in.N_HoursXDay()) // prof_2 on the free day has only class_2
   {
     for (h = 0; h < in.N_HoursXDay(); h++)
       if (out.Prof_Schedule(prof_1, in.ProfUnavailability(prof_2), h) == mv.class_1)
@@ -491,7 +484,7 @@ int Sched_SwapProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& 
   p1_extra_hours = out.ProfWeeklyAssignedHours(p1) - in.ProfMaxWeeklyHours();
   p2_extra_hours = out.ProfWeeklyAssignedHours(p2) - in.ProfMaxWeeklyHours();
 
-  // the cost is != 0 only if one of the subjects is not fully assigned for the class
+  // the cost is not 0 only if one of the subjects is not fully assigned for the class
   if (out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0)
   {
     if (p2_extra_hours > 0)

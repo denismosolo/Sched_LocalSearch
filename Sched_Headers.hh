@@ -259,7 +259,7 @@ public:
   Sched_AssignProfDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_AssignProf>(in,cc,"Sched_AssignProfDeltaCompleteSolution") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return -1; }
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_AssignProf& mv) const override { return -1; } // AssignProf always resolve 1 violation
 };
 
 
@@ -325,7 +325,7 @@ public:
   Sched_SwapProfDeltaMaxSubjectHoursXDay(const Sched_Input& in, Sched_MaxSubjectHoursXDay_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaMaxSubjectHoursXDay") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }  // SwapProf can't change this cost
 };
 
 class Sched_SwapProfDeltaProfMaxWeeklyHours
@@ -345,7 +345,7 @@ public:
   Sched_SwapProfDeltaScheduleContiguity(const Sched_Input& in, Sched_ScheduleContiguity_CC& cc) 
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaScheduleContiguity") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }  // SwapProf can't change this cost
 };
 
 class Sched_SwapProfDeltaCompleteSolution
@@ -355,6 +355,6 @@ public:
   Sched_SwapProfDeltaCompleteSolution(const Sched_Input& in, Sched_SolutionComplete_CC& cc)
     : DeltaCostComponent<Sched_Input,Sched_Output,Sched_SwapProf>(in,cc,"Sched_SwapProfDeltaCompleteSolution") 
   {}
-  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }
+  int ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const override { return 0; }  // SwapProf can't change this cost
 };
 #endif

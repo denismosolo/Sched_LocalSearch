@@ -1,9 +1,10 @@
 // File Sched_AssignProf_NHE.cc
-#include "Sched_Helpers.hh"
+#include "Sched_Headers.hh"
 
 namespace
 {
-  // RandomMove and AnyNextMovehelp function
+  // Help function: for the selected class gets the professor of the subjects not completly assigned
+  //                if a subject doesn't have assigned hours gets all the profs teaching that subject
   vector<unsigned> GetAvailableProfs(const Sched_Input& in, const Sched_Output& out, const int c)
   {
     unsigned s, p;
@@ -184,7 +185,6 @@ bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out,
     mv.index++;
   else
   {
-    // Move to next hour
     mv.hour++;
     mv.index = 0;
 
