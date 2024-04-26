@@ -94,6 +94,7 @@ int main(int argc, const char* argv[])
   HillClimbing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_hc(in, Sched_sm, Union_nhe, "HC");
   SteepestDescent<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sd(in, Sched_sm, Union_nhe, "SD");
   SimulatedAnnealing<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_sa(in, Sched_sm, Union_nhe, "SA");
+  TabuSearch<Sched_Input, Sched_Output, tuple <ActiveMove<Sched_SwapHours>, ActiveMove<Sched_AssignProf>, ActiveMove<Sched_SwapProf>>> Sched_ts(in, Sched_sm, Union_nhe, "TS");
 
   // SwapProf
   //HillClimbing<Sched_Input, Sched_Output, Sched_SwapProf> Sched_hc(in, Sched_sm, Sched_SwapP_nhe, "HC");
@@ -140,6 +141,10 @@ int main(int argc, const char* argv[])
     else if (method == "SD")
     {
       Sched_solver.SetRunner(Sched_sd);
+    }
+    else if (method == "TS")
+    {
+      Sched_solver.SetRunner(Sched_ts);
     }
     else
     {
