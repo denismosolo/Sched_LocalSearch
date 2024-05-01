@@ -117,7 +117,7 @@ int main(int argc, const char* argv[])
   MoveTester<Sched_Input, Sched_Output, Sched_AssignProf> assignP_move_test(in, Sched_sm, Sched_AssignP_nhe, "Sched_AssignProf move", tester); 
   MoveTester<Sched_Input, Sched_Output, Sched_SwapProf> swapP_move_test(in, Sched_sm, Sched_SwapP_nhe, "Sched_SwapProf move", tester);
 
-  SimpleLocalSearch<Sched_Input, Sched_Output> Sched_solver(in, Sched_sm, "Sched solver");
+  SimpleLocalSearch<Sched_Input, Sched_Output> Sched_solver(in, Sched_sm, "Sched_solver");
   if (!CommandLineParameters::Parse(argc, argv, true, false))
     return 1;
 
@@ -157,16 +157,26 @@ int main(int argc, const char* argv[])
     if (output_file.IsSet())
     { // write the output on the file passed in the command line
       ofstream os(static_cast<string>(output_file));
-      os << out << endl;
-      os << "Cost: " << result.cost.total << endl;
-      os << "Time: " << result.running_time << "s " << endl;
+      //os << out << endl;
+      os << "Cost:\t" << result.cost.total << endl
+         << "Violations:\t " << result.cost.violations << endl
+         << "ProfUnavailability:\t" << result.cost.all_components[0] << endl
+         << "MaxHoursXDay:\t" << result.cost.all_components[1] << endl
+         << "ProfMaxWeeklyHours:\t" << result.cost.all_components[2] << endl
+         << "ScheduleContiguity:\t" << result.cost.all_components[3] << endl;
+      os << "Time:\t" << result.running_time << "\ts " << endl;
       os.close();
     }
     else
     { // write the solution in the standard output
       cout << out << endl;
-      cout << "Cost: " << result.cost.total << endl;
-      cout << "Time: " << result.running_time << "s" << endl;				
+      cout << "Cost:\t" << result.cost.total << endl
+           << "Violations:\t " << result.cost.violations << endl
+           << "ProfUnavailability:\t" << result.cost.all_components[0] << endl
+           << "MaxHoursXDay:\t" << result.cost.all_components[1] << endl
+           << "ProfMaxWeeklyHours:\t" << result.cost.all_components[2] << endl
+           << "ScheduleContiguity:\t" << result.cost.all_components[3] << endl;
+      cout << "Time:\t" << result.running_time << "\ts" << endl;				
     }
   }
 
