@@ -163,9 +163,6 @@ bool Sched_AssignProf_NeighborhoodExplorer::NextMove(const Sched_Output& out, Sc
 bool Sched_AssignProf_NeighborhoodExplorer::AnyNextMove(const Sched_Output& out, Sched_AssignProf& mv) const
 {
   vector<unsigned> available_profs;
-  
-  if (mv._class >= in.N_Classes())
-      return false;
 
   available_profs = GetAvailableProfs(in, out, mv._class);
 

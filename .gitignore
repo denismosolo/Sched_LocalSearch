@@ -14,3 +14,4 @@ test
 out
 *.ipnyb
 
+Instances/InstanceGenerator.ipynb
