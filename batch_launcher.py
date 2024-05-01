@@ -20,14 +20,6 @@ solution_directory = "./Solutions"
 max_evaluations = 100000000
 max_idle_iterations = 10000000
 
-
-today = date.today()
-# The log file stores a summary of the results
-log_file = "Log_" + today.isoformat() + ".log"
-f = open(log_file,"a")
-f.write("Trial Instance Cost Seed Time Start_Temp Min_Temp Cooling_Rate\n")
-f.close()
-
 for instance in instances:
   in_file_path = instance_directory + "/instance" + instance + ".txt"
   init_state_path = init_state_directory + "/Random" + instance
