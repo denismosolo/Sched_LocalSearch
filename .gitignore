@@ -12,6 +12,6 @@ test0.txt
 *.xlsx
 test
 out
-*.ipnyb
-
 Instances/InstanceGenerator.ipynb
+*.bash
+*.py
