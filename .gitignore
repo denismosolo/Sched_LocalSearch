@@ -9,7 +9,7 @@ easylocal-3
 test.txt
 test0.txt
 *.test
-*.xlsx
+Check_for_instance4.xlsx
 test
 out
 Instances/InstanceGenerator.ipynb
