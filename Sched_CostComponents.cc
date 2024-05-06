@@ -472,10 +472,11 @@ int Sched_SwapProfDeltaProfUnavailability::ComputeDeltaCost(const Sched_Output& 
   return cost;
 }
 
+// the cost is not 0 only if the number of assigned hours for that subject to the two classes is different
 int Sched_SwapProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& out, const Sched_SwapProf& mv) const
 {
   unsigned p1, p2;
-  int p1_extra_hours, p2_extra_hours;
+  int p1_extra_hours, p2_extra_hours, delta;
   int cost = 0;
 
   p1 = out.Subject_Prof(mv.class_1, mv.subject);
@@ -484,39 +485,38 @@ int Sched_SwapProfDeltaProfMaxWeeklyHours::ComputeDeltaCost(const Sched_Output& 
   p1_extra_hours = out.ProfWeeklyAssignedHours(p1) - in.ProfMaxWeeklyHours();
   p2_extra_hours = out.ProfWeeklyAssignedHours(p2) - in.ProfMaxWeeklyHours();
 
-  // the cost is not 0 only if one of the subjects is not fully assigned for the class
-  if (out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0)
+  if (out.WeeklySubjectAssignedHours(mv.class_1, mv.subject) > out.WeeklySubjectAssignedHours(mv.class_2, mv.subject))
   {
-    if (p2_extra_hours > 0)
-    {
-      if (p2_extra_hours > out.WeeklySubjectResidualHours(mv.class_1, mv.subject))
-        cost -= out.WeeklySubjectResidualHours(mv.class_1, mv.subject);
-      else
-        cost -= p2_extra_hours;
-    }
-
-    if (p1_extra_hours > 0)
-      cost += out.WeeklySubjectResidualHours(mv.class_1, mv.subject);
-    else
-      if (p1_extra_hours + out.WeeklySubjectResidualHours(mv.class_1, mv.subject) > 0)
-        cost += (p1_extra_hours + out.WeeklySubjectResidualHours(mv.class_1, mv.subject));
-  }
-
-  if (out.WeeklySubjectResidualHours(mv.class_2, mv.subject) > 0)
-  {
+    delta = out.WeeklySubjectAssignedHours(mv.class_1, mv.subject) - out.WeeklySubjectAssignedHours(mv.class_2, mv.subject);
     if (p1_extra_hours > 0)
     {
-      if (p1_extra_hours > out.WeeklySubjectResidualHours(mv.class_2, mv.subject))
-        cost -= out.WeeklySubjectResidualHours(mv.class_2, mv.subject);
+      if (p1_extra_hours > delta)
+        cost -= delta;
       else
         cost -= p1_extra_hours;
     }
 
     if (p2_extra_hours > 0)
-      cost += out.WeeklySubjectResidualHours(mv.class_2, mv.subject);
-    else
-      if (p2_extra_hours + out.WeeklySubjectResidualHours(mv.class_2, mv.subject) > 0)
-        cost += (p2_extra_hours + out.WeeklySubjectResidualHours(mv.class_2, mv.subject));
+      cost += delta;
+    else if (p2_extra_hours + delta > 0)
+      cost += p2_extra_hours + delta;
+  }
+
+  if (out.WeeklySubjectAssignedHours(mv.class_1, mv.subject) < out.WeeklySubjectAssignedHours(mv.class_2, mv.subject))
+  {
+    delta = out.WeeklySubjectAssignedHours(mv.class_2, mv.subject) - out.WeeklySubjectAssignedHours(mv.class_1, mv.subject);
+    if (p2_extra_hours > 0)
+    {
+      if (p2_extra_hours > delta)
+        cost -= delta;
+      else
+        cost -= p2_extra_hours;
+    }
+
+    if (p1_extra_hours > 0)
+      cost += delta;
+    else if (p1_extra_hours + delta > 0)
+      cost += p1_extra_hours + delta;
   }
 
   return cost;
