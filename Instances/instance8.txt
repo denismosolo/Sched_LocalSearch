@@ -1,0 +1,410 @@
+$orario
+Days 6
+HoursXDay 5
+SubjectMaxHoursXDay 2
+ProfMaxWeeklyHours 18
+
+$materie
+scienze 3
+matematica 4
+italiano 7
+latino 3
+filosofia 3
+storia 2
+inglese 3
+storia_arte 2
+educazione_fisica 2
+religione 1
+
+$professori
+Emma_Bianchi scienze ven
+Francesco_Romano scienze sab
+Aurora_Gallo scienze gio
+Ludovica_Colombo scienze lun
+Leonardo_Romano scienze gio
+Gabriele_Marino scienze sab
+Sofia_Costa scienze lun
+Francesco_Ferrari scienze mar
+Alessandro_Mancini scienze lun
+Mattia_Bianchi scienze ven
+Edoardo_Lombardi scienze gio
+Alice_Moretti scienze mer
+Andrea_Bruno scienze mar
+Riccardo_Lombardi scienze sab
+Edoardo_Colombo scienze gio
+Edoardo_Bianchi scienze sab
+Aurora_Barbieri scienze lun
+Tommaso_Bianchi scienze mer
+Tommaso_Ricci scienze mer
+Leonardo_Ricci scienze mar
+Emma_Romano scienze mar
+Vittoria_Bianchi scienze ven
+Ginevra_Lombardi scienze ven
+Emma_Gallo scienze sab
+Andrea_Rossi scienze gio
+Mattia_Giordano matematica lun
+Sofia_Greco matematica lun
+Andrea_Martinelli matematica gio
+Matilde_Moretti matematica gio
+Ludovica_Bianchi matematica sab
+Edoardo_Fontana matematica ven
+Alessandro_Gallo matematica mar
+Gabriele_Moretti matematica mer
+Ludovica_Greco matematica gio
+Matilde_Bruno matematica ven
+Leonardo_Barbieri matematica mer
+Francesco_Fontana matematica lun
+Ginevra_Bianchi matematica mer
+Aurora_Longo matematica ven
+Francesco_Giordano matematica mar
+Vittoria_Barbieri matematica ven
+Leonardo_Colombo matematica ven
+Edoardo_Longo matematica mer
+Giulia_Fontana matematica ven
+Alice_Longo matematica gio
+Beatrice_Fontana matematica gio
+Sofia_Ferrari matematica sab
+Tommaso_Fontana matematica gio
+Edoardo_Greco matematica mer
+Tommaso_Conti matematica sab
+Francesco_Colombo matematica lun
+Riccardo_Bianchi matematica sab
+Giulia_Giordano matematica mar
+Sofia_Lombardi matematica mer
+Beatrice_Giordano matematica mar
+Aurora_Costa italiano lun
+Riccardo_Fontana italiano lun
+Andrea_Conti italiano gio
+Ludovica_Conti italiano mer
+Riccardo_Martinelli italiano gio
+Mattia_Fontana italiano mar
+Ludovica_Lombardi italiano lun
+Lorenzo_Lombardi italiano ven
+Emma_Greco italiano mer
+Ludovica_Fontana italiano gio
+Edoardo_Rossi italiano lun
+Aurora_Lombardi italiano gio
+Aurora_Conti italiano sab
+Riccardo_Romano italiano ven
+Edoardo_Ricci italiano mar
+Giulia_Bianchi italiano sab
+Alice_Romano italiano lun
+Ginevra_Martinelli italiano gio
+Alessandro_Bianchi italiano gio
+Riccardo_Greco italiano mer
+Mattia_Marino italiano mer
+Gabriele_Rossi italiano lun
+Matilde_Colombo italiano mer
+Gabriele_Fontana italiano mar
+Edoardo_Barbieri italiano gio
+Gabriele_Conti italiano mer
+Andrea_Bianchi italiano sab
+Giulia_Ferrari italiano ven
+Matilde_Giordano italiano mar
+Lorenzo_Ferrari italiano sab
+Francesco_Ricci italiano gio
+Riccardo_Marino italiano gio
+Francesco_Lombardi italiano gio
+Alessandro_Costa italiano ven
+Alice_Marino italiano ven
+Alice_Conti italiano ven
+Beatrice_Colombo italiano mar
+Gabriele_Bruno italiano mer
+Emma_Conti italiano gio
+Ginevra_Costa italiano ven
+Tommaso_Longo latino mar
+Andrea_Marino latino sab
+Leonardo_Ferrari latino lun
+Francesco_Conti latino mar
+Leonardo_Bruno latino mar
+Emma_Giordano latino ven
+Alice_Mancini latino sab
+Leonardo_Conti latino sab
+Emma_Colombo latino mer
+Ginevra_Mancini latino gio
+Giulia_Marino latino sab
+Leonardo_Mancini latino mar
+Lorenzo_Rossi latino mer
+Alessandro_Romano latino ven
+Tommaso_Marino latino sab
+Ginevra_Fontana latino mer
+Alice_Barbieri latino mar
+Beatrice_Bianchi latino mer
+Mattia_Greco latino lun
+Riccardo_Rossi latino lun
+Lorenzo_Marino latino mer
+Andrea_Mancini latino lun
+Giulia_Conti latino ven
+Giulia_Colombo latino sab
+Matilde_Fontana latino sab
+Aurora_Rossi latino ven
+Aurora_Marino filosofia mar
+Andrea_Gallo filosofia mar
+Giulia_Ricci filosofia lun
+Francesco_Gallo filosofia mar
+Sofia_Marino filosofia mer
+Andrea_Barbieri filosofia ven
+Gabriele_Colombo filosofia lun
+Giulia_Rossi filosofia lun
+Gabriele_Longo filosofia mar
+Mattia_Mancini filosofia ven
+Mattia_Rossi filosofia gio
+Gabriele_Ricci filosofia mar
+Tommaso_Moretti filosofia mer
+Alessandro_Marino filosofia gio
+Riccardo_Ferrari filosofia lun
+Ludovica_Rossi filosofia mar
+Andrea_Fontana filosofia sab
+Sofia_Giordano filosofia mer
+Alessandro_Rossi filosofia sab
+Emma_Marino filosofia lun
+Sofia_Bianchi filosofia lun
+Gabriele_Mancini filosofia sab
+Leonardo_Gallo filosofia ven
+Riccardo_Colombo filosofia gio
+Aurora_Greco storia mar
+Francesco_Bruno storia mer
+Vittoria_Greco storia lun
+Aurora_Bianchi storia lun
+Lorenzo_Colombo storia sab
+Edoardo_Costa storia gio
+Sofia_Mancini storia ven
+Mattia_Bruno storia sab
+Beatrice_Moretti storia ven
+Ginevra_Colombo storia mer
+Matilde_Lombardi storia mar
+Edoardo_Mancini storia gio
+Mattia_Martinelli storia mer
+Beatrice_Romano storia sab
+Giulia_Moretti storia mer
+Beatrice_Bruno storia ven
+Vittoria_Costa storia ven
+Riccardo_Longo storia gio
+Aurora_Moretti storia mar
+Alessandro_Ricci storia lun
+Ginevra_Moretti storia sab
+Vittoria_Colombo storia ven
+Vittoria_Giordano storia mer
+Gabriele_Martinelli storia mar
+Matilde_Marino storia gio
+Matilde_Barbieri storia lun
+Ludovica_Mancini storia gio
+Mattia_Lombardi inglese sab
+Beatrice_Greco inglese mar
+Francesco_Greco inglese mer
+Aurora_Ricci inglese gio
+Lorenzo_Bianchi inglese lun
+Lorenzo_Costa inglese mer
+Vittoria_Ferrari inglese ven
+Aurora_Colombo inglese mar
+Andrea_Moretti inglese lun
+Mattia_Barbieri inglese sab
+Leonardo_Bianchi inglese mer
+Tommaso_Lombardi inglese sab
+Emma_Fontana inglese ven
+Sofia_Ricci inglese mar
+Sofia_Fontana inglese mer
+Tommaso_Colombo inglese sab
+Alice_Greco inglese mar
+Ludovica_Marino inglese sab
+Alice_Gallo inglese ven
+Francesco_Costa inglese sab
+Edoardo_Moretti inglese sab
+Beatrice_Longo inglese sab
+Beatrice_Ferrari inglese sab
+Ginevra_Bruno inglese lun
+Ludovica_Bruno inglese lun
+Tommaso_Giordano inglese lun
+Ginevra_Rossi inglese ven
+Francesco_Longo inglese sab
+Giulia_Greco inglese ven
+Sofia_Martinelli inglese sab
+Leonardo_Costa storia_arte sab
+Beatrice_Barbieri storia_arte gio
+Giulia_Mancini storia_arte lun
+Alice_Bruno storia_arte mar
+Mattia_Colombo storia_arte mar
+Tommaso_Martinelli storia_arte ven
+Ludovica_Ferrari storia_arte sab
+Andrea_Lombardi storia_arte ven
+Sofia_Bruno storia_arte mar
+Gabriele_Lombardi storia_arte ven
+Aurora_Fontana storia_arte lun
+Riccardo_Conti storia_arte mer
+Vittoria_Bruno storia_arte mer
+Vittoria_Romano storia_arte gio
+Lorenzo_Barbieri storia_arte mer
+Sofia_Moretti storia_arte gio
+Riccardo_Moretti storia_arte gio
+Aurora_Mancini storia_arte mar
+Aurora_Martinelli storia_arte mar
+Andrea_Costa storia_arte mar
+Andrea_Ferrari storia_arte mar
+Ginevra_Longo storia_arte mer
+Giulia_Barbieri storia_arte mar
+Leonardo_Marino educazione_fisica gio
+Matilde_Greco educazione_fisica mar
+Giulia_Gallo educazione_fisica ven
+Aurora_Ferrari educazione_fisica gio
+Ginevra_Giordano educazione_fisica mer
+Beatrice_Rossi educazione_fisica sab
+Matilde_Rossi educazione_fisica sab
+Ginevra_Romano educazione_fisica ven
+Riccardo_Ricci educazione_fisica gio
+Beatrice_Mancini educazione_fisica mar
+Giulia_Costa educazione_fisica mer
+Matilde_Conti educazione_fisica sab
+Matilde_Mancini educazione_fisica lun
+Vittoria_Moretti educazione_fisica gio
+Leonardo_Martinelli educazione_fisica lun
+Lorenzo_Moretti educazione_fisica mer
+Mattia_Ferrari educazione_fisica gio
+Riccardo_Gallo educazione_fisica mar
+Alessandro_Martinelli religione ven
+Tommaso_Romano religione ven
+Edoardo_Martinelli religione mar
+Vittoria_Mancini religione lun
+Francesco_Marino religione sab
+Vittoria_Rossi religione mar
+Sofia_Conti religione mar
+Mattia_Longo religione lun
+Mattia_Romano religione mar
+Tommaso_Greco religione ven
+
+$classi
+1A
+2A
+3A
+4A
+5A
+1B
+2B
+3B
+4B
+5B
+1C
+2C
+3C
+4C
+5C
+1D
+2D
+3D
+4D
+5D
+1E
+2E
+3E
+4E
+5E
+1F
+2F
+3F
+4F
+5F
+1G
+2G
+3G
+4G
+5G
+1H
+2H
+3H
+4H
+5H
+1I
+2I
+3I
+4I
+5I
+1J
+2J
+3J
+4J
+5J
+1K
+2K
+3K
+4K
+5K
+1L
+2L
+3L
+4L
+5L
+1M
+2M
+3M
+4M
+5M
+1N
+2N
+3N
+4N
+5N
+1O
+2O
+3O
+4O
+5O
+1P
+2P
+3P
+4P
+5P
+1Q
+2Q
+3Q
+4Q
+5Q
+1R
+2R
+3R
+4R
+5R
+1S
+2S
+3S
+4S
+5S
+1T
+2T
+3T
+4T
+5T
+1U
+2U
+3U
+4U
+5U
+1V
+2V
+3V
+4V
+5V
+1W
+2W
+3W
+4W
+5W
+1X
+2X
+3X
+4X
+5X
+1Y
+2Y
+3Y
+4Y
+5Y
+1Z
+2Z
+3Z
+4Z
+5Z
+
+$costi
+UnavailabilityViolation 10
+MaxSubjectHoursXDayViolation 5
+MaxProfWeeklyHoursViolation 15
+ScheduleContiguityViolation 5

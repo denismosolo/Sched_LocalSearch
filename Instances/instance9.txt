@@ -1,0 +1,290 @@
+$orario
+Days 6
+HoursXDay 5
+SubjectMaxHoursXDay 2
+ProfMaxWeeklyHours 18
+
+$materie
+scienze 3
+matematica 4
+italiano 7
+latino 3
+filosofia 3
+storia 2
+inglese 3
+storia_arte 2
+educazione_fisica 2
+religione 1
+
+$professori
+Emma_Marino scienze ven
+Alice_Ricci scienze gio
+Ludovica_Moretti scienze mer
+Ludovica_Bianchi scienze sab
+Tommaso_Colombo scienze ven
+Sofia_Barbieri scienze ven
+Ginevra_Romano scienze gio
+Vittoria_Fontana scienze sab
+Andrea_Conti scienze sab
+Francesco_Moretti scienze ven
+Riccardo_Marino scienze gio
+Ginevra_Costa scienze ven
+Alessandro_Martinelli scienze lun
+Aurora_Giordano matematica ven
+Leonardo_Greco matematica mer
+Mattia_Mancini matematica ven
+Vittoria_Greco matematica gio
+Beatrice_Martinelli matematica mer
+Giulia_Bruno matematica mer
+Leonardo_Mancini matematica mar
+Aurora_Martinelli matematica sab
+Francesco_Fontana matematica ven
+Riccardo_Fontana matematica ven
+Lorenzo_Ferrari matematica sab
+Sofia_Conti matematica sab
+Edoardo_Lombardi matematica mar
+Lorenzo_Martinelli matematica sab
+Riccardo_Bianchi matematica gio
+Andrea_Ferrari matematica sab
+Mattia_Marino matematica mar
+Tommaso_Barbieri matematica mar
+Vittoria_Mancini italiano sab
+Aurora_Conti italiano gio
+Vittoria_Gallo italiano mer
+Gabriele_Bianchi italiano mar
+Andrea_Giordano italiano mer
+Vittoria_Giordano italiano mer
+Alessandro_Fontana italiano mar
+Gabriele_Rossi italiano sab
+Giulia_Bianchi italiano gio
+Giulia_Colombo italiano sab
+Francesco_Lombardi italiano gio
+Lorenzo_Barbieri italiano ven
+Alice_Barbieri italiano sab
+Aurora_Bruno italiano mer
+Lorenzo_Costa italiano gio
+Andrea_Rossi italiano mar
+Lorenzo_Bruno italiano mar
+Aurora_Greco italiano sab
+Leonardo_Costa italiano gio
+Andrea_Bianchi italiano lun
+Edoardo_Conti italiano lun
+Alessandro_Moretti italiano mer
+Gabriele_Longo italiano gio
+Gabriele_Giordano italiano gio
+Gabriele_Romano italiano sab
+Matilde_Bruno italiano sab
+Vittoria_Bruno italiano gio
+Francesco_Gallo italiano mer
+Matilde_Marino italiano ven
+Giulia_Mancini italiano gio
+Riccardo_Conti italiano sab
+Emma_Moretti latino gio
+Francesco_Bruno latino gio
+Tommaso_Giordano latino sab
+Gabriele_Gallo latino gio
+Ludovica_Ferrari latino mer
+Tommaso_Greco latino sab
+Ludovica_Longo latino gio
+Andrea_Longo latino lun
+Matilde_Romano latino ven
+Alessandro_Lombardi latino ven
+Alessandro_Ricci latino gio
+Andrea_Bruno latino ven
+Ludovica_Costa latino sab
+Tommaso_Fontana filosofia mer
+Leonardo_Gallo filosofia lun
+Sofia_Fontana filosofia mer
+Ginevra_Ferrari filosofia mar
+Aurora_Bianchi filosofia mar
+Andrea_Greco filosofia sab
+Riccardo_Rossi filosofia lun
+Gabriele_Lombardi filosofia mer
+Riccardo_Greco filosofia lun
+Ludovica_Martinelli filosofia ven
+Mattia_Martinelli filosofia lun
+Gabriele_Ferrari filosofia sab
+Giulia_Fontana filosofia gio
+Riccardo_Giordano storia mer
+Mattia_Longo storia gio
+Vittoria_Colombo storia sab
+Ginevra_Lombardi storia gio
+Ginevra_Greco storia mer
+Giulia_Conti storia ven
+Giulia_Romano storia lun
+Francesco_Colombo storia sab
+Emma_Greco storia lun
+Sofia_Lombardi inglese gio
+Lorenzo_Gallo inglese lun
+Ludovica_Gallo inglese mer
+Riccardo_Costa inglese sab
+Francesco_Romano inglese gio
+Emma_Bianchi inglese mer
+Aurora_Moretti inglese ven
+Matilde_Moretti inglese gio
+Sofia_Marino inglese sab
+Sofia_Bianchi inglese mer
+Leonardo_Conti inglese mer
+Sofia_Martinelli inglese mer
+Alessandro_Ferrari inglese gio
+Alice_Marino storia_arte sab
+Giulia_Gallo storia_arte lun
+Ludovica_Marino storia_arte gio
+Edoardo_Greco storia_arte mer
+Ludovica_Fontana storia_arte gio
+Giulia_Costa storia_arte mar
+Matilde_Ferrari storia_arte ven
+Mattia_Gallo storia_arte lun
+Leonardo_Moretti storia_arte mer
+Riccardo_Gallo educazione_fisica lun
+Andrea_Romano educazione_fisica gio
+Giulia_Ferrari educazione_fisica sab
+Sofia_Giordano educazione_fisica ven
+Lorenzo_Ricci educazione_fisica lun
+Sofia_Greco educazione_fisica lun
+Aurora_Lombardi educazione_fisica mer
+Gabriele_Greco educazione_fisica ven
+Sofia_Ricci educazione_fisica mer
+Ludovica_Bruno religione ven
+Ludovica_Colombo religione mar
+Alessandro_Rossi religione mer
+Aurora_Costa religione lun
+Vittoria_Romano religione ven
+
+$classi
+1A
+2A
+3A
+4A
+5A
+1B
+2B
+3B
+4B
+5B
+1C
+2C
+3C
+4C
+5C
+1D
+2D
+3D
+4D
+5D
+1E
+2E
+3E
+4E
+5E
+1F
+2F
+3F
+4F
+5F
+1G
+2G
+3G
+4G
+5G
+1H
+2H
+3H
+4H
+5H
+1I
+2I
+3I
+4I
+5I
+1J
+2J
+3J
+4J
+5J
+1K
+2K
+3K
+4K
+5K
+1L
+2L
+3L
+4L
+5L
+1M
+2M
+3M
+4M
+5M
+1N
+2N
+3N
+4N
+5N
+1O
+2O
+3O
+4O
+5O
+1P
+2P
+3P
+4P
+5P
+1Q
+2Q
+3Q
+4Q
+5Q
+1R
+2R
+3R
+4R
+5R
+1S
+2S
+3S
+4S
+5S
+1T
+2T
+3T
+4T
+5T
+1U
+2U
+3U
+4U
+5U
+1V
+2V
+3V
+4V
+5V
+1W
+2W
+3W
+4W
+5W
+1X
+2X
+3X
+4X
+5X
+1Y
+2Y
+3Y
+4Y
+5Y
+1Z
+2Z
+3Z
+4Z
+5Z
+
+$costi
+UnavailabilityViolation 10
+MaxSubjectHoursXDayViolation 5
+MaxProfWeeklyHoursViolation 15
+ScheduleContiguityViolation 5
